@@ -1,0 +1,302 @@
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+interface TachometerProps {
+  /** Player score on a 1-10 scale */
+  score: number;
+  /** Rendered size of the gauge */
+  size?: "sm" | "md" | "lg" | "xl";
+  /** Animate the needle on mount (default true) */
+  animated?: boolean;
+  /** Show the level label below the score (default true) */
+  showLabel?: boolean;
+  className?: string;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
+
+const SIZE_PX: Record<NonNullable<TachometerProps["size"]>, number> = {
+  sm: 80,
+  md: 160,
+  lg: 280,
+  xl: 420,
+};
+
+const LEVEL_LABELS: Record<number, string> = {
+  10: "Professional Prospect",
+  9: "High Level Div I",
+  8: "Mid Level Div I",
+  7: "Lower Level Div I",
+  6: "D2/D3 College Player",
+  5: "Above Average HS",
+  4: "Average Varsity HS",
+  3: "Average JV",
+  2: "Below Avg JV",
+  1: "Below Avg JV",
+};
+
+/** Arc start / end in degrees (0 = 12-o'clock, CW positive) */
+const ARC_START_DEG = 210;
+const ARC_END_DEG = 330;
+const ARC_SPAN_DEG = ARC_END_DEG - ARC_START_DEG; // 120°
+
+const VIEWBOX = 200; // SVG viewBox is 200×200
+const CX = 100;
+const CY = 100;
+const RADIUS = 78;
+
+const COLOR_GOLD = "#B8975A";
+const COLOR_OXBLOOD = "#7A1E1E";
+const COLOR_BRIGHT_RED = "#CC2222";
+const COLOR_ARC_BG = "#303030";
+const COLOR_BG = "#1A1A1A";
+
+const ANIMATION_DURATION_MS = 1200;
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+/** Convert a "clock" degree (0 = top, CW) to standard math radians. */
+function degToRad(deg: number): number {
+  return ((deg - 90) * Math.PI) / 180;
+}
+
+/** Point on a circle at the given clock-degree. */
+function polarPoint(cx: number, cy: number, r: number, deg: number) {
+  const rad = degToRad(deg);
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+/**
+ * Build an SVG arc path from `startDeg` to `endDeg` at radius `r`
+ * around center (`cx`, `cy`).
+ */
+function arcPath(
+  cx: number,
+  cy: number,
+  r: number,
+  startDeg: number,
+  endDeg: number
+): string {
+  const start = polarPoint(cx, cy, r, startDeg);
+  const end = polarPoint(cx, cy, r, endDeg);
+  const span = endDeg - startDeg;
+  const largeArc = span > 180 ? 1 : 0;
+  return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y}`;
+}
+
+/** Map a score (1-10) to the corresponding degree on the arc. */
+function scoreToDeg(score: number): number {
+  // score 1 → ARC_START_DEG, score 10 → ARC_END_DEG
+  const t = (Math.min(Math.max(score, 1), 10) - 1) / 9;
+  return ARC_START_DEG + t * ARC_SPAN_DEG;
+}
+
+/** Return the zone color for a given score. */
+function zoneColor(score: number): string {
+  if (score >= 9) return COLOR_BRIGHT_RED;
+  if (score >= 7) return COLOR_OXBLOOD;
+  return COLOR_GOLD;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Colored arc segments                                               */
+/* ------------------------------------------------------------------ */
+
+interface ArcSegment {
+  startScore: number;
+  endScore: number;
+  color: string;
+}
+
+const ARC_SEGMENTS: ArcSegment[] = [
+  { startScore: 1, endScore: 6, color: COLOR_GOLD },
+  { startScore: 6, endScore: 8, color: COLOR_OXBLOOD },
+  { startScore: 8, endScore: 10, color: COLOR_BRIGHT_RED },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
+export function Tachometer({
+  score,
+  size = "md",
+  animated = true,
+  showLabel = true,
+  className = "",
+}: TachometerProps) {
+  const clampedScore = Math.min(Math.max(Math.round(score), 1), 10);
+
+  /* ---- animation state ---- */
+  const [displayDeg, setDisplayDeg] = useState<number>(
+    animated ? ARC_START_DEG : scoreToDeg(clampedScore)
+  );
+
+  useEffect(() => {
+    if (!animated) {
+      setDisplayDeg(scoreToDeg(clampedScore));
+      return;
+    }
+
+    const targetDeg = scoreToDeg(clampedScore);
+    const startDeg = ARC_START_DEG;
+    const startTime = performance.now();
+
+    let rafId: number;
+
+    function tick(now: number) {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / ANIMATION_DURATION_MS, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplayDeg(startDeg + (targetDeg - startDeg) * eased);
+
+      if (t < 1) {
+        rafId = requestAnimationFrame(tick);
+      }
+    }
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [clampedScore, animated]);
+
+  /* ---- derived geometry ---- */
+  const needleEnd = useMemo(
+    () => polarPoint(CX, CY, RADIUS - 10, displayDeg),
+    [displayDeg]
+  );
+
+  const px = SIZE_PX[size];
+  const isSmall = size === "sm";
+
+  /* ---- tick marks ---- */
+  const ticks = useMemo(() => {
+    const result: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    for (let s = 1; s <= 10; s++) {
+      const deg = scoreToDeg(s);
+      const outer = polarPoint(CX, CY, RADIUS + 4, deg);
+      const inner = polarPoint(CX, CY, RADIUS - 4, deg);
+      result.push({ x1: outer.x, y1: outer.y, x2: inner.x, y2: inner.y });
+    }
+    return result;
+  }, []);
+
+  /* ---- label font sizing ---- */
+  const scoreFontSize = isSmall ? 28 : 36;
+  const labelFontSize = isSmall ? 7 : 9;
+
+  const label = LEVEL_LABELS[clampedScore] ?? "";
+
+  return (
+    <div
+      className={`inline-flex items-center justify-center ${className}`}
+      style={{ width: px, height: px }}
+    >
+      <svg
+        viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
+        width={px}
+        height={px}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Background circle */}
+        <circle cx={CX} cy={CY} r={RADIUS + 14} fill={COLOR_BG} />
+
+        {/* Arc background (unfilled track) */}
+        <path
+          d={arcPath(CX, CY, RADIUS, ARC_START_DEG, ARC_END_DEG)}
+          fill="none"
+          stroke={COLOR_ARC_BG}
+          strokeWidth={8}
+          strokeLinecap="round"
+        />
+
+        {/* Colored arc segments */}
+        {ARC_SEGMENTS.map((seg) => (
+          <path
+            key={seg.color}
+            d={arcPath(
+              CX,
+              CY,
+              RADIUS,
+              scoreToDeg(seg.startScore),
+              scoreToDeg(seg.endScore)
+            )}
+            fill="none"
+            stroke={seg.color}
+            strokeWidth={8}
+            strokeLinecap="butt"
+          />
+        ))}
+
+        {/* Tick marks */}
+        {ticks.map((t, i) => (
+          <line
+            key={i}
+            x1={t.x1}
+            y1={t.y1}
+            x2={t.x2}
+            y2={t.y2}
+            stroke="#555"
+            strokeWidth={1.2}
+          />
+        ))}
+
+        {/* Needle */}
+        <line
+          x1={CX}
+          y1={CY}
+          x2={needleEnd.x}
+          y2={needleEnd.y}
+          stroke={COLOR_GOLD}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+
+        {/* Needle pivot dot */}
+        <circle cx={CX} cy={CY} r={4} fill={COLOR_GOLD} />
+
+        {/* Score text (center) */}
+        <text
+          x={CX}
+          y={CY + 2}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="#EDEDED"
+          fontSize={scoreFontSize}
+          fontFamily="'Cormorant Garamond', serif"
+          fontWeight={700}
+        >
+          {clampedScore}
+        </text>
+
+        {/* Level label */}
+        {showLabel && !isSmall && (
+          <text
+            x={CX}
+            y={CY + 24}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill={zoneColor(clampedScore)}
+            fontSize={labelFontSize}
+            fontFamily="'Cormorant Garamond', serif"
+            fontWeight={600}
+            opacity={0.9}
+          >
+            {label}
+          </text>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+export default Tachometer;

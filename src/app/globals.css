@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Core palette from diamond-path-v3.html ── */
+  --color-bone: #F5F0E8;
+  --color-bone-2: #EDE6D6;
+  --color-bone-3: #D8CEBC;
+
+  --color-ink: #1C1C1C;
+  --color-ink-2: #242424;
+  --color-ink-3: #303030;
+  --color-ink-4: #444444;
+  --color-ink-5: #666666;
+
+  --color-gold: #B8975A;
+  --color-gold-2: #CAA96C;
+  --color-gold-3: #E8D9A8;
+
+  --color-blood: #7A1E1E;
+  --color-blood-2: #9B2B2B;
+
+  --color-green: #2D7A50;
+  --color-green-2: #3DAA6E;
+
+  --color-slate: #888888;
+  --color-slate-2: #AAAAAA;
+
+  --color-blue: #1A5C9A;
+  --color-blue-2: #2472BE;
+
+  /* ── Typography ── */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Barlow", sans-serif;
+  --font-condensed: "Barlow Condensed", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.09);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.13);
+}
+
+/* ── Base styles ── */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bone);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

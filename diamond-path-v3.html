@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A.I.M. Recruiting — Athlete Identification &amp; Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bone:#F5F0E8;--bone2:#EDE6D6;--bone3:#D8CEBC;
+  --ink:#1C1C1C;--ink2:#242424;--ink3:#303030;--ink4:#444;--ink5:#666;
+  --gold:#B8975A;--gold2:#CAA96C;--gold3:#E8D9A8;
+  --blood:#7A1E1E;--blood2:#9B2B2B;
+  --green:#2D7A50;--green2:#3DAA6E;
+  --slate:#888;--slate2:#AAA;--white:#fff;
+  --blue:#1A5C9A;--blue2:#2472BE;
+  --fd:'Cormorant Garamond',Georgia,serif;
+  --fb:'Barlow',sans-serif;
+  --fc:'Barlow Condensed',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --s1:0 1px 4px rgba(0,0,0,.09);
+  --s2:0 4px 20px rgba(0,0,0,.13);
+  --bd:1px solid rgba(28,28,28,.11);
+  --tr:.17s cubic-bezier(.4,0,.2,1);
+}
+html{font-size:14px}
+body{font-family:var(--fb);background:var(--bone);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+* {box-sizing:border-box;max-width:100vw}
+.dtbl,.cost-tbl{max-width:100%;display:block;overflow-x:auto}
+
+
+/* ── LAYOUT ── */
+.shell{display:grid;grid-template-columns:236px 1fr;grid-template-rows:56px 1fr;min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{
+  grid-column:1/-1;background:var(--ink);border-bottom:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;position:sticky;top:0;z-index:300;
+}
+.logo{display:flex;align-items:center;gap:13px}
+.logo-name{font-family:var(--fd);font-size:21px;font-weight:700;color:var(--bone);letter-spacing:.03em}
+.logo-name em{color:var(--gold);font-style:normal}
+.logo-rule{width:1px;height:22px;background:var(--ink3);margin:0 4px}
+.logo-tag{font-family:var(--fc);font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--ink4)}
+.tb-right{display:flex;align-items:center;gap:9px}
+.roles{display:flex;background:var(--ink2);border:1px solid var(--ink3)}
+.role-btn{font-family:var(--fc);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:7px 15px;cursor:pointer;color:var(--slate2);background:transparent;border:none;transition:var(--tr)}
+.role-btn:hover{color:var(--bone)}
+.role-btn.active{background:var(--gold);color:var(--ink)}
+.tb-btn{font-family:var(--fc);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:7px 16px;background:transparent;border:1px solid var(--ink3);color:var(--slate2);cursor:pointer;transition:var(--tr)}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── MODE BANNERS ── */
+.mode-banner{display:none;align-items:center;gap:10px;padding:9px 24px;font-family:var(--fc);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;border-bottom:1px solid}
+.mode-banner.scout-banner{background:rgba(26,92,154,.08);border-color:rgba(26,92,154,.22);color:#2472BE}
+.mode-banner.coach-banner{background:rgba(45,122,80,.08);border-color:rgba(45,122,80,.22);color:var(--green)}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--ink);border-right:1px solid var(--ink2);display:flex;flex-direction:column;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;padding:18px 0 20px;grid-row:2/3}
+.sidebar::-webkit-scrollbar{width:2px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ink3)}
+.ns-head{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink3);padding:0 20px;margin-bottom:5px}
+.ns{margin-bottom:24px}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 20px;cursor:pointer;font-size:13px;color:var(--slate);border-left:2px solid transparent;transition:var(--tr);position:relative;user-select:none}
+.ni:hover{color:var(--bone2);background:rgba(255,255,255,.025)}
+.ni.active{color:var(--gold3);border-left-color:var(--gold);background:rgba(184,151,90,.07);font-weight:500}
+.ni-dot{width:5px;height:5px;background:var(--gold);border-radius:50%;position:absolute;right:16px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sb-card{margin:auto 14px 0;padding:15px;background:var(--ink2);border:1px solid var(--ink3)}
+.sb-lbl{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:7px}
+.sb-score{font-family:var(--fd);font-size:50px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.02em}
+.sb-desc{font-size:11px;color:var(--slate);margin-top:5px;line-height:1.4}
+.sb-bar{height:3px;background:var(--ink3);margin-top:9px}
+.sb-fill{height:100%;background:linear-gradient(90deg,var(--blood),var(--gold));transition:width .6s}
+
+/* ── MAIN ── */
+.main{background:var(--bone);height:calc(100vh - 56px);overflow-y:auto;grid-row:2/3;min-width:0}
+.main::-webkit-scrollbar{width:5px}
+.main::-webkit-scrollbar-track{background:var(--bone2)}
+.main::-webkit-scrollbar-thumb{background:var(--bone3)}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block;animation:fadein .2s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── PAGE HEADER ── */
+.ph{background:var(--ink);padding:24px 34px 20px;border-bottom:1px solid rgba(184,151,90,.16);position:relative;overflow:hidden}
+.ph::after{content:attr(data-bg);font-family:var(--fd);font-size:88px;font-weight:700;color:rgba(255,255,255,.025);position:absolute;right:-4px;bottom:-14px;line-height:1;pointer-events:none;letter-spacing:-.03em}
+.ph-eye{font-family:var(--fc);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.ph-h{font-family:var(--fd);font-size:29px;font-weight:700;color:var(--bone);line-height:1.1;letter-spacing:-.01em}
+.ph-sub{font-size:12.5px;color:var(--slate);margin-top:4px;max-width:560px;line-height:1.55}
+.pb{padding:24px 34px 52px}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:var(--bd);margin-bottom:15px;box-shadow:var(--s1)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 19px 12px;border-bottom:var(--bd)}
+.ct{font-family:var(--fd);font-size:17px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+.cs{font-size:11px;color:var(--slate);margin-top:2px}
+.cb{padding:17px 19px}
+
+/* ── FORM INPUTS — WHITE BG, DARK TEXT ── */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-family:var(--fc);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink4)}
+.field input,.field select,.field textarea{
+  font-family:var(--fb);font-size:14px;font-weight:500;
+  color:var(--ink);
+  background:var(--white);
+  border:1.5px solid var(--bone3);
+  padding:9px 12px;outline:none;
+  border-radius:2px;width:100%;
+  transition:border-color var(--tr),box-shadow var(--tr);
+  -webkit-appearance:none;appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(184,151,90,.12);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--slate2);font-weight:400;font-size:13px}
+.field textarea{resize:vertical;min-height:84px;line-height:1.65}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer;
+}
+/* inline table inputs */
+.tbl-in{font-family:var(--fm);font-size:12px;font-weight:500;color:var(--ink);background:var(--white);border:none;border-bottom:1.5px solid var(--bone3);padding:3px 4px;outline:none;width:54px;transition:border-color var(--tr)}
+.tbl-in:focus{border-bottom-color:var(--gold);background:rgba(184,151,90,.05)}
+.tbl-in::placeholder{color:var(--slate2);opacity:.7}
+/* large mono metric inputs */
+.ap-in{font-family:var(--fm);font-size:22px;font-weight:500;color:var(--ink);background:transparent;border:none;border-bottom:2px solid var(--bone3);outline:none;width:100%;padding:2px 0 4px;transition:border-color var(--tr)}
+.ap-in:focus{border-bottom-color:var(--gold)}
+.ap-in::placeholder{color:var(--bone3);font-size:20px;font-weight:400}
+/* cost table */
+.cost-in{font-family:var(--fm);font-size:12.5px;font-weight:500;color:var(--ink);background:var(--white);border:1px solid var(--bone3);padding:5px 8px;outline:none;width:100%;transition:border-color var(--tr)}
+.cost-in:focus{border-color:var(--gold)}
+.cost-in::placeholder{color:var(--slate2);opacity:.65}
+
+/* grid helpers */
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(198px,1fr));gap:13px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.ff{grid-column:1/-1}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--fc);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:10px 21px;cursor:pointer;border:none;border-radius:2px;transition:var(--tr);white-space:nowrap}
+.btn-primary{background:var(--ink);color:var(--bone)}
+.btn-primary:hover{background:var(--gold);color:var(--ink)}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:var(--gold2)}
+.btn-outline{background:transparent;border:1.5px solid var(--bone3);color:var(--ink4)}
+.btn-outline:hover{border-color:var(--ink);color:var(--ink)}
+.btn-sm{padding:6px 12px;font-size:10px}
+.btn-lg{padding:13px 28px;font-size:13px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── POS TABS ── */
+.pos-tabs{display:flex;border:1.5px solid var(--bone3);background:var(--bone2);margin-bottom:19px;overflow:hidden}
+.pos-tab{flex:1;font-family:var(--fc);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:9px 5px;cursor:pointer;color:var(--slate);background:transparent;border:none;border-right:1px solid var(--bone3);transition:var(--tr);text-align:center}
+.pos-tab:last-child{border-right:none}
+.pos-tab:hover{background:var(--bone);color:var(--ink)}
+.pos-tab.active{background:var(--ink);color:var(--gold)}
+
+/* ── RATING BARS ── */
+.r-lbl{font-family:var(--fc);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);padding-bottom:9px;border-bottom:1px solid var(--bone2);margin-bottom:13px}
+.r-row{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.r-name{font-family:var(--fc);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink4);width:116px;flex-shrink:0;line-height:1.3}
+.r-bar{flex:1;display:flex;gap:2px;height:27px}
+.r-cell{flex:1;background:var(--bone2);border:1px solid #C4B89A;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:10px;font-weight:600;color:#888;transition:var(--tr);border-radius:1px}
+.r-cell:hover{background:var(--gold3);border-color:var(--gold);color:var(--ink)}
+.r-cell.lo{background:var(--blood2);border-color:var(--blood);color:rgba(255,255,255,.85)}
+.r-cell.mi{background:var(--gold);border-color:#9A7B42;color:var(--ink)}
+.r-cell.hi{background:var(--green);border-color:#1E5C38;color:var(--white)}
+.r-cell.tip{transform:scaleY(1.15);box-shadow:0 2px 8px rgba(0,0,0,.18);z-index:1}
+.r-num{font-family:var(--fm);font-size:15px;font-weight:500;color:var(--ink);width:24px;text-align:right;flex-shrink:0}
+.r-two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.oss{background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:15px 21px;margin-top:18px;border:1px solid var(--ink2)}
+.oss-lbl{font-family:var(--fc);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--slate)}
+.oss-lvl{font-family:var(--fd);font-size:14px;font-style:italic;color:var(--bone2);margin-top:2px}
+.oss-num{font-family:var(--fd);font-size:52px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.03em}
+
+/* ── KPI ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px}
+.kpi{background:var(--white);border:var(--bd);padding:15px 17px}
+.kpi-lbl{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:4px}
+.kpi-val{font-family:var(--fd);font-size:34px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em}
+.kpi-val.g{color:var(--gold)}
+.kpi-sub{font-size:11px;color:var(--slate);margin-top:3px}
+
+/* ── PLAYER BANNER ── */
+.banner{background:var(--ink);border:1px solid var(--ink2);display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:20px;padding:18px 22px;margin-bottom:18px}
+.b-mono{width:72px;height:72px;background:var(--ink2);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:32px;font-weight:700;color:var(--gold);flex-shrink:0}
+.b-name{font-family:var(--fd);font-size:25px;font-weight:700;color:var(--bone);line-height:1.1;margin-bottom:5px}
+.b-meta{display:flex;gap:16px;flex-wrap:wrap}
+.b-mi{font-size:11px;color:var(--slate)}
+.b-mi strong{color:var(--slate2);font-weight:500}
+.b-sn{font-family:var(--fd);font-size:56px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-.04em;text-align:right}
+.b-sl{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);text-align:right}
+
+/* ── ATHLETIC METRICS ── */
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:11px}
+.ap-m{background:var(--bone);border:var(--bd);padding:14px;position:relative}
+.ap-lbl{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-bottom:6px}
+.ap-bench{font-size:10.5px;color:var(--slate);margin-top:6px;line-height:1.45}
+.ap-badge{position:absolute;top:10px;right:10px;font-family:var(--fm);font-size:10px;font-weight:500;padding:2px 7px;border-radius:2px}
+.bg-g{background:rgba(45,122,80,.1);color:var(--green)}
+.bg-y{background:rgba(184,151,90,.14);color:#7A5E1A}
+.bg-r{background:rgba(122,30,30,.1);color:var(--blood)}
+.prog{height:4px;background:var(--bone3);border-radius:2px;margin-top:7px}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .6s}
+
+/* ── DATA TABLE ── */
+.dtbl{width:100%;border-collapse:collapse}
+.dtbl th{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--slate);padding:7px 9px;text-align:left;border-bottom:1.5px solid var(--bone3);background:var(--bone)}
+.dtbl td{padding:6px 9px;border-bottom:1px solid var(--bone);font-family:var(--fm);font-size:12px;color:var(--ink)}
+.dtbl tbody tr:hover td{background:var(--bone)}
+
+/* ── LADDER ── */
+.ladder{display:flex;flex-direction:column;gap:1px}
+.l-rung{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:11px;padding:7px 12px;transition:var(--tr);border-left:3px solid transparent}
+.l-rung.on{background:rgba(184,151,90,.08);border-left-color:var(--gold)}
+.l-n{font-family:var(--fd);font-size:21px;font-weight:700;color:var(--bone3);text-align:center;line-height:1}
+.l-rung.on .l-n{color:var(--gold)}
+.l-d{font-size:12px;color:var(--slate);line-height:1.3}
+.l-rung.on .l-d{color:var(--ink);font-weight:500}
+
+/* ── MAJOR CHIPS ── */
+.mj-wrap{display:flex;flex-wrap:wrap;gap:6px}
+.mj{font-family:var(--fc);font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:6px 11px;border:1.5px solid var(--bone3);cursor:pointer;color:var(--ink4);background:var(--bone);transition:var(--tr);border-radius:1px}
+.mj:hover{border-color:var(--ink);color:var(--ink)}
+.mj.on{background:var(--ink);border-color:var(--ink);color:var(--gold3)}
+
+/* ── INLINE TABS ── */
+.itabs{display:flex;border-bottom:1.5px solid var(--bone3);margin-bottom:17px}
+.itab{font-family:var(--fc);font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;padding:8px 16px;cursor:pointer;color:var(--slate);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:var(--tr);background:none;border-top:none;border-left:none;border-right:none}
+.itab:hover{color:var(--ink)}
+.itab.active{color:var(--ink);border-bottom-color:var(--gold)}
+
+/* ── SECTION DIVIDER ── */
+.sdiv{display:flex;align-items:center;gap:12px;margin:18px 0 13px}
+.sdiv-l{flex:1;height:1px;background:var(--bone3)}
+.sdiv-t{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--slate);white-space:nowrap}
+
+/* ── NOTICES ── */
+.notice{display:flex;gap:9px;padding:11px 14px;margin-bottom:14px;border-left:3px solid;font-size:12px;line-height:1.55}
+.n-gold{border-color:var(--gold);background:rgba(184,151,90,.08);color:#5C4010}
+.n-green{border-color:var(--green);background:rgba(45,122,80,.07);color:#1C4A2C}
+.n-red{border-color:var(--blood);background:rgba(122,30,30,.07);color:var(--blood)}
+.n-blue{border-color:var(--blue);background:rgba(26,92,154,.07);color:#1A4A78}
+
+/* ── CHECKLIST ── */
+.ck-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bone);align-items:flex-start}
+.ck-box{width:17px;height:17px;flex-shrink:0;border:1.5px solid var(--bone3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr);margin-top:2px}
+.ck-box.done{background:var(--ink);border-color:var(--ink);color:var(--bone);font-size:10px}
+.ck-content strong{font-size:13px;color:var(--ink);font-weight:600;display:block;margin-bottom:2px}
+.ck-content span{font-size:11px;color:var(--slate);line-height:1.5}
+
+/* ── Q&A ACCORDION ── */
+.qa-card{background:var(--white);border:var(--bd);margin-bottom:9px}
+.qa-hd{display:flex;align-items:flex-start;gap:12px;padding:13px 17px;cursor:pointer;border-bottom:1px solid transparent;transition:var(--tr)}
+.qa-card.open .qa-hd{border-bottom-color:var(--bone)}
+.qa-n{font-family:var(--fd);font-size:21px;font-weight:700;color:var(--bone3);line-height:1;flex-shrink:0;width:28px}
+.qa-card.open .qa-n{color:var(--gold)}
+.qa-q{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.4}
+.qa-tip{font-size:11.5px;color:var(--slate);line-height:1.65;padding:10px 17px 12px 57px;background:var(--bone);display:none}
+.qa-card.open .qa-tip{display:block}
+.qa-ans{padding:10px 17px 14px 57px;display:none}
+.qa-card.open .qa-ans{display:block}
+
+/* ── SCALE BOX ── */
+.scale-box{background:var(--bone);border:var(--bd);padding:12px 14px}
+.scale-title{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--ink4);margin-bottom:7px}
+.scale-items{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--slate)}
+.scale-items strong{font-family:var(--fm);font-size:11px;color:var(--ink)}
+
+/* ── COST TABLE ── */
+.cost-tbl{width:100%;border-collapse:collapse}
+.cost-tbl th{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--slate);padding:8px 10px;background:var(--bone);text-align:left;border-bottom:var(--bd)}
+.cost-tbl td{padding:7px 9px;border-bottom:1px solid var(--bone);vertical-align:middle}
+.c-tot{font-family:var(--fm);font-size:13px;font-weight:500;color:var(--ink)}
+.c-net{font-family:var(--fm);font-size:13px;font-weight:500;color:var(--green)}
+
+/* ── AI OUTPUT ── */
+.ai-box{background:#1E1E1E;border:1px solid #2E2E2E;padding:22px;min-height:180px;font-family:var(--fb);font-size:13.5px;line-height:1.85;color:#E8E0D0;white-space:pre-wrap;position:relative}
+.ai-ph{color:#666;font-style:italic;font-size:13px}
+.ai-spin{position:absolute;inset:0;background:rgba(28,28,28,.94);display:flex;align-items:center;justify-content:center;gap:10px}
+.ai-spin-t{font-family:var(--fc);font-size:12px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--gold)}
+.spinner{width:17px;height:17px;border:2px solid var(--ink3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LETTER ── */
+.letter-wrap{background:var(--white);border:1px solid var(--bone3);box-shadow:var(--s2)}
+.letter-hdr{background:var(--ink);padding:16px 26px;display:flex;align-items:center;justify-content:space-between}
+.letter-logo{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--bone)}
+.letter-logo em{color:var(--gold);font-style:normal}
+.letter-meta{display:flex;gap:18px;flex-wrap:wrap;padding:9px 26px;background:var(--bone);border-bottom:var(--bd);font-size:11px;color:var(--slate)}
+.letter-meta strong{color:var(--ink)}
+.letter-body{padding:38px 50px;min-height:460px;font-family:var(--fb);font-size:13.5px;line-height:1.9;color:var(--ink);white-space:pre-wrap}
+
+/* ── COLLEGE CARDS ── */
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.cc{background:var(--white);border:var(--bd);transition:var(--tr);position:relative;overflow:hidden}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform var(--tr)}
+.cc:hover{border-color:rgba(184,151,90,.4);box-shadow:var(--s2)}
+.cc:hover::before{transform:scaleX(1)}
+.cc-hd{padding:16px 17px 12px;border-bottom:var(--bd)}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.cc-name{font-family:var(--fd);font-size:17px;font-weight:600;color:var(--ink);line-height:1.2;flex:1;margin-right:8px}
+.cc-fit-block{text-align:right;flex-shrink:0}
+.cc-fit-num{font-family:var(--fm);font-size:22px;font-weight:500;color:var(--gold);line-height:1}
+.cc-fit-lbl{font-family:var(--fc);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--slate)}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-family:var(--fc);font-size:9px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;padding:2px 7px;border:1px solid;border-radius:1px}
+.t-d1{color:var(--blue);border-color:var(--blue);background:rgba(26,92,154,.06)}
+.t-d2{color:var(--green);border-color:var(--green);background:rgba(45,122,80,.06)}
+.t-d3{color:var(--blood);border-color:var(--blood);background:rgba(122,30,30,.06)}
+.t-info{color:var(--ink4);border-color:var(--bone3);background:var(--bone)}
+.t-sch{color:var(--green);border-color:var(--green);background:rgba(45,122,80,.06)}
+/* Stats strip */
+.cc-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:var(--bd)}
+.cc-stat{padding:9px 11px;border-right:var(--bd);text-align:center}
+.cc-stat:last-child{border-right:none}
+.cc-sv{font-family:var(--fm);font-size:13px;font-weight:500;color:var(--ink);display:block}
+.cc-sk{font-family:var(--fc);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--slate);margin-top:2px;display:block}
+/* College Board links — the star feature */
+.cc-body{padding:13px 17px}
+.cc-prog{font-size:12px;color:var(--ink4);line-height:1.6;margin-bottom:11px}
+.cb-links{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
+.cb-link{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--bone);border:1px solid var(--bone3);text-decoration:none;transition:var(--tr)}
+.cb-link:hover{background:var(--ink);border-color:var(--ink)}
+.cb-link-icon{width:15px;height:15px;flex-shrink:0;opacity:.45}
+.cb-link:hover .cb-link-icon{opacity:1;filter:brightness(3)}
+.cb-link-text{flex:1}
+.cb-link-title{font-size:12.5px;font-weight:600;color:var(--ink);display:block}
+.cb-link:hover .cb-link-title{color:var(--gold3)}
+.cb-link-sub{font-size:10px;color:var(--slate);display:block}
+.cb-link:hover .cb-link-sub{color:var(--slate2)}
+.cb-link-arr{font-size:11px;color:var(--slate);flex-shrink:0}
+.cb-link:hover .cb-link-arr{color:var(--gold)}
+.cc-actions{display:flex;gap:7px;flex-wrap:wrap;padding:11px 17px 13px;border-top:var(--bd);background:var(--bone)}
+
+/* ── FILTER BAR ── */
+.fbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
+.fbar .field{flex:1;min-width:148px}
+
+/* ── MISC ── */
+.hidden{display:none!important}
+.divider{height:1px;background:var(--bone2);margin:17px 0}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bone2)}
+::-webkit-scrollbar-thumb{background:var(--bone3)}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+/* Scout/Coach role visibility */
+.scout-only{display:none}
+.coach-only{display:none}
+body.is-scout .scout-only{display:block}
+body.is-coach .coach-only{display:block}
+
+/* ── MOBILE NAV ── */
+.mob-nav{display:none}
+@media(max-width:800px){
+  .shell{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0;height:auto}
+  .sidebar{display:none}
+  .main{height:auto !important;min-height:0 !important;overflow:visible !important;overflow-y:visible !important;padding-bottom:96px;grid-row:auto}
+  .topbar{padding:0 14px;flex-wrap:wrap;height:auto;min-height:56px;gap:8px;padding-top:10px;padding-bottom:10px;position:relative}
+  .logo-rule,.logo-tag{display:none}
+  .logo-name{font-size:17px}
+  .tb-right{gap:6px;width:100%;flex-wrap:nowrap}
+  .roles{flex:1;min-width:0}
+  .role-btn{padding:6px 7px;font-size:9px;letter-spacing:.06em}
+  .tb-btn{display:none}
+  .pb{padding:16px 14px 40px}
+  .ph{padding:18px 16px 16px}
+  .ph::after{display:none}
+  .kpi-row{grid-template-columns:1fr 1fr;gap:9px}
+  .banner{grid-template-columns:54px 1fr;gap:12px;padding:14px}
+  .b-mono{width:54px;height:54px;font-size:24px;flex-shrink:0}
+  .b-sn,.b-sl{display:none}
+  .b-name{font-size:19px}
+  .fg2,.fg3{grid-template-columns:1fr}
+  .r-two{grid-template-columns:1fr}
+  .r-row{flex-wrap:wrap;gap:5px}
+  .r-name{width:100%;font-size:12px}
+  .r-cell{height:36px;font-size:10px}
+  .r-num{width:100%;text-align:left;font-size:17px;padding-top:2px}
+  .cc-grid{grid-template-columns:1fr}
+  .cc-stats{grid-template-columns:1fr 1fr}
+  .cc-stat:nth-child(2){border-right:none}
+  .cc-stat:nth-child(3){border-top:var(--bd)}
+  .cc-stat:nth-child(4){border-top:var(--bd);border-right:none}
+  .oss{flex-direction:column;align-items:flex-start;gap:6px;padding:14px 16px}
+  .oss-num{font-size:42px}
+  .fbar{flex-direction:column}
+  .fbar .field{min-width:100%}
+  .cost-tbl{font-size:11px}
+  .cost-in{padding:4px 5px;font-size:11px}
+  .letter-body{padding:22px 18px}
+  .letter-hdr{flex-direction:column;gap:5px;padding:12px 16px}
+  .letter-meta{padding:8px 16px;flex-direction:column;gap:4px}
+  body{overflow-x:hidden;overflow-y:auto}
+  .mob-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:var(--ink);border-top:2px solid var(--gold);
+    z-index:9999 !important;height:64px;align-items:stretch;
+    pointer-events:all !important;
+    -webkit-transform:translateZ(0);transform:translateZ(0);
+  }
+  .mob-ni{-webkit-tap-highlight-color:rgba(184,151,90,.2);touch-action:manipulation;
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;cursor:pointer;color:var(--slate);transition:var(--tr);border:none;background:transparent;
+    font-family:var(--fc);font-size:8px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  }
+  .mob-ni svg{opacity:.5;transition:opacity var(--tr)}
+  .mob-ni.active{color:var(--gold)}
+  .mob-ni.active svg{opacity:1}
+  .mob-drawer{display:none;position:fixed;inset:0;z-index:500}
+  .mob-drawer.open{display:flex}
+  .mob-drawer-bg{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px)}
+  .mob-drawer-panel{
+    position:absolute;bottom:0;left:0;right:0;
+    background:var(--ink);border-top:2px solid var(--gold);
+    padding:18px 0 72px;max-height:80vh;overflow-y:auto;
+  }
+  .mob-drawer-hd{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 20px 12px;border-bottom:1px solid var(--ink3);margin-bottom:8px;
+  }
+  .mob-drawer-title{font-family:var(--fd);font-size:19px;font-weight:700;color:var(--bone)}
+  .mob-drawer-x{background:none;border:none;color:var(--slate);font-size:24px;cursor:pointer;line-height:1;padding:4px}
+  .mob-drawer .ni{display:flex}
+  .mob-drawer .ns-head{padding:10px 20px 4px;margin-bottom:2px}
+}
+@media(max-width:420px){
+  .role-btn{padding:5px 4px;font-size:8px}
+  .kpi-val{font-size:26px}
+  .r-cell{height:32px}
+}
+
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position:fixed;inset:0;z-index:99999;
+  background:#111;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s ease, transform .6s ease;
+}
+#login-screen.out {
+  opacity:0;transform:scale(1.04);pointer-events:none;
+}
+
+/* animated field grid background */
+#login-screen::before {
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(184,151,90,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,151,90,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+  animation:gridshift 18s linear infinite;
+}
+@keyframes gridshift { to { background-position:48px 48px; } }
+
+/* diamond pulse in background */
+#login-screen::after {
+  content:'';position:absolute;
+  width:420px;height:420px;
+  border:1px solid rgba(184,151,90,.07);
+  transform:rotate(45deg);
+  animation:dpulse 4s ease-in-out infinite;
+}
+@keyframes orbit {
+  from { transform-origin:44px 44px; transform:rotate(0deg); }
+  to   { transform-origin:44px 44px; transform:rotate(360deg); }
+}
+.login-orbit { animation:orbit 6s linear infinite; transform-box:fill-box; }
+@keyframes dpulse {
+  0%,100%{transform:rotate(45deg) scale(1);opacity:.5}
+  50%{transform:rotate(45deg) scale(1.06);opacity:1}
+}
+
+.login-wrap {
+  position:relative;z-index:2;
+  width:100%;max-width:420px;
+  padding:0 28px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;
+}
+
+/* logo mark */
+.login-mark {
+  width:72px;height:72px;
+  border:1.5px solid rgba(184,151,90,.5);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;margin-bottom:28px;
+  animation:markfade 1s ease .1s both;
+}
+@keyframes markfade{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+.login-mark::before {
+  content:'';position:absolute;inset:8px;
+  border:1px solid rgba(184,151,90,.25);
+  transform:rotate(45deg);
+}
+.login-mark svg { position:relative;z-index:1; }
+
+/* wordmark */
+.login-brand {
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:42px;font-weight:700;
+  color:#F5F0E8;letter-spacing:-.01em;line-height:1;
+  margin-bottom:6px;
+  animation:markfade 1s ease .2s both;
+}
+.login-brand em { color:#B8975A;font-style:normal; }
+
+.login-sub {
+  font-family:'Barlow Condensed','Arial Narrow',sans-serif;
+  font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:#9A8E7A;margin-bottom:48px;
+  animation:markfade 1s ease .3s both;
+}
+
+/* form */
+.login-form {
+  width:100%;
+  animation:markfade 1s ease .4s both;
+}
+
+.login-field {
+  position:relative;margin-bottom:14px;
+}
+
+.login-field input {
+  width:100%;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:2px;
+  color:#F5F0E8;
+  font-family:'Barlow','Arial',sans-serif;
+  font-size:15px;font-weight:500;
+  padding:14px 16px;
+  outline:none;
+  transition:border-color .2s, background .2s;
+  -webkit-appearance:none;
+}
+.login-field input::placeholder { color:#444;font-weight:400; }
+.login-field input:focus {
+  border-color:rgba(184,151,90,.5);
+  background:rgba(184,151,90,.04);
+}
+.login-field input.error {
+  border-color:rgba(180,40,40,.6);
+  animation:shake .35s ease;
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+
+/* submit button */
+.login-btn {
+  width:100%;
+  background:#B8975A;
+  border:none;border-radius:2px;
+  color:#111;
+  font-family:'Barlow Condensed','Arial Narrow',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  padding:15px;
+  cursor:pointer;
+  margin-top:4px;
+  transition:background .2s, transform .1s;
+  position:relative;overflow:hidden;
+}
+.login-btn:hover { background:#CAA96C; }
+.login-btn:active { transform:scale(.99); }
+
+/* authenticating state */
+.login-btn.loading {
+  background:#1E1E1E;border:1px solid #B8975A;color:#B8975A;
+  pointer-events:none;
+}
+
+/* progress bar inside button */
+.login-progress {
+  position:absolute;left:0;top:0;height:100%;
+  background:rgba(184,151,90,.15);
+  width:0%;transition:width .05s linear;
+}
+.login-btn-text { position:relative;z-index:1; }
+
+/* status messages */
+.login-status {
+  font-family:'Barlow Condensed','Arial Narrow',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  text-align:center;margin-top:18px;height:18px;
+  transition:color .2s;
+}
+.login-status.ok  { color:#2D7A50; }
+.login-status.err { color:#9B2B2B; }
+.login-status.chk { color:#B8975A; }
+
+/* divider */
+.login-divider {
+  width:48px;height:1px;background:rgba(255,255,255,.08);
+  margin:32px auto;
+}
+
+.login-footer {
+  font-family:'Barlow Condensed','Arial Narrow',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:#6A6054;text-align:center;
+}
+
+</style>
+</head><body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-mark" style="width:88px;height:88px;background:none;border:none;margin-bottom:24px">
+      <svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- outer ring -->
+        <circle cx="44" cy="44" r="40" stroke="#B8975A" stroke-width="1" opacity=".35"/>
+        <!-- mid ring -->
+        <circle cx="44" cy="44" r="28" stroke="#B8975A" stroke-width="1.2" opacity=".6"/>
+        <!-- inner ring -->
+        <circle cx="44" cy="44" r="14" stroke="#B8975A" stroke-width="1.5" opacity=".9"/>
+        <!-- crosshairs — top -->
+        <line x1="44" y1="2" x2="44" y2="28" stroke="#B8975A" stroke-width="1.2" opacity=".7"/>
+        <!-- crosshairs — bottom -->
+        <line x1="44" y1="60" x2="44" y2="86" stroke="#B8975A" stroke-width="1.2" opacity=".7"/>
+        <!-- crosshairs — left -->
+        <line x1="2" y1="44" x2="28" y2="44" stroke="#B8975A" stroke-width="1.2" opacity=".7"/>
+        <!-- crosshairs — right -->
+        <line x1="60" y1="44" x2="86" y2="44" stroke="#B8975A" stroke-width="1.2" opacity=".7"/>
+        <!-- tick marks on outer ring at 4 compass points -->
+        <line x1="44" y1="2" x2="44" y2="8" stroke="#B8975A" stroke-width="2" opacity=".5"/>
+        <line x1="44" y1="80" x2="44" y2="86" stroke="#B8975A" stroke-width="2" opacity=".5"/>
+        <line x1="2" y1="44" x2="8" y2="44" stroke="#B8975A" stroke-width="2" opacity=".5"/>
+        <line x1="80" y1="44" x2="86" y2="44" stroke="#B8975A" stroke-width="2" opacity=".5"/>
+        <!-- center dot -->
+        <circle cx="44" cy="44" r="3.5" fill="#B8975A"/>
+        <!-- subtle inner fill -->
+        <circle cx="44" cy="44" r="13" fill="#B8975A" opacity=".06"/>
+        <!-- rotating indicator — animated via CSS -->
+        <circle cx="44" cy="4" r="2.5" fill="#B8975A" opacity=".9" class="login-orbit"/>
+      </svg>
+    </div>
+    <div class="login-brand"><em>A.I.M.</em> Recruiting</div>
+    <div class="login-sub">Athlete Identification &amp; Match</div>
+
+    <div class="login-form">
+      <div class="login-field">
+        <input type="text" id="login-user" placeholder="Username or Email" autocomplete="username" autocorrect="off" autocapitalize="none">
+      </div>
+      <div class="login-field">
+        <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" id="login-btn" onclick="doLogin()">
+        <div class="login-progress" id="login-prog"></div>
+        <span class="login-btn-text" id="login-btn-txt">Sign In</span>
+      </button>
+      <div class="login-status" id="login-status"></div>
+    </div>
+
+    <div class="login-divider"></div>
+    <div class="login-footer">Scanzano Sports &nbsp;·&nbsp; All-American Baseball Talent Showcases</div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+  <circle cx="13" cy="13" r="11" stroke="#B8975A" stroke-width="1" opacity=".4"/>
+  <circle cx="13" cy="13" r="6.5" stroke="#B8975A" stroke-width="1.2" opacity=".75"/>
+  <line x1="13" y1="1" x2="13" y2="6" stroke="#B8975A" stroke-width="1.3"/>
+  <line x1="13" y1="20" x2="13" y2="25" stroke="#B8975A" stroke-width="1.3"/>
+  <line x1="1" y1="13" x2="6" y2="13" stroke="#B8975A" stroke-width="1.3"/>
+  <line x1="20" y1="13" x2="25" y2="13" stroke="#B8975A" stroke-width="1.3"/>
+  <circle cx="13" cy="13" r="2.2" fill="#B8975A"/>
+</svg>
+    <div class="logo-name"><em>A.I.M.</em> Recruiting</div>
+    <div class="logo-rule"></div>
+    <div class="logo-tag">Athlete Identification &amp; Match</div>
+  </div>
+  <div class="tb-right">
+    <div class="roles">
+      <button class="role-btn active" onclick="setRole(this,'player')">Player</button>
+      <button class="role-btn" onclick="setRole(this,'scout')">Scout / Evaluator</button>
+      <button class="role-btn" onclick="setRole(this,'coach')">Coach</button>
+    </div>
+    <button class="tb-btn" onclick="window.print()">Export PDF</button>
+  </div>
+</div>
+
+<!-- MODE BANNERS -->
+<div id="banner-scout" class="mode-banner scout-banner">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="7" r="2"/></svg>
+  Scout / Evaluator Mode — Evaluation tools and notes are now visible
+</div>
+<div id="banner-coach" class="mode-banner coach-banner">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M5 3V2M9 3V2M2 7h10" stroke="currentColor" stroke-width="1.3"/></svg>
+  Coach Mode — Recruitment pipeline and comparison tools active
+</div>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="ns">
+    <div class="ns-head">Profile</div>
+    <div class="ni active" data-page="dashboard" onclick="nav(this)">Dashboard</div>
+    <div class="ni" data-page="player-info" onclick="nav(this)">Player Info</div>
+    <div class="ni" data-page="athletic" onclick="nav(this)">Athletic Profile</div>
+    <div class="ni" data-page="academics" onclick="nav(this)">Academics &amp; NCAA</div>
+    <div class="ni" data-page="position-scores" onclick="nav(this)">Position Scores</div>
+  </div>
+  <div class="ns">
+    <div class="ns-head">Recruiting</div>
+    <div class="ni" data-page="college-match" onclick="nav(this)">College Match <span class="ni-dot"></span></div>
+    <div class="ni" data-page="letter-builder" onclick="nav(this)">Letter Builder</div>
+    <div class="ni" data-page="cost-tracker" onclick="nav(this)">Cost Tracker</div>
+    <div class="ni" data-page="checklist" onclick="nav(this)">Checklist &amp; Q&amp;A</div>
+  </div>
+  <div class="ns">
+    <div class="ns-head">Tools</div>
+    <div class="ni" data-page="ai-bio" onclick="nav(this)">AI Bio Generator</div>
+    <div class="ni" data-page="pitch-log" onclick="nav(this)">Pitching Log</div>
+  </div>
+  <div class="sb-card">
+    <div class="sb-lbl">Overall Rating</div>
+    <div class="sb-score" id="sb-score">--</div>
+    <div class="sb-desc" id="sb-desc">Enter scores to generate rating</div>
+    <div class="sb-bar"><div class="sb-fill" id="sb-fill" style="width:0%"></div></div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="page-dashboard" class="page active">
+  <div class="ph" data-bg="DASHBOARD">
+    <div class="ph-eye">A.I.M. Recruiting — Athlete Identification &amp; Match</div>
+    <div class="ph-h" id="ph-name">Player Dashboard</div>
+    <div class="ph-sub">Complete your profile below to generate your showcase evaluation and college match report.</div>
+  </div>
+  <div class="pb">
+    <!-- Player Banner -->
+    <div class="banner">
+      <div class="b-mono" id="b-mono"><svg id="b-mono-svg" width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="13" r="7" fill="rgba(184,151,90,0.35)" stroke="#B8975A" stroke-width="1.5"/><path d="M4 34c0-7.73 6.27-14 14-14s14 6.27 14 14" stroke="#B8975A" stroke-width="1.5" stroke-linecap="round" fill="rgba(184,151,90,0.15)"/></svg></div>
+      <div>
+        <div class="b-name" id="b-name">Your Name</div>
+        <div class="b-meta">
+          <span class="b-mi"><strong id="b-pos">Position</strong></span>
+          <span class="b-mi">HS: <strong id="b-hs">--</strong></span>
+          <span class="b-mi">Grad: <strong id="b-grad">--</strong></span>
+          <span class="b-mi">B/T: <strong id="b-bt">--</strong></span>
+          <span class="b-mi">Ht/Wt: <strong id="b-hw">--</strong></span>
+        </div>
+      </div>
+      <div><div class="b-sn" id="b-score">--</div><div class="b-sl">Overall Rating</div></div>
+    </div>
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-lbl">Showcase Rating</div><div class="kpi-val g" id="kpi-rating">--</div><div class="kpi-sub">Out of 10.0</div></div>
+      <div class="kpi"><div class="kpi-lbl">College Matches</div><div class="kpi-val" id="kpi-matches">32</div><div class="kpi-sub">Run engine to filter</div></div>
+      <div class="kpi"><div class="kpi-lbl">Profile Complete</div><div class="kpi-val" id="kpi-pct">0%</div><div class="kpi-sub"><div style="height:4px;background:var(--bone3);margin-top:5px;border-radius:2px"><div id="kpi-bar" style="height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width .5s"></div></div></div></div>
+      <div class="kpi"><div class="kpi-lbl">Letters Drafted</div><div class="kpi-val" id="kpi-letters">0</div><div class="kpi-sub">Via letter builder</div></div>
+    </div>
+    <div class="fg2">
+      <!-- Evaluation Ladder -->
+      <div class="card">
+        <div class="ch"><div><div class="ct">Player Evaluation Ladder</div><div class="cs">All-American Showcase Rating Scale</div></div></div>
+        <div class="cb">
+          <div class="ladder" id="ladder">
+            <div class="l-rung" data-lv="10"><div class="l-n">10</div><div class="l-d">Professional Prospect</div></div>
+            <div class="l-rung" data-lv="9"><div class="l-n">9</div><div class="l-d">High Level Div I Player</div></div>
+            <div class="l-rung" data-lv="8"><div class="l-n">8</div><div class="l-d">Mid Level Div I Player</div></div>
+            <div class="l-rung" data-lv="7"><div class="l-n">7</div><div class="l-d">Lower Level Div I Player</div></div>
+            <div class="l-rung" data-lv="6"><div class="l-n">6</div><div class="l-d">Div 2 / Div 3 College Player</div></div>
+            <div class="l-rung" data-lv="5"><div class="l-n">5</div><div class="l-d">Above Average HS Player</div></div>
+            <div class="l-rung" data-lv="4"><div class="l-n">4</div><div class="l-d">Average Varsity HS Player</div></div>
+            <div class="l-rung" data-lv="3"><div class="l-n">3</div><div class="l-d">Average JV HS Player</div></div>
+            <div class="l-rung" data-lv="2"><div class="l-n">2</div><div class="l-d">Below Avg JV HS Player</div></div>
+            <div class="l-rung" data-lv="1"><div class="l-n">1</div><div class="l-d">Below Avg JV HS Player</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Priority Actions -->
+      <div class="card">
+        <div class="ch"><div><div class="ct">Priority Actions</div><div class="cs">Steps to complete your recruiting profile</div></div></div>
+        <div class="cb">
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Complete Player Info</strong><span>Name, position, height, weight, B/T</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Enter HS &amp; Summer Stats</strong><span>Batting or pitching from most recent season</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Complete Athletic Profile</strong><span>60-yard dash, bat speed, vertical leap</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Enter Position Scores</strong><span>Rate your skills 1-10 to generate overall score</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Set Academic Info</strong><span>GPA, SAT/ACT, intended majors</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Run College Match Engine</strong><span>Find programs aligned to your profile</span></div></div>
+          <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Generate AI Bio</strong><span>Create your player narrative for coaches</span></div></div>
+          <div class="ck-row" style="border:none"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Send 5 Letters</strong><span>Use the letter builder to contact programs</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PLAYER INFO ═══ -->
+<div id="page-player-info" class="page">
+  <div class="ph" data-bg="PLAYER">
+    <div class="ph-eye">Section 1</div>
+    <div class="ph-h">Player Information</div>
+    <div class="ph-sub">Personal details, contact information, and season statistics.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Personal Details</div></div>
+      <div class="cb">
+        <div class="fg" style="margin-bottom:13px">
+          <div class="field"><label>First Name</label><input id="pi-first" type="text" placeholder="First" oninput="syncBanner()"></div>
+          <div class="field"><label>Last Name</label><input id="pi-last" type="text" placeholder="Last" oninput="syncBanner()"></div>
+          <div class="field"><label>Graduation Year</label><input id="pi-grad" type="text" placeholder="2026" oninput="syncBanner()"></div>
+          <div class="field"><label>Date of Birth</label><input id="pi-dob" type="text" placeholder="MM/DD/YYYY"></div>
+          <div class="field"><label>Height (in)</label><input id="pi-height" type="text" placeholder='72"' oninput="syncBanner()"></div>
+          <div class="field"><label>Weight (lbs)</label><input id="pi-weight" type="text" placeholder="185" oninput="syncBanner()"></div>
+          <div class="field"><label>Bats</label>
+            <select id="pi-bats" onchange="syncBanner()">
+              <option value="">Select</option><option>R</option><option>L</option><option>S</option>
+            </select>
+          </div>
+          <div class="field"><label>Throws</label>
+            <select id="pi-throws" onchange="syncBanner()">
+              <option value="">Select</option><option>R</option><option>L</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="field ff"><label>Primary Position</label>
+            <select id="pi-pos" onchange="syncBanner();switchPos(this.value)">
+              <option value="">Select position</option>
+              <option>Pitcher (RHP)</option><option>Pitcher (LHP)</option>
+              <option>Catcher</option><option>First Baseman</option>
+              <option>Second Baseman</option><option>Shortstop</option>
+              <option>Third Baseman</option><option>Outfielder</option>
+            </select>
+          </div>
+          <div class="field"><label>High School</label><input id="pi-hs" type="text" placeholder="School name" oninput="syncBanner()"></div>
+          <div class="field"><label>City / State</label><input id="pi-city" type="text" placeholder="Cherry Hill, NJ"></div>
+          <div class="field"><label>HS Coach</label><input id="pi-coach" type="text" placeholder="Coach name"></div>
+          <div class="field"><label>HS Coach Phone</label><input id="pi-cphone" type="tel" placeholder="(555) 555-5555"></div>
+          <div class="field"><label>Summer Team / League</label><input id="pi-summer" type="text" placeholder="Team name"></div>
+          <div class="field"><label>Summer Coach</label><input id="pi-scoach" type="text" placeholder="Coach name"></div>
+          <div class="field"><label>Email</label><input id="pi-email" type="email" placeholder="player@email.com"></div>
+          <div class="field"><label>Phone</label><input id="pi-phone" type="tel" placeholder="(555) 555-5555"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Stats Card -->
+    <div class="card">
+      <div class="ch"><div class="ct">Season Statistics</div><div class="cs">Most recent varsity season</div></div>
+      <div class="cb">
+        <div class="itabs">
+          <button class="itab active" onclick="switchTab(this,'hs-hit')">HS Hitting</button>
+          <button class="itab" onclick="switchTab(this,'hs-pit')">HS Pitching</button>
+          <button class="itab" onclick="switchTab(this,'su-hit')">Summer Hitting</button>
+          <button class="itab" onclick="switchTab(this,'su-pit')">Summer Pitching</button>
+        </div>
+        <div id="hs-hit">
+          <table class="dtbl"><thead><tr><th>G</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>R</th><th>RBI</th><th>BB</th><th>K</th><th>SB</th><th>BA</th></tr></thead>
+          <tbody><tr><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder=".000" style="width:52px"></td></tr></tbody></table>
+        </div>
+        <div id="hs-pit" class="hidden">
+          <table class="dtbl"><thead><tr><th>W</th><th>L</th><th>SV</th><th>ERA</th><th>G</th><th>CG</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>SHO</th></tr></thead>
+          <tbody><tr><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0.00"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0.0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td></tr></tbody></table>
+        </div>
+        <div id="su-hit" class="hidden">
+          <table class="dtbl"><thead><tr><th>G</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>R</th><th>RBI</th><th>BB</th><th>K</th><th>SB</th><th>BA</th></tr></thead>
+          <tbody><tr><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder=".000" style="width:52px"></td></tr></tbody></table>
+        </div>
+        <div id="su-pit" class="hidden">
+          <table class="dtbl"><thead><tr><th>W</th><th>L</th><th>SV</th><th>ERA</th><th>G</th><th>CG</th><th>IP</th><th>H</th><th>BB</th><th>K</th><th>SHO</th></tr></thead>
+          <tbody><tr><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0.00"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0.0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" placeholder="0"></td></tr></tbody></table>
+        </div>
+        <div style="margin-top:13px">
+          <div class="field"><label>Team Titles / Personal Honors</label><textarea id="pi-honors" placeholder="All-League, All-State, Team MVP, Tournament honors..."></textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ATHLETIC PROFILE ═══ -->
+<div id="page-athletic" class="page">
+  <div class="ph" data-bg="ATHLETIC">
+    <div class="ph-eye">Section 3</div>
+    <div class="ph-h">Athletic Profile</div>
+    <div class="ph-sub">Physical measurements compared against professional and high school benchmarks.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Physical Measurements</div></div>
+      <div class="cb">
+        <div class="fg">
+          <div class="field"><label>Height (inches)</label><input id="ap-ht" type="number" placeholder="72" oninput="syncBanner()"></div>
+          <div class="field"><label>Weight (lbs)</label><input id="ap-wt" type="number" placeholder="185" oninput="syncBanner()"></div>
+          <div class="field"><label>Body Fat %</label><input id="ap-bf" type="number" placeholder="9.5" step="0.1"></div>
+          <div class="field"><label>Hand Strength R (lbs)</label><input id="ap-hr" type="number" placeholder="104"></div>
+          <div class="field"><label>Hand Strength L (lbs)</label><input id="ap-hl" type="number" placeholder="99"></div>
+        </div>
+        <div class="notice n-gold" style="margin-top:13px">Pro average body fat: C 9.71% · IF 9.37% · OF 8.36% · P 10.40%. Hand strength superior: R120/L118, good: R104/L103, poor: R90/L88.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Speed &amp; Agility</div></div>
+      <div class="cb">
+        <div class="ap-grid">
+          <div class="ap-m">
+            <div class="ap-lbl">60-Yard Dash</div>
+            <input class="ap-in" id="ap-60" type="number" step="0.01" placeholder="7.10" oninput="calc60()">
+            <div class="ap-bench">Pro avg: C 7.35s · IF 6.97s · OF 6.89s</div>
+            <div class="prog"><div class="prog-fill" id="ap-60-bar" style="width:0%"></div></div>
+            <span class="ap-badge" id="ap-60-badge"></span>
+          </div>
+          <div class="ap-m">
+            <div class="ap-lbl">Pro Agility (seconds)</div>
+            <input class="ap-in" id="ap-ag" type="number" step="0.01" placeholder="4.75">
+            <div class="ap-bench">HS avg: C 4.79 · CIF 4.78 · MIF 4.76 · OF 4.74 · P 4.94</div>
+          </div>
+          <div class="ap-m">
+            <div class="ap-lbl">30-Yard Dash</div>
+            <input class="ap-in" id="ap-30" type="number" step="0.01" placeholder="3.80">
+            <div class="ap-bench">Pro avg: C 3.93 · IF 3.73 · OF 3.69</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Power &amp; Explosiveness</div></div>
+      <div class="cb">
+        <div class="ap-grid">
+          <div class="ap-m">
+            <div class="ap-lbl">Bat Speed (MPH)</div>
+            <input class="ap-in" id="ap-bat" type="number" placeholder="74" oninput="calcBat()">
+            <div class="ap-bench">HS superior: 80+ · average: 74 MPH</div>
+            <div class="prog"><div class="prog-fill" id="ap-bat-bar" style="width:0%"></div></div>
+            <span class="ap-badge" id="ap-bat-badge"></span>
+          </div>
+          <div class="ap-m">
+            <div class="ap-lbl">Vertical Leap (in)</div>
+            <input class="ap-in" id="ap-vt" type="number" placeholder="28" oninput="calcVert()">
+            <div class="ap-bench">Pro: superior 32-35 · outstanding 29-32 · avg 26.2 · HS avg 24.5</div>
+            <div class="prog"><div class="prog-fill" id="ap-vt-bar" style="width:0%"></div></div>
+            <span class="ap-badge" id="ap-vt-badge"></span>
+          </div>
+          <div class="ap-m">
+            <div class="ap-lbl">Standing Long Jump (in)</div>
+            <input class="ap-in" id="ap-lj" type="number" placeholder="106">
+            <div class="ap-bench">Pro: superior 129 · avg 106 · HS avg 92 · poor 88</div>
+          </div>
+          <div class="ap-m">
+            <div class="ap-lbl">Medicine Ball Throw (ft)</div>
+            <input class="ap-in" id="ap-mb" type="number" step="0.1" placeholder="13.5">
+            <div class="ap-bench">Pro: superior 15'2" · average 13'6" · poor 12'4"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACADEMICS ═══ -->
+<div id="page-academics" class="page">
+  <div class="ph" data-bg="ACADEMICS">
+    <div class="ph-eye">Section 4</div>
+    <div class="ph-h">Academics &amp; NCAA Eligibility</div>
+    <div class="ph-sub">GPA, test scores, and NCAA eligibility quick-check for Division I and II.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Academic Profile</div></div>
+      <div class="cb">
+        <div class="fg">
+          <div class="field"><label>Overall GPA</label><input id="ac-gpa" type="number" step="0.01" placeholder="3.50" oninput="checkElig()"></div>
+          <div class="field"><label>Class Rank</label><input id="ac-rank" type="text" placeholder="Top 15%"></div>
+          <div class="field"><label>SAT (CR + Math only)</label><input id="ac-sat" type="number" placeholder="1200" oninput="checkElig()"></div>
+          <div class="field"><label>ACT Sum (4 sections)</label><input id="ac-act" type="number" placeholder="88" oninput="checkElig()"></div>
+          <div class="field"><label>Graduation Year</label><input id="ac-grad" type="text" placeholder="June 2026"></div>
+        </div>
+        <div id="elig-notice" class="notice n-green hidden" style="margin-top:13px">NCAA eligibility status will appear here.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Academic Interests</div><div class="cs">Select intended major areas — used by college match engine</div></div>
+      <div class="cb">
+        <div class="mj-wrap" id="mj-wrap">
+          <div class="mj" onclick="togMj(this,'Business')">Business</div>
+          <div class="mj" onclick="togMj(this,'Engineering')">Engineering</div>
+          <div class="mj" onclick="togMj(this,'Computer Science')">Computer Science</div>
+          <div class="mj" onclick="togMj(this,'Pre-Med / Biology')">Pre-Med / Biology</div>
+          <div class="mj" onclick="togMj(this,'Finance / Accounting')">Finance / Accounting</div>
+          <div class="mj" onclick="togMj(this,'Communications')">Communications</div>
+          <div class="mj" onclick="togMj(this,'Criminal Justice')">Criminal Justice</div>
+          <div class="mj" onclick="togMj(this,'Education')">Education</div>
+          <div class="mj" onclick="togMj(this,'Kinesiology')">Kinesiology / Exercise Science</div>
+          <div class="mj" onclick="togMj(this,'Psychology')">Psychology</div>
+          <div class="mj" onclick="togMj(this,'Architecture')">Architecture</div>
+          <div class="mj" onclick="togMj(this,'Nursing')">Nursing</div>
+          <div class="mj" onclick="togMj(this,'Liberal Arts')">Liberal Arts</div>
+          <div class="mj" onclick="togMj(this,'Undecided')">Undecided</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Campus Preference</div></div>
+      <div class="cb">
+        <div class="fg">
+          <div class="field"><label>Campus Setting</label>
+            <select id="ac-campus">
+              <option value="">No preference</option>
+              <option>Suburban campus</option><option>Urban campus</option>
+              <option>College-town setting</option><option>Rural / college-town setting</option>
+            </select>
+          </div>
+          <div class="field"><label>Distance from Home</label>
+            <select id="ac-dist">
+              <option value="">No preference</option>
+              <option>Within 2 hours</option><option>Within 4 hours</option><option>Anywhere in US</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">NCAA Core Course Reference</div><div class="cs">Quick reference — verify at ncaa.org</div></div>
+      <div class="cb">
+        <div class="fg2">
+          <div>
+            <div class="sdiv"><div class="sdiv-l"></div><div class="sdiv-t">Division I — 16 Core Courses</div><div class="sdiv-l"></div></div>
+            <div style="font-size:12.5px;line-height:2;color:var(--ink4)">4 yrs English &nbsp;·&nbsp; 3 yrs Math (Algebra I+) &nbsp;·&nbsp; 2 yrs Natural/Physical Science (1 lab) &nbsp;·&nbsp; 1 yr additional English/Math/Science &nbsp;·&nbsp; 2 yrs Social Science &nbsp;·&nbsp; 4 yrs additional electives</div>
+            <div class="notice n-blue" style="margin-top:11px;font-size:11.5px">D-I uses a sliding GPA/SAT scale. Min SAT not fixed — depends on GPA. Use NCAA code <strong>9999</strong> when registering for SAT/ACT.</div>
+          </div>
+          <div>
+            <div class="sdiv"><div class="sdiv-l"></div><div class="sdiv-t">Division II — 14 Core Courses</div><div class="sdiv-l"></div></div>
+            <div style="font-size:12.5px;line-height:2;color:var(--ink4)">3 yrs English &nbsp;·&nbsp; 2 yrs Math &nbsp;·&nbsp; 2 yrs Natural/Physical Science &nbsp;·&nbsp; 2 yrs additional &nbsp;·&nbsp; 2 yrs Social Science &nbsp;·&nbsp; 3 yrs additional</div>
+            <div class="notice n-blue" style="margin-top:11px;font-size:11.5px">D-II minimum: SAT 820 (CR+Math) or ACT sum of 88. Min GPA 2.000. Writing section of SAT is NOT used.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POSITION SCORES ═══ -->
+<div id="page-position-scores" class="page">
+  <div class="ph" data-bg="SCORES">
+    <div class="ph-eye">Section 5</div>
+    <div class="ph-h">Position Scores</div>
+    <div class="ph-sub">Rate each skill 1-10. Overall score auto-calculates and updates your dashboard.</div>
+  </div>
+  <div style="background:var(--bone);border-bottom:1px solid var(--bone3);padding:12px 34px;display:flex;align-items:center;gap:14px">
+    <label style="font-family:var(--fc);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink4);white-space:nowrap">Evaluating Position</label>
+    <select id="ps-pos" onchange="switchPos(this.value);document.getElementById('pi-pos').value=this.value;syncBanner()" style="font-family:var(--fb);font-size:14px;font-weight:500;color:var(--ink);background:var(--white);border:1.5px solid var(--bone3);padding:7px 32px 7px 10px;border-radius:2px;outline:none;flex:1;max-width:300px;-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 10px center">
+      <option value="">— Select Position —</option>
+      <option>Pitcher (RHP)</option><option>Pitcher (LHP)</option>
+      <option>Catcher</option><option>First Baseman</option>
+      <option>Second Baseman</option><option>Shortstop</option>
+      <option>Third Baseman</option><option>Outfielder</option>
+    </select>
+  </div>
+  <div class="pb">
+    <!-- PITCHER -->
+    <div id="pos-pitcher" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="ct">Pitcher Evaluation</div><div class="cs">Left-click a cell to set score</div></div>
+        <div class="cb">
+          <div class="r-two">
+            <div>
+              <div class="r-lbl">Velocity &amp; Stuff</div>
+              <div id="rb-p-fbv"></div>
+              <div id="rb-p-fbc"></div>
+              <div id="rb-p-cbc"></div>
+              <div id="rb-p-cbv"></div>
+              <div id="rb-p-bbc"></div>
+              <div id="rb-p-bbv"></div>
+            </div>
+            <div>
+              <div class="r-lbl">Command &amp; Other</div>
+              <div id="rb-p-str"></div>
+              <div id="rb-p-pfp"></div>
+              <div id="rb-p-sbv" class="hidden"></div>
+            </div>
+          </div>
+          <div class="scale-box" style="margin-top:14px">
+            <div class="scale-title">Fastball MPH Scale</div>
+            <div class="scale-items">
+              <span>1 ≤64 &nbsp;</span><span>2 65-69 &nbsp;</span><span>3 70-72 &nbsp;</span><span>4 73-74 &nbsp;</span><span>5 75-77 &nbsp;</span>
+              <span>6 78-80 &nbsp;</span><span>7 81-83 &nbsp;</span><span>8 84-85 &nbsp;</span><span>9 86-87 &nbsp;</span><span><strong>10 88-90+</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- CATCHER -->
+    <div id="pos-catcher" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="ct">Catcher Evaluation</div></div>
+        <div class="cb">
+          <div class="r-two">
+            <div>
+              <div class="r-lbl">Offense</div>
+              <div id="rb-c-hit"></div>
+              <div id="rb-c-pow"></div>
+              <div id="rb-c-sqa"></div>
+              <div id="rb-c-sbl"></div>
+            </div>
+            <div>
+              <div class="r-lbl">Defense</div>
+              <div id="rb-c-blk"></div>
+              <div id="rb-c-rec"></div>
+              <div id="rb-c-pop"></div>
+              <div id="rb-c-pro"></div>
+            </div>
+          </div>
+          <div class="scale-box" style="margin-top:14px">
+            <div class="scale-title">Pop Time Scale (pop-to-pop ± accuracy)</div>
+            <div class="scale-items"><span>1: 2.70-2.79 &nbsp;</span><span>2: 2.60-2.69 &nbsp;</span><span>3: 2.50-2.59 &nbsp;</span><span>4: 2.40-2.49 &nbsp;</span><span>5: 2.30-2.39 &nbsp;</span><span>6: 2.20-2.29 &nbsp;</span><span>7: 2.10-2.19 &nbsp;</span><span>8: 2.01-2.10 &nbsp;</span><span>9: 1.91-2.00 &nbsp;</span><span><strong>10: ≤1.90</strong></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 1B -->
+    <div id="pos-first" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="ct">First Baseman Evaluation</div></div>
+        <div class="cb">
+          <div class="r-two">
+            <div><div class="r-lbl">Offense</div><div id="rb-1-hit"></div><div id="rb-1-pow"></div><div id="rb-1-sqa"></div><div id="rb-1-sbl"></div></div>
+            <div><div class="r-lbl">Defense</div><div id="rb-1-thr"></div><div id="rb-1-str"></div><div id="rb-1-pic"></div><div id="rb-1-fld"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- INFIELDER -->
+    <div id="pos-infield" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="ct">Infielder Evaluation</div></div>
+        <div class="cb">
+          <div class="r-two">
+            <div><div class="r-lbl">Offense</div><div id="rb-i-hit"></div><div id="rb-i-pow"></div><div id="rb-i-sqa"></div><div id="rb-i-sbl"></div></div>
+            <div><div class="r-lbl">Defense</div><div id="rb-i-thr"></div><div id="rb-i-str"></div><div id="rb-i-cfd"></div><div id="rb-i-pfd"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- OUTFIELDER -->
+    <div id="pos-outfield" class="hidden">
+      <div class="card">
+        <div class="ch"><div class="ct">Outfielder Evaluation</div></div>
+        <div class="cb">
+          <div class="r-two">
+            <div><div class="r-lbl">Offense</div><div id="rb-o-hit"></div><div id="rb-o-pow"></div><div id="rb-o-sqa"></div><div id="rb-o-sbl"></div></div>
+            <div><div class="r-lbl">Defense</div><div id="rb-o-thr"></div><div id="rb-o-str"></div><div id="rb-o-fld"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- DEFAULT -->
+    <div id="pos-default">
+      <div class="notice n-gold">Select your position in Player Info to see the correct evaluation form.</div>
+    </div>
+    <!-- SCOUT NOTES - only visible in scout mode -->
+    <div id="scout-notes-panel" class="scout-only card" style="display:none">
+      <div class="ch"><div class="ct">Evaluator Notes</div><div class="cs">Internal — not shared with player</div></div>
+      <div class="cb"><div class="field"><textarea placeholder="Detail observations on mechanics, athleticism, projectability, makeup, and any standout plays or concerns..."></textarea></div></div>
+    </div>
+    <!-- OVERALL SCORE -->
+    <div class="oss">
+      <div><div class="oss-lbl">Overall Showcase Score</div><div class="oss-lvl" id="oss-lvl">--</div></div>
+      <div class="oss-num" id="oss-num">--</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COLLEGE MATCH ═══ -->
+<div id="page-college-match" class="page">
+  <div class="ph" data-bg="MATCH">
+    <div class="ph-eye">College Match Engine</div>
+    <div class="ph-h">College Program Finder</div>
+    <div class="ph-sub">Programs ranked by fit score using your division level, academic interests, and campus preference. Click any College Board link to see live admissions data.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Match Controls</div></div>
+      <div class="cb">
+        <div class="fbar">
+          <div class="field"><label>Filter by Division</label>
+            <select id="cf-div" onchange="renderColleges()">
+              <option value="">All Divisions</option><option>D1</option><option>D2</option><option>D3</option>
+            </select>
+          </div>
+          <div class="field"><label>Filter by State</label>
+            <select id="cf-state" onchange="renderColleges()">
+              <option value="">All States</option>
+              <option>AL</option><option>CA</option><option>DE</option><option>FL</option><option>GA</option>
+              <option>IN</option><option>LA</option><option>MA</option><option>MD</option><option>NC</option>
+              <option>NJ</option><option>NY</option><option>PA</option><option>SC</option><option>TN</option>
+              <option>TX</option><option>VA</option>
+            </select>
+          </div>
+          <div class="field"><label>Search Program</label><input id="cf-search" type="text" placeholder="School name..." oninput="renderColleges()"></div>
+          <button class="btn btn-primary" onclick="runMatchEngine()">Run Match Engine</button>
+        </div>
+        <div id="match-notice" class="notice n-green hidden"></div>
+      </div>
+    </div>
+    <div id="college-grid" class="cc-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ LETTER BUILDER ═══ -->
+<div id="page-letter-builder" class="page">
+  <div class="ph" data-bg="LETTER">
+    <div class="ph-eye">Section 7</div>
+    <div class="ph-h">Letter Builder</div>
+    <div class="ph-sub">AI-generated recruiting letters. Scanzano Sports references pre-filled.</div>
+  </div>
+  <div class="pb">
+    <div class="fg2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="ch"><div class="ct">Coach Details</div></div>
+        <div class="cb">
+          <div class="fg" style="gap:11px">
+            <div class="field"><label>Coach Name</label><input id="lb-coach" type="text" placeholder="Coach Smith"></div>
+            <div class="field"><label>College / University</label><input id="lb-college" type="text" placeholder="University Name"></div>
+            <div class="field ff"><label>Street Address</label><input id="lb-addr" type="text" placeholder="123 University Ave"></div>
+            <div class="field"><label>City, State Zip</label><input id="lb-city" type="text" placeholder="City, ST 00000"></div>
+            <div class="field"><label>Letter Type</label>
+              <select id="lb-type">
+                <option>Initial Contact</option><option>Follow-Up</option><option>Strong Interest</option><option>Thank You</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Letter Controls</div></div>
+        <div class="cb">
+          <div class="fg" style="gap:11px">
+            <div class="field"><label>Tone</label>
+              <select id="lb-tone"><option>Professional</option><option>Confident</option><option>Humble</option><option>Direct</option></select>
+            </div>
+            <div class="field"><label>Length</label>
+              <select id="lb-len"><option>Standard (3-4 paragraphs)</option><option>Brief (2 paragraphs)</option><option>Detailed (5+ paragraphs)</option></select>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary btn-lg" onclick="genLetter()">Generate Letter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="letter-wrap">
+      <div class="letter-hdr">
+        <div class="letter-logo"><em>A.I.M.</em> Recruiting · Letter</div>
+        <div style="font-family:var(--fc);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--slate)">All-American Baseball Talent Showcases</div>
+      </div>
+      <div class="letter-meta">
+        <span>To: <strong id="lm-to">Coach Name / College</strong></span>
+        <span>From: <strong id="lm-from">Player Name</strong></span>
+        <span>Type: <strong id="lm-type">Initial Contact</strong></span>
+      </div>
+      <div class="letter-body" id="letter-output"><span style="color:var(--slate);font-style:italic;font-size:13px">Your generated letter will appear here. Fill in coach details above and click Generate Letter.</span></div>
+    </div>
+    <div class="btn-row" style="margin-top:11px">
+      <button class="btn btn-outline btn-sm" onclick="copyEl('letter-output')">Copy Letter</button>
+      <button class="btn btn-outline btn-sm" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COST TRACKER ═══ -->
+<div id="page-cost-tracker" class="page">
+  <div class="ph" data-bg="COSTS">
+    <div class="ph-eye">Financial Planning</div>
+    <div class="ph-h">Cost Tracker</div>
+    <div class="ph-sub">Compare net cost across programs after scholarship. Spending money column is for parental contribution planning.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">College Cost Comparison</div><div class="cs">Net cost auto-calculates from total minus scholarship</div></div>
+        <button class="btn btn-outline btn-sm" onclick="addCostRow()">+ Add Row</button>
+      </div>
+      <div class="cb" style="overflow-x:auto">
+        <table class="cost-tbl">
+          <thead><tr><th>College</th><th>Tuition</th><th>Room &amp; Board</th><th>Books</th><th>Total</th><th>Scholarship</th><th>Net Cost</th><th>Spending $</th></tr></thead>
+          <tbody id="cost-tbody">
+            <tr>
+              <td><input class="cost-in" type="text" placeholder="e.g. Villanova" style="min-width:160px"></td>
+              <td><input class="cost-in" type="number" placeholder="32000" oninput="calcRow(this)"></td>
+              <td><input class="cost-in" type="number" placeholder="8000" oninput="calcRow(this)"></td>
+              <td><input class="cost-in" type="number" placeholder="2000" oninput="calcRow(this)"></td>
+              <td><span class="c-tot" data-cell="total">--</span></td>
+              <td><input class="cost-in" type="number" placeholder="5500" oninput="calcRow(this)"></td>
+              <td><span class="c-net" data-cell="net">--</span></td>
+              <td><input class="cost-in" type="number" placeholder="2000"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHECKLIST & Q&A ═══ -->
+<div id="page-checklist" class="page">
+  <div class="ph" data-bg="PREP">
+    <div class="ph-eye">Recruiting Preparation</div>
+    <div class="ph-h">Checklist &amp; Coach Q&amp;A</div>
+    <div class="ph-sub">Package checklist and the 20 most common questions college coaches ask — with tips and your practice answers.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Package Checklist</div><div class="cs">What to include when contacting coaches</div></div>
+      <div class="cb" id="pkg-checklist">
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Brief Cover Letter</strong><span>Express sincere interest in playing for the specific program</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Player Info Sheet</strong><span>Personal info, height/weight, B/T, contact info</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Most Recent Varsity Stats</strong><span>Current season stats — make it easy to scan</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Academic Transcript / GPA</strong><span>Core GPA and SAT/ACT scores</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Letter of Rec — HS Coach</strong><span>Character, coachability, work ethic</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Letter of Rec — Summer Coach</strong><span>Performance under competitive conditions</span></div></div>
+        <div class="ck-row"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Showcase Evaluation (this report)</strong><span>All-American Showcase score sheet</span></div></div>
+        <div class="ck-row" style="border:none"><div class="ck-box" onclick="toggleCk(this)"></div><div class="ck-content"><strong>Highlight Video Link</strong><span>YouTube or Hudl link — 3-5 min max</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">20 Questions College Coaches Ask</div><div class="cs">Click any question to expand — write your practice answer</div></div>
+      <div class="cb" id="qa-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AI BIO ═══ -->
+<div id="page-ai-bio" class="page">
+  <div class="ph" data-bg="BIO">
+    <div class="ph-eye">AI Tools</div>
+    <div class="ph-h">AI Bio Generator</div>
+    <div class="ph-sub">Generates a third-person player narrative for coaches from your profile data. Complete Player Info and Position Scores first for best results.</div>
+  </div>
+  <div class="pb">
+    <div class="fg2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="ch"><div class="ct">Generation Settings</div></div>
+        <div class="cb">
+          <div class="fg" style="gap:11px">
+            <div class="field"><label>Tone</label>
+              <select id="bio-tone"><option>Professional</option><option>Direct / Analytical</option><option>Narrative</option></select>
+            </div>
+            <div class="field"><label>Audience</label>
+              <select id="bio-audience"><option>College Coaching Staff</option><option>Scout / Evaluator</option><option>General</option></select>
+            </div>
+            <div class="field"><label>Length</label>
+              <select id="bio-length"><option>Standard (3 paragraphs)</option><option>Brief (1 paragraph)</option><option>Extended (5 paragraphs)</option></select>
+            </div>
+            <div class="field"><label>Emphasis</label>
+              <select id="bio-emphasis"><option>Balanced</option><option>Offense-focused</option><option>Defense-focused</option><option>Academics first</option></select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:11px"><label>Additional Scout Notes</label><textarea id="bio-scout-notes" placeholder="Add any context not captured in the profile: standout plays, makeup, work ethic, projectability..."></textarea></div>
+          <div style="margin-top:14px"><button class="btn btn-primary btn-lg" onclick="genBio()">Generate Bio</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">Profile Data Preview</div><div class="cs">What the AI will use</div></div>
+        <div class="cb" id="bio-preview" style="font-size:12.5px;line-height:2;color:var(--slate)">Fill out Player Info, Athletic Profile, and Position Scores to see a preview of data available to the generator.</div>
+      </div>
+    </div>
+    <div class="ai-box" id="bio-output"><span class="ai-ph">Your player bio will appear here after generation.</span></div>
+    <div class="btn-row" style="margin-top:11px">
+      <button class="btn btn-outline btn-sm" onclick="copyEl('bio-output')">Copy Bio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PITCHING LOG ═══ -->
+<div id="page-pitch-log" class="page">
+  <div class="ph" data-bg="PITCHING">
+    <div class="ph-eye">Game Tools</div>
+    <div class="ph-h">Pitching Log</div>
+    <div class="ph-sub">Summary data taken from full pitching chart. One entry per game.</div>
+  </div>
+  <div class="pb">
+    <div class="card">
+      <div class="ch"><div class="ct">Game Info</div></div>
+      <div class="cb">
+        <div class="fg">
+          <div class="field"><label>Pitcher Name</label><input type="text" id="pl-name" placeholder="Name"></div>
+          <div class="field"><label>Game / Opponent</label><input type="text" id="pl-game" placeholder="vs. Opponent"></div>
+          <div class="field"><label>Date</label><input type="date" id="pl-date"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Pitch Totals</div></div>
+      <div class="cb">
+        <div class="fg">
+          <div class="field"><label>Total Pitches</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total Pitches for Strikes</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total Fastballs</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total Fastballs for Strikes</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total Changeups</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total CHG for Strikes</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total Breaking Balls</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Total BB for Strikes</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>1st Pitch Strikes</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>1st Pitch Hits</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Hits 0-2 Count</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+          <div class="field"><label>Hits 1-2 Count</label><input class="tbl-in" type="number" style="width:100%" placeholder="0"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Inning-by-Inning</div></div>
+      <div class="cb" style="overflow-x:auto">
+        <table class="dtbl">
+          <thead><tr><th>Inning</th><th>Hits</th><th>Pitch Location</th><th>Where Hit</th><th>Count</th><th>Velocity</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>2</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>3</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>4</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>5</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>6</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>7</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+            <tr><td>Extra</td><td><input class="tbl-in" placeholder="0"></td><td><input class="tbl-in" style="width:90px" placeholder="zone"></td><td><input class="tbl-in" style="width:90px" placeholder="--"></td><td><input class="tbl-in" style="width:54px" placeholder="0-0"></td><td><input class="tbl-in" style="width:54px" placeholder="mph"></td></tr>
+          </tbody>
+        </table>
+        <div class="notice n-gold" style="margin-top:11px;font-size:11.5px">When documenting hit count, add a special note if the count started 0-2.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div><!-- end shell -->
+<script>
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+const S = {
+  role: 'player',
+  ratings: {},
+  majors: [],
+  overallScore: null,
+  letterCount: 0,
+  ckDone: 0
+};
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+function nav(el) {
+  const pid = el.dataset.page;
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + pid);
+  if (pg) { pg.classList.add('active'); const _m = document.getElementById('main'); if(_m) _m.scrollTop = 0; window.scrollTo(0,0); }
+  if (pid === 'college-match') renderColleges();
+  if (pid === 'ai-bio') updateBioPreview();
+  if (pid === 'position-scores') { const p=v('pi-pos'); const ps=document.getElementById('ps-pos'); if(ps&&p) ps.value=p; }
+}
+
+/* ══════════════════════════════════════════════
+   ROLE SWITCHING
+══════════════════════════════════════════════ */
+function setRole(btn, role) {
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  S.role = role;
+  document.body.className = document.body.className.replace(/\bis-\w+/g,'').trim() + ' is-' + role;
+  document.querySelectorAll('.mode-banner').forEach(b => b.style.display = 'none');
+  if (role !== 'player') {
+    const banner = document.getElementById('banner-' + role);
+    if (banner) banner.style.display = 'flex';
+  }
+  const sp = document.getElementById('scout-notes-panel');
+  if (sp) sp.style.display = role === 'scout' ? 'block' : 'none';
+}
+
+/* ══════════════════════════════════════════════
+   BANNER SYNC
+══════════════════════════════════════════════ */
+function syncBanner() {
+  const first = v('pi-first'), last = v('pi-last');
+  const name = [first, last].filter(Boolean).join(' ') || 'Your Name';
+  const pos = v('pi-pos') || 'Position';
+  const hs = v('pi-hs') || '--';
+  const grad = v('pi-grad') || '--';
+  const bats = v('pi-bats') || '--';
+  const throws = v('pi-throws') || '--';
+  const ht = v('ap-ht') || v('pi-height') || '--';
+  const wt = v('ap-wt') || v('pi-weight') || '--';
+  const initials = [(first||'')[0],(last||'')[0]].filter(Boolean).join('').toUpperCase() || '--';
+  const monoEl = document.getElementById('b-mono');
+  if (monoEl) {
+    if (initials && initials !== '--') {
+      monoEl.innerHTML = initials;
+      monoEl.style.fontSize = '';
+    } else {
+      monoEl.innerHTML = '<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="13" r="7" fill="rgba(184,151,90,0.35)" stroke="#B8975A" stroke-width="1.5"/><path d="M4 34c0-7.73 6.27-14 14-14s14 6.27 14 14" stroke="#B8975A" stroke-width="1.5" stroke-linecap="round" fill="rgba(184,151,90,0.15)"/></svg>';
+    }
+  }
+  set('b-name', name);
+  set('b-pos', pos);
+  set('b-hs', hs);
+  set('b-grad', grad);
+  set('b-bt', bats + '/' + throws);
+  set('b-hw', ht + '"/' + wt + 'lbs');
+  set('ph-name', first ? name + ' — Dashboard' : 'Player Dashboard');
+  document.getElementById('lm-from').textContent = name;
+  S.playerName = name;
+  S.position = pos;
+}
+
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+/* ══════════════════════════════════════════════
+   TABS
+══════════════════════════════════════════════ */
+function switchTab(btn, targetId) {
+  const parent = btn.closest('.cb');
+  parent.querySelectorAll('.itab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  ['hs-hit','hs-pit','su-hit','su-pit'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', id !== targetId);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   CHECKLIST
+══════════════════════════════════════════════ */
+function toggleCk(box) {
+  const done = box.classList.toggle('done');
+  box.textContent = done ? '✓' : '';
+}
+
+/* ══════════════════════════════════════════════
+   MAJORS
+══════════════════════════════════════════════ */
+function togMj(el, name) {
+  el.classList.toggle('on');
+  S.majors = [...document.querySelectorAll('.mj.on')].map(m => m.dataset.major || m.textContent.trim());
+}
+
+/* ══════════════════════════════════════════════
+   NCAA ELIGIBILITY
+══════════════════════════════════════════════ */
+function checkElig() {
+  const gpa = parseFloat(v('ac-gpa'));
+  const sat = parseInt(v('ac-sat'));
+  const act = parseInt(v('ac-act'));
+  const notice = document.getElementById('elig-notice');
+  if (!notice) return;
+  if (!gpa && !sat && !act) { notice.classList.add('hidden'); return; }
+  const msgs = [];
+  let cls = 'n-green';
+  if (gpa && gpa >= 2.0) {
+    if (gpa >= 3.0) msgs.push('GPA ' + gpa + ' — strong NCAA academic standing');
+    else if (gpa >= 2.5) msgs.push('GPA ' + gpa + ' — meets D-II minimum');
+    else msgs.push('GPA ' + gpa + ' — borderline, consult sliding scale');
+  } else if (gpa) { msgs.push('GPA below 2.0 — does not meet NCAA minimum'); cls = 'n-red'; }
+  if (sat) {
+    if (sat >= 1000) msgs.push('SAT ' + sat + ' — meets D-II (820) and likely D-I sliding scale');
+    else if (sat >= 820) msgs.push('SAT ' + sat + ' — meets D-II minimum of 820');
+    else { msgs.push('SAT ' + sat + ' — below D-II minimum of 820'); cls = 'n-red'; }
+  }
+  if (act) {
+    if (act >= 88) msgs.push('ACT sum ' + act + ' — meets D-II minimum (88)');
+    else { msgs.push('ACT sum ' + act + ' — below D-II minimum of 88'); if (cls !== 'n-red') cls = 'n-gold'; }
+  }
+  notice.className = 'notice ' + cls;
+  notice.innerHTML = msgs.join(' &nbsp;·&nbsp; ') || 'Enter GPA, SAT, or ACT to check eligibility.';
+  notice.classList.remove('hidden');
+}
+
+/* ══════════════════════════════════════════════
+   ATHLETIC CALCS
+══════════════════════════════════════════════ */
+function calc60() {
+  const t = parseFloat(v('ap-60'));
+  const bar = document.getElementById('ap-60-bar');
+  const badge = document.getElementById('ap-60-badge');
+  if (!t || !bar) return;
+  let score, label, cls;
+  if (t <= 6.60) { score=10; label='Elite'; cls='bg-g'; }
+  else if (t <= 6.70) { score=9; label='Outstanding'; cls='bg-g'; }
+  else if (t <= 6.90) { score=8; label='Excellent'; cls='bg-g'; }
+  else if (t <= 7.10) { score=7; label='Very Good'; cls='bg-g'; }
+  else if (t <= 7.30) { score=6; label='Good'; cls='bg-y'; }
+  else if (t <= 7.40) { score=5; label='Average+'; cls='bg-y'; }
+  else if (t <= 7.50) { score=4; label='Average'; cls='bg-y'; }
+  else if (t <= 7.60) { score=3; label='Below Avg'; cls='bg-r'; }
+  else if (t <= 7.70) { score=2; label='Poor'; cls='bg-r'; }
+  else { score=1; label='Very Slow'; cls='bg-r'; }
+  bar.style.width = (score * 10) + '%';
+  bar.style.background = cls === 'bg-g' ? 'var(--green)' : cls === 'bg-y' ? 'var(--gold)' : 'var(--blood)';
+  badge.className = 'ap-badge ' + cls;
+  badge.textContent = score + '/10 · ' + label;
+}
+function calcBat() {
+  const b = parseFloat(v('ap-bat'));
+  const bar = document.getElementById('ap-bat-bar');
+  const badge = document.getElementById('ap-bat-badge');
+  if (!b || !bar) return;
+  const pct = Math.min(100, Math.max(0, ((b - 60) / 30) * 100));
+  bar.style.width = pct + '%';
+  const cls = b >= 80 ? 'bg-g' : b >= 74 ? 'bg-y' : 'bg-r';
+  bar.style.background = b >= 80 ? 'var(--green)' : b >= 74 ? 'var(--gold)' : 'var(--blood)';
+  badge.className = 'ap-badge ' + cls;
+  badge.textContent = b + ' MPH · ' + (b >= 80 ? 'Superior' : b >= 74 ? 'Average' : 'Below Avg');
+}
+function calcVert() {
+  const i = parseFloat(v('ap-vt'));
+  const bar = document.getElementById('ap-vt-bar');
+  const badge = document.getElementById('ap-vt-badge');
+  if (!i || !bar) return;
+  const pct = Math.min(100, Math.max(0, ((i - 15) / 25) * 100));
+  bar.style.width = pct + '%';
+  const cls = i >= 29 ? 'bg-g' : i >= 24 ? 'bg-y' : 'bg-r';
+  bar.style.background = i >= 29 ? 'var(--green)' : i >= 24 ? 'var(--gold)' : 'var(--blood)';
+  badge.className = 'ap-badge ' + cls;
+  badge.textContent = i + '"· ' + (i >= 32 ? 'Superior' : i >= 29 ? 'Outstanding' : i >= 26 ? 'Average Pro' : i >= 24 ? 'HS Average' : 'Below HS Avg');
+}
+
+/* ══════════════════════════════════════════════
+   POSITION SWITCHING
+══════════════════════════════════════════════ */
+function switchPos(pos) {
+  const panels = ['pos-pitcher','pos-catcher','pos-first','pos-infield','pos-outfield','pos-default'];
+  panels.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('hidden'); });
+  if (pos.includes('Pitcher')) show('pos-pitcher');
+  else if (pos === 'Catcher') show('pos-catcher');
+  else if (pos === 'First Baseman') show('pos-first');
+  else if (['Second Baseman','Shortstop','Third Baseman'].includes(pos)) show('pos-infield');
+  else if (pos === 'Outfielder') show('pos-outfield');
+  else show('pos-default');
+}
+function show(id) { const el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
+
+/* ══════════════════════════════════════════════
+   RATING BARS
+══════════════════════════════════════════════ */
+const RBAR_DEFS = {
+  // Pitchers
+  'p-fbv': 'Fastball Velocity', 'p-fbc': 'Fastball Control', 'p-cbc': 'Changeup Control',
+  'p-cbv': 'Changeup Quality', 'p-bbc': 'Breaking Ball Control', 'p-bbv': 'Breaking Ball Quality',
+  'p-str': 'Strength', 'p-pfp': 'PFP & Fielding',
+  // Catcher
+  'c-hit': 'Hitting', 'c-pow': 'Power', 'c-sqa': 'SQA', 'c-sbl': 'Small Ball',
+  'c-blk': 'Blocking', 'c-rec': 'Receiving', 'c-pop': 'Pop Time', 'c-pro': 'Pro Pop',
+  // 1B
+  '1-hit': 'Hitting', '1-pow': 'Power', '1-sqa': 'SQA', '1-sbl': 'Small Ball',
+  '1-thr': 'Throwing', '1-str': 'Strength', '1-pic': 'Picks', '1-fld': 'Core Fld %',
+  // Infield
+  'i-hit': 'Hitting', 'i-pow': 'Power', 'i-sqa': 'SQA', 'i-sbl': 'Small Ball',
+  'i-thr': 'Throwing', 'i-str': 'Strength', 'i-cfd': 'Core Fld %', 'i-pfd': 'Pro Fld %',
+  // Outfield
+  'o-hit': 'Hitting', 'o-pow': 'Power', 'o-sqa': 'SQA', 'o-sbl': 'Small Ball',
+  'o-thr': 'Throwing', 'o-str': 'Strength', 'o-fld': 'Fielding',
+};
+
+function buildRatingBars() {
+  Object.entries(RBAR_DEFS).forEach(([key, label]) => {
+    const el = document.getElementById('rb-' + key);
+    if (!el) return;
+    el.innerHTML = rbarHTML(key, label);
+  });
+}
+
+function rbarHTML(key, label) {
+  const cells = Array.from({length:10}, (_,i) => {
+    const n = i + 1;
+    return `<div class="r-cell" data-k="${key}" data-n="${n}" onclick="setRating('${key}',${n})">${n}</div>`;
+  }).join('');
+  return `<div class="r-row"><div class="r-name">${label}</div><div class="r-bar" id="rbar-${key}">${cells}</div><div class="r-num" id="rnum-${key}">--</div></div>`;
+}
+
+function setRating(key, n) {
+  S.ratings[key] = n;
+  const bar = document.getElementById('rbar-' + key);
+  if (!bar) return;
+  bar.querySelectorAll('.r-cell').forEach((c, i) => {
+    c.classList.remove('lo','mi','hi','tip');
+    const num = i + 1;
+    if (num <= n) {
+      if (n <= 3) c.classList.add('lo');
+      else if (n <= 6) c.classList.add('mi');
+      else c.classList.add('hi');
+    }
+    if (num === n) c.classList.add('tip');
+  });
+  const rnum = document.getElementById('rnum-' + key);
+  if (rnum) rnum.textContent = n;
+  calcOverall();
+}
+
+function calcOverall() {
+  const pos = v('pi-pos');
+  let keys = [];
+  if (pos.includes('Pitcher')) keys = ['p-fbv','p-fbc','p-cbc','p-cbv','p-bbc','p-bbv','p-str','p-pfp'];
+  else if (pos === 'Catcher') keys = ['c-hit','c-pow','c-sqa','c-sbl','c-blk','c-rec','c-pop','c-pro'];
+  else if (pos === 'First Baseman') keys = ['1-hit','1-pow','1-sqa','1-sbl','1-thr','1-str','1-pic','1-fld'];
+  else if (['Second Baseman','Shortstop','Third Baseman'].includes(pos)) keys = ['i-hit','i-pow','i-sqa','i-sbl','i-thr','i-str','i-cfd','i-pfd'];
+  else if (pos === 'Outfielder') keys = ['o-hit','o-pow','o-sqa','o-sbl','o-thr','o-str','o-fld'];
+  const vals = keys.map(k => S.ratings[k] || 0).filter(v => v > 0);
+  if (!vals.length) return;
+  const avg = vals.reduce((a,b) => a+b, 0) / vals.length;
+  const rounded = Math.round(avg * 10) / 10;
+  S.overallScore = rounded;
+  const lvl = levelDesc(Math.round(avg));
+  // Update sidebar
+  set('sb-score', rounded.toFixed(1));
+  set('sb-desc', lvl);
+  const fillPct = (rounded / 10) * 100;
+  const fill = document.getElementById('sb-fill');
+  if (fill) fill.style.width = fillPct + '%';
+  // Update dashboard KPI
+  set('kpi-rating', rounded.toFixed(1));
+  set('b-score', rounded.toFixed(1));
+  // Update position scores page
+  set('oss-num', rounded.toFixed(1));
+  set('oss-lvl', lvl);
+  // Ladder highlight
+  const ladder = document.getElementById('ladder');
+  if (ladder) {
+    ladder.querySelectorAll('.l-rung').forEach(r => {
+      r.classList.toggle('on', parseInt(r.dataset.lv) === Math.round(avg));
+    });
+  }
+}
+
+function levelDesc(n) {
+  const map = {10:'Professional Prospect',9:'High Level Div I',8:'Mid Level Div I',7:'Lower Level Div I',6:'Div II / Div III',5:'Above Average HS',4:'Average Varsity HS',3:'Average JV HS',2:'Below Avg JV HS',1:'Below Avg JV HS'};
+  return map[n] || '--';
+}
+
+/* ══════════════════════════════════════════════
+   COST TRACKER
+══════════════════════════════════════════════ */
+function calcRow(input) {
+  const row = input.closest('tr');
+  const nums = [...row.querySelectorAll('input[type=number]')];
+  const tuition = parseFloat(nums[0]?.value)||0;
+  const room    = parseFloat(nums[1]?.value)||0;
+  const books   = parseFloat(nums[2]?.value)||0;
+  const scholar = parseFloat(nums[4]?.value)||0;
+  const total = tuition + room + books;
+  const net   = Math.max(0, total - scholar);
+  const tc = row.querySelector('[data-cell="total"]');
+  const nc = row.querySelector('[data-cell="net"]');
+  if (tc) tc.textContent = total > 0 ? '$' + total.toLocaleString() : '--';
+  if (nc) nc.textContent = total > 0 ? '$' + net.toLocaleString() : '--';
+}
+function addCostRow() {
+  const tbody = document.getElementById('cost-tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input class="cost-in" type="text" placeholder="College name" style="min-width:160px"></td>
+    <td><input class="cost-in" type="number" placeholder="0" oninput="calcRow(this)"></td>
+    <td><input class="cost-in" type="number" placeholder="0" oninput="calcRow(this)"></td>
+    <td><input class="cost-in" type="number" placeholder="0" oninput="calcRow(this)"></td>
+    <td><span class="c-tot" data-cell="total">--</span></td>
+    <td><input class="cost-in" type="number" placeholder="0" oninput="calcRow(this)"></td>
+    <td><span class="c-net" data-cell="net">--</span></td>
+    <td><input class="cost-in" type="number" placeholder="0"></td>`;
+  tbody.appendChild(tr);
+}
+
+/* ══════════════════════════════════════════════
+   Q&A BUILD
+══════════════════════════════════════════════ */
+const QA = [
+  ['What are your strengths as a player?','Be specific. "I have a sound understanding of the strike zone as a hitter." Don\'t be modest — coaches want to know what you bring.'],
+  ['What are your weaknesses as a player?','Be honest. The coach will know soon enough if you\'re lying, which reflects worse than any actual weakness. Keep it brief.'],
+  ['What improvements have you made recently?','Good segue to discuss weaknesses you\'re actively addressing. Shows self-awareness and work ethic.'],
+  ['What kind of workout routine do you have?','Talk about weight training, one-on-one coaching/training, any off-season work you do independently.'],
+  ['What are your goals for the upcoming season?','Aim high but be realistic. Focus on team goals, not just individual stats.'],
+  ['What other schools are you considering?','You can share this — but make it clear their school is where you want to be.'],
+  ['What would make you a good fit for our program?','Do your homework. Talk about the strength of their academic program, your intended major, and what you know about the team.'],
+  ['Do you think you can compete at our level?','The answer is yes — or you wouldn\'t be there. Explain specifically how you can contribute to their team.'],
+  ['What type of financial assistance are you looking for?','Always let the coach know what offers you have. Be open to academic aid, not just athletic scholarships.'],
+  ['What would you say are the weaknesses of your current coaches?','Be honest but not a complainer. How you talk about current coaches tells them how you\'ll talk about them.'],
+  ['Do you work on the mental aspect of the game? How?','Describe any specific mental training, sports psychology, routine, or focus technique you use.'],
+  ['Where do you see yourself in 5 years?','Connect baseball to your career vision. Show you have a plan beyond the sport.'],
+  ['What advice would you give a high school freshman?','Shows maturity, leadership perspective, and how you think about development.'],
+  ['How do you feel about playing time?','Be honest — you want to compete — but show you understand development takes time and trust in coaches.'],
+  ['How do you feel about winning and losing?','Acknowledge losing hurts, but explain how you use it. Show competitiveness without being a sore loser.'],
+  ['What are your interests outside of baseball?','Share genuine interests. Coaches want well-rounded people, not one-dimensional athletes.'],
+  ['What can you offer the program that someone else cannot?','Your specific answer to this wins jobs. Be concrete, specific, and honest.'],
+  ['Do you want to come here for baseball or academics?','Maintain a delicate balance — both matter. Never say just baseball.'],
+  ['Are you a leader? Explain.','Don\'t just say yes. Give a specific example from a game, practice, or moment with teammates.'],
+  ['What questions do you have for us?','Always have 2-3 questions ready. Ask about the academic support, the program culture, or a player who graduated and where they are now.'],
+];
+
+function buildQA() {
+  const wrap = document.getElementById('qa-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = QA.map((q, i) => `
+    <div class="qa-card" onclick="toggleQA(this)">
+      <div class="qa-hd">
+        <div class="qa-n">${i+1}</div>
+        <div class="qa-q">${q[0]}</div>
+      </div>
+      <div class="qa-tip">${q[1]}</div>
+      <div class="qa-ans"><div class="field"><textarea placeholder="Your practice answer..."></textarea></div></div>
+    </div>`).join('');
+}
+function toggleQA(card) { card.classList.toggle('open'); }
+
+/* ══════════════════════════════════════════════
+   COLLEGE DATABASE
+══════════════════════════════════════════════ */
+const COLLEGES = [
+  // ── D1 ──
+  {name:'University of North Carolina',short:'UNC Chapel Hill',state:'NC',div:'D1',cb:'university-of-north-carolina-at-chapel-hill',size:'Large (30K+)',atm:'Suburban campus',majors:['Business','Communications','Pre-Med / Biology','Computer Science','Education'],enrollment:31000,prog:'ACC powerhouse. Consistent CWS contender. Multiple national titles. Strong pro pipeline.',sat:'1360-1520',acc:'18.74%',cost:'$11,140 avg/yr after aid'},
+  {name:'Vanderbilt University',short:'Vanderbilt',state:'TN',div:'D1',cb:'vanderbilt-university',size:'Mid-size (13K)',atm:'Suburban campus',majors:['Engineering','Finance / Accounting','Pre-Med / Biology','Computer Science'],enrollment:13000,prog:'Elite program. Two national championships. Highest academic prestige in college baseball.',sat:'1500-1570',acc:'6.7%',cost:'$22K avg/yr after aid'},
+  {name:'Florida State University',short:'Florida State',state:'FL',div:'D1',cb:'florida-state-university',size:'Large (45K+)',atm:'Suburban campus',majors:['Business','Criminal Justice','Communications','Education','Finance / Accounting'],enrollment:45000,prog:'Perennial top-10 program. Strong pro pipeline. CWS regular.',sat:'1310-1470',acc:'25%',cost:'$15K avg/yr after aid'},
+  {name:'Louisiana State University',short:'LSU',state:'LA',div:'D1',cb:'louisiana-state-university',size:'Large (38K+)',atm:'College-town setting',majors:['Business','Engineering','Education','Kinesiology'],enrollment:38000,prog:'Iconic SEC program. Six national championships. Premier facilities and recruiting budget.',sat:'1130-1340',acc:'75%',cost:'$18K avg/yr after aid'},
+  {name:'University of Florida',short:'Florida',state:'FL',div:'D1',cb:'university-of-florida',size:'Large (56K+)',atm:'College-town setting',majors:['Engineering','Business','Pre-Med / Biology','Architecture'],enrollment:56000,prog:'SEC powerhouse. Elite facilities. Multiple titles. Strong MLB draft production.',sat:'1360-1510',acc:'24%',cost:'$12K avg/yr after aid'},
+  {name:'University of Virginia',short:'Virginia',state:'VA',div:'D1',cb:'university-of-virginia-main-campus',size:'Mid-size (25K)',atm:'College-town setting',majors:['Engineering','Finance / Accounting','Pre-Med / Biology','Architecture'],enrollment:25000,prog:'ACC power. Consistent national rankings. Historic campus. Strong academic prestige.',sat:'1360-1530',acc:'20%',cost:'$19K avg/yr after aid'},
+  {name:'Georgia Tech',short:'Georgia Tech',state:'GA',div:'D1',cb:'georgia-institute-of-technology-main-campus',size:'Mid-size (16K)',atm:'Urban campus',majors:['Engineering','Computer Science','Architecture'],enrollment:16000,prog:'ACC program with consistent national bids. STEM academic environment.',sat:'1390-1540',acc:'17%',cost:'$14K avg/yr after aid'},
+  {name:'Texas A&M University',short:'Texas A&M',state:'TX',div:'D1',cb:'texas-a-m-university-college-station',size:'Large (75K+)',atm:'College-town setting',majors:['Engineering','Business','Kinesiology'],enrollment:75000,prog:'SEC. Strong facilities. Large recruiting budget. Iconic Aggie traditions.',sat:'1200-1430',acc:'62%',cost:'$21K avg/yr after aid'},
+  {name:'Auburn University',short:'Auburn',state:'AL',div:'D1',cb:'auburn-university',size:'Large (32K+)',atm:'College-town setting',majors:['Engineering','Business','Education'],enrollment:32000,prog:'SEC baseball. Warm weather. Quality facilities. Consistent tournament program.',sat:'1200-1410',acc:'80%',cost:'$22K avg/yr after aid'},
+  {name:'Cal State Fullerton',short:'CSUF',state:'CA',div:'D1',cb:'california-state-university-fullerton',size:'Large (40K+)',atm:'Suburban campus',majors:['Business','Education','Communications'],enrollment:40000,prog:'Consistent D1 contender. Three national titles. Strong West Coast program.',sat:'1020-1250',acc:'67%',cost:'$5K avg/yr after aid'},
+  {name:'Penn State University',short:'Penn State',state:'PA',div:'D1',cb:'pennsylvania-state-university-main-campus',size:'Large (50K+)',atm:'College-town setting',majors:['Engineering','Business','Computer Science','Finance / Accounting'],enrollment:50000,prog:'Big Ten. Strong facilities. Iconic college-town atmosphere.',sat:'1220-1430',acc:'55%',cost:'$24K avg/yr after aid'},
+  {name:'Rutgers University',short:'Rutgers',state:'NJ',div:'D1',cb:'rutgers-university-new-brunswick',size:'Large (36K+)',atm:'Suburban campus',majors:['Business','Engineering','Criminal Justice','Communications'],enrollment:36000,prog:'Big Ten program. Growing under new staff. Close to NYC. NJ flagship.',sat:'1200-1430',acc:'66%',cost:'$23K avg/yr after aid'},
+  {name:'Seton Hall University',short:'Seton Hall',state:'NJ',div:'D1',cb:'seton-hall-university',size:'Mid-size (10K)',atm:'Suburban campus',majors:['Business','Criminal Justice','Communications','Nursing'],enrollment:10000,prog:'Big East. Historically competitive. Strong NJ/NY recruiting pipeline.',sat:'1140-1340',acc:'80%',cost:'$29K avg/yr after aid'},
+  {name:'University of Notre Dame',short:'Notre Dame',state:'IN',div:'D1',cb:'university-of-notre-dame',size:'Mid-size (12K)',atm:'Suburban campus',majors:['Engineering','Finance / Accounting','Pre-Med / Biology'],enrollment:12000,prog:'ACC member. Strong academic-athlete profile. Iconic campus and alumni network.',sat:'1450-1560',acc:'12%',cost:'$27K avg/yr after aid'},
+  {name:'University of Maryland',short:'Maryland',state:'MD',div:'D1',cb:'university-of-maryland-college-park',size:'Large (41K+)',atm:'Suburban campus',majors:['Engineering','Business','Computer Science','Communications'],enrollment:41000,prog:'Big Ten. Consistent tournament team. Close to DC and Baltimore.',sat:'1320-1510',acc:'45%',cost:'$15K avg/yr after aid'},
+  {name:'Villanova University',short:'Villanova',state:'PA',div:'D1',cb:'villanova-university',size:'Mid-size (11K)',atm:'Suburban campus',majors:['Business','Finance / Accounting','Engineering','Nursing'],enrollment:11000,prog:'Big East. Rising program. Strong academics. Close to Philadelphia.',sat:'1330-1490',acc:'24%',cost:'$30K avg/yr after aid'},
+  // ── D2 ──
+  {name:'West Chester University',short:'West Chester',state:'PA',div:'D2',cb:'west-chester-university-of-pennsylvania',size:'Mid-size (17K)',atm:'Suburban campus',majors:['Education','Kinesiology','Criminal Justice','Business'],enrollment:17000,prog:'PSAC powerhouse. Multiple D2 national titles. Suburban Philadelphia.',sat:'1010-1190',acc:'72%',cost:'$13K avg/yr after aid'},
+  {name:'Kutztown University',short:'Kutztown',state:'PA',div:'D2',cb:'kutztown-university-of-pennsylvania',size:'Mid-size (8K)',atm:'College-town setting',majors:['Education','Business','Communications'],enrollment:8000,prog:'PSAC competitive program. Strong regional recruiting. Rural PA campus.',sat:'980-1170',acc:'78%',cost:'$14K avg/yr after aid'},
+  {name:'Millersville University',short:'Millersville',state:'PA',div:'D2',cb:'millersville-university-of-pennsylvania',size:'Mid-size (8.5K)',atm:'Suburban campus',majors:['Education','Business','Pre-Med / Biology'],enrollment:8500,prog:'PSAC. Solid academic-balance program. South-central PA.',sat:'990-1160',acc:'80%',cost:'$14K avg/yr after aid'},
+  {name:'Wilmington University',short:'Wilmington',state:'DE',div:'D2',cb:'wilmington-university',size:'Mid-size (14K)',atm:'Suburban campus',majors:['Business','Education','Criminal Justice'],enrollment:14000,prog:'CACC competitive. Strong NJ/DE recruiting. Affordable working-professional culture.',sat:'940-1120',acc:'92%',cost:'$10K avg/yr after aid'},
+  {name:'Catawba College',short:'Catawba',state:'NC',div:'D2',cb:'catawba-college',size:'Small (1.4K)',atm:'Suburban campus',majors:['Business','Kinesiology','Education'],enrollment:1400,prog:'SAC two-time D2 national champion. Small liberal arts culture. Salisbury NC.',sat:'980-1180',acc:'55%',cost:'$18K avg/yr after aid'},
+  {name:'Limestone University',short:'Limestone',state:'SC',div:'D2',cb:'limestone-university',size:'Small (1.2K)',atm:'Rural / college-town setting',majors:['Business','Kinesiology','Education'],enrollment:1200,prog:'Conference Carolina competitive. Small college experience. Gaffney SC.',sat:'940-1110',acc:'50%',cost:'$15K avg/yr after aid'},
+  {name:'Le Moyne College',short:'Le Moyne',state:'NY',div:'D2',cb:'le-moyne-college',size:'Small (3.5K)',atm:'Suburban campus',majors:['Business','Pre-Med / Biology','Education'],enrollment:3500,prog:'ECC program. Jesuit academic environment. Syracuse area.',sat:'1080-1260',acc:'65%',cost:'$22K avg/yr after aid'},
+  {name:'Merrimack College',short:'Merrimack',state:'MA',div:'D2',cb:'merrimack-college',size:'Small (4K)',atm:'Suburban campus',majors:['Business','Kinesiology','Criminal Justice'],enrollment:4000,prog:'NE-10 competitive. North of Boston. Strong community culture.',sat:'1060-1240',acc:'70%',cost:'$23K avg/yr after aid'},
+  // ── D3 ──
+  {name:'Muhlenberg College',short:'Muhlenberg',state:'PA',div:'D3',cb:'muhlenberg-college',size:'Small (2.2K)',atm:'Suburban campus',majors:['Business','Pre-Med / Biology','Communications','Psychology'],enrollment:2200,prog:'Centennial Conference. Strong academic-athletic balance. Allentown PA.',sat:'1240-1420',acc:'44%',cost:'$35K avg/yr after aid'},
+  {name:'Ursinus College',short:'Ursinus',state:'PA',div:'D3',cb:'ursinus-college',size:'Small (1.6K)',atm:'Suburban campus',majors:['Pre-Med / Biology','Business','Liberal Arts','Psychology'],enrollment:1600,prog:'Centennial Conference. Competitive small-college program. Close to Philadelphia.',sat:'1150-1360',acc:'61%',cost:'$30K avg/yr after aid'},
+  {name:'Gettysburg College',short:'Gettysburg',state:'PA',div:'D3',cb:'gettysburg-college',size:'Small (2.6K)',atm:'College-town setting',majors:['Finance / Accounting','Liberal Arts','Pre-Med / Biology'],enrollment:2600,prog:'Centennial Conference. Historic campus. Quality program. Gettysburg PA.',sat:'1200-1390',acc:'45%',cost:'$36K avg/yr after aid'},
+  {name:'Rowan University',short:'Rowan',state:'NJ',div:'D3',cb:'rowan-university',size:'Mid-size (19K)',atm:'Suburban campus',majors:['Engineering','Business','Education','Communications'],enrollment:19000,prog:'NJAC powerhouse. Nationally ranked D3 program. South Jersey. Strong engineering.',sat:'1130-1310',acc:'79%',cost:'$14K avg/yr after aid'},
+  {name:'Stevens Institute of Technology',short:'Stevens',state:'NJ',div:'D3',cb:'stevens-institute-of-technology',size:'Small (3K)',atm:'Urban campus',majors:['Engineering','Computer Science','Finance / Accounting'],enrollment:3000,prog:'MAC program. STEM academic culture. Hoboken waterfront. NYC proximity.',sat:'1380-1520',acc:'46%',cost:'$35K avg/yr after aid'},
+  {name:'Montclair State University',short:'Montclair State',state:'NJ',div:'D3',cb:'montclair-state-university',size:'Large (22K)',atm:'Suburban campus',majors:['Business','Education','Communications','Psychology'],enrollment:22000,prog:'NJAC competitive. Large D3 campus culture. Suburban NJ.',sat:'1070-1260',acc:'84%',cost:'$13K avg/yr after aid'},
+  {name:'Rider University',short:'Rider',state:'NJ',div:'D3',cb:'rider-university',size:'Small (3.5K)',atm:'Suburban campus',majors:['Business','Education','Liberal Arts'],enrollment:3500,prog:'MAC program. Intimate campus baseball culture. Lawrenceville NJ.',sat:'1070-1270',acc:'74%',cost:'$28K avg/yr after aid'},
+];
+
+let matchedColleges = [...COLLEGES];
+
+/* ══════════════════════════════════════════════
+   COLLEGE CARD RENDERING
+══════════════════════════════════════════════ */
+function cbSlug(c) { return c.cb || c.name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function cbUrl(c, sub) { return 'https://bigfuture.collegeboard.org/colleges/' + cbSlug(c) + (sub ? '/' + sub : ''); }
+
+function renderColleges() {
+  const divF  = document.getElementById('cf-div')?.value || '';
+  const stF   = document.getElementById('cf-state')?.value || '';
+  const srch  = (document.getElementById('cf-search')?.value || '').toLowerCase();
+  const grid  = document.getElementById('college-grid');
+  if (!grid) return;
+  const list = (matchedColleges.length ? matchedColleges : COLLEGES.map(c => ({...c, fit:65})))
+    .filter(c => {
+      if (divF && c.div !== divF) return false;
+      if (stF  && c.state !== stF) return false;
+      if (srch && !c.name.toLowerCase().includes(srch) && !c.state.toLowerCase().includes(srch)) return false;
+      return true;
+    });
+  grid.innerHTML = '';
+  list.forEach(c => {
+    const divTag = c.div === 'D1' ? 't-d1' : c.div === 'D2' ? 't-d2' : 't-d3';
+    const fitNum = c.fit ? c.fit + '%' : '--';
+    const el = document.createElement('div');
+    el.className = 'cc';
+    el.innerHTML = `
+      <div class="cc-hd">
+        <div class="cc-top">
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-fit-block"><div class="cc-fit-num">${fitNum}</div><div class="cc-fit-lbl">Fit Score</div></div>
+        </div>
+        <div class="cc-tags">
+          <span class="tag ${divTag}">${c.div}</span>
+          <span class="tag t-info">${c.state}</span>
+          <span class="tag t-info">${c.size}</span>
+          ${c.majors.slice(0,2).map(m => `<span class="tag t-info">${m}</span>`).join('')}
+        </div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat"><span class="cc-sv">${c.sat || '--'}</span><span class="cc-sk">SAT Range</span></div>
+        <div class="cc-stat"><span class="cc-sv">${c.acc || '--'}</span><span class="cc-sk">Accept Rate</span></div>
+        <div class="cc-stat"><span class="cc-sv">${c.enrollment?.toLocaleString() || '--'}</span><span class="cc-sk">Enrollment</span></div>
+        <div class="cc-stat"><span class="cc-sv">${c.cost || '--'}</span><span class="cc-sk">Net Cost</span></div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-prog">${c.prog}</div>
+        <div class="cb-links">
+          <a class="cb-link" href="${cbUrl(c)}" target="_blank" rel="noopener">
+            <svg class="cb-link-icon" viewBox="0 0 15 15" fill="currentColor"><circle cx="7.5" cy="7.5" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 4v4l2.5 2" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>
+            <div class="cb-link-text"><span class="cb-link-title">Overview &amp; Contact</span><span class="cb-link-sub">Type, size, location, phone, website</span></div>
+            <span class="cb-link-arr">↗</span>
+          </a>
+          <a class="cb-link" href="${cbUrl(c,'admissions')}" target="_blank" rel="noopener">
+            <svg class="cb-link-icon" viewBox="0 0 15 15" fill="currentColor"><rect x="3" y="2" width="9" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h5M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <div class="cb-link-text"><span class="cb-link-title">Admissions Data</span><span class="cb-link-sub">Acceptance rate, GPA range, SAT/ACT, deadlines</span></div>
+            <span class="cb-link-arr">↗</span>
+          </a>
+          <a class="cb-link" href="${cbUrl(c,'academics')}" target="_blank" rel="noopener">
+            <svg class="cb-link-icon" viewBox="0 0 15 15" fill="none"><path d="M7.5 2L13 5v4c0 3-5.5 4-5.5 4S2 12 2 9V5L7.5 2z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <div class="cb-link-text"><span class="cb-link-title">Academics &amp; Majors</span><span class="cb-link-sub">Full major list, graduation rate, faculty ratio</span></div>
+            <span class="cb-link-arr">↗</span>
+          </a>
+          <a class="cb-link" href="${cbUrl(c,'tuition-and-costs')}" target="_blank" rel="noopener">
+            <svg class="cb-link-icon" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M7.5 4.5v6M5.5 6.5h3a1 1 0 010 2H6a1 1 0 000 2h3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <div class="cb-link-text"><span class="cb-link-title">Tuition &amp; Financial Aid</span><span class="cb-link-sub">Net price by income, in/out-of-state, scholarships</span></div>
+            <span class="cb-link-arr">↗</span>
+          </a>
+          <a class="cb-link" href="${cbUrl(c,'campus-life')}" target="_blank" rel="noopener">
+            <svg class="cb-link-icon" viewBox="0 0 15 15" fill="none"><path d="M2 12l5.5-9L13 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M5 12V8.5a2.5 2.5 0 015 0V12" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div class="cb-link-text"><span class="cb-link-title">Campus Life &amp; Baseball</span><span class="cb-link-sub">Sports programs, scholarship status, housing, student life</span></div>
+            <span class="cb-link-arr">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="cc-actions">
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();prefillLetter('${c.name.replace(/'/g,"&#39;")}')">Write Letter</button>
+        <a class="btn btn-outline btn-sm" href="${cbUrl(c)}" target="_blank" rel="noopener">College Board ↗</a>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+function prefillLetter(name) {
+  document.getElementById('lb-college').value = name;
+  nav(document.querySelector('[data-page="letter-builder"]'));
+}
+
+/* ══════════════════════════════════════════════
+   MATCH ENGINE
+══════════════════════════════════════════════ */
+function runMatchEngine() {
+  const score  = S.overallScore || 0;
+  const majors = S.majors;
+  const campus = document.getElementById('ac-campus')?.value || '';
+  const scored = COLLEGES.map(c => {
+    let fit = 35;
+    if (score >= 8)      { if (c.div==='D1') fit+=45; else if (c.div==='D2') fit+=10; }
+    else if (score >= 6) { if (c.div==='D1') fit+=25; else if (c.div==='D2') fit+=35; else fit+=20; }
+    else if (score >= 4) { if (c.div==='D2') fit+=35; else if (c.div==='D3') fit+=40; else fit+=5; }
+    else                 { if (c.div==='D3') fit+=45; else if (c.div==='D2') fit+=30; }
+    if (majors.length) {
+      const ov = majors.filter(m => c.majors.some(cm => cm.toLowerCase().includes(m.toLowerCase()) || m.toLowerCase().includes(cm.toLowerCase()))).length;
+      fit += ov * 8;
+    }
+    if (campus && c.atm.toLowerCase().includes(campus.split(' ')[0].toLowerCase())) fit += 12;
+    return {...c, fit: Math.min(97, fit)};
+  }).sort((a,b) => b.fit - a.fit);
+  matchedColleges = scored;
+  set('kpi-matches', scored.length);
+  S.matches = scored.length;
+  renderColleges();
+  const n = document.getElementById('match-notice');
+  if (n) {
+    const rec = score >= 8 ? 'Division I (primary)' : score >= 6 ? 'Division I / II' : score >= 4 ? 'Division II / III' : 'Division III';
+    n.textContent = `Match complete. ${scored.length} programs ranked. Division recommendation: ${rec}.`;
+    n.className = 'notice n-green';
+    n.classList.remove('hidden');
+  }
+}
+
+/* ══════════════════════════════════════════════
+   COPY UTIL
+══════════════════════════════════════════════ */
+function copyEl(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const txt = el.innerText || el.textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btns = document.querySelectorAll('.btn');
+    btns.forEach(b => { if (b.textContent.includes('Copy')) { const t = b.textContent; b.textContent = 'Copied!'; setTimeout(() => b.textContent = t, 1800); } });
+  });
+}
+
+/* ══════════════════════════════════════════════
+   BIO PREVIEW
+══════════════════════════════════════════════ */
+function updateBioPreview() {
+  const preview = document.getElementById('bio-preview');
+  if (!preview) return;
+  const first = v('pi-first'), last = v('pi-last');
+  const name = [first, last].filter(Boolean).join(' ') || null;
+  const pos  = v('pi-pos') || null;
+  const hs   = v('pi-hs') || null;
+  const grad = v('pi-grad') || null;
+  const ht   = v('ap-ht') || v('pi-height') || null;
+  const wt   = v('ap-wt') || v('pi-weight') || null;
+  const bats = v('pi-bats') || null;
+  const throws = v('pi-throws') || null;
+  const gpa  = v('ac-gpa') || null;
+  const sat  = v('ac-sat') || null;
+  const act  = v('ac-act') || null;
+  const score = S.overallScore;
+  const lines = [
+    name   ? `Name: ${name}`                        : null,
+    pos    ? `Position: ${pos}`                     : null,
+    hs     ? `High School: ${hs}`                   : null,
+    grad   ? `Graduation: ${grad}`                  : null,
+    ht||wt ? `Physical: ${ht?ht+'"':'--'} / ${wt?wt+'lbs':'--'} / B:${bats||'?'} T:${throws||'?'}` : null,
+    score  ? `Overall Rating: ${score.toFixed(1)}/10 (${levelDesc(Math.round(score))})` : null,
+    gpa||sat||act ? `Academics: GPA ${gpa||'--'}, SAT ${sat||'--'}, ACT ${act||'--'}` : null,
+    S.majors.length ? `Majors of Interest: ${S.majors.join(', ')}` : null,
+  ].filter(Boolean);
+  preview.innerHTML = lines.length
+    ? lines.map(l => `<div style="margin-bottom:5px;font-size:12.5px;color:var(--ink4)">${l}</div>`).join('')
+    : '<span style="color:var(--slate2);font-size:12.5px">Fill out Player Info, Athletic Profile, and Position Scores for best results.</span>';
+}
+
+/* ══════════════════════════════════════════════
+   AI BIO GENERATOR
+══════════════════════════════════════════════ */
+async function genBio() {
+  const box = document.getElementById('bio-output');
+  box.innerHTML = '<div class="ai-spin"><div class="spinner"></div><div class="ai-spin-t">Generating player narrative</div></div>';
+  const name   = [v('pi-first'), v('pi-last')].filter(Boolean).join(' ') || 'the player';
+  const pos    = v('pi-pos') || 'position player';
+  const hs     = v('pi-hs');
+  const grad   = v('pi-grad');
+  const ht     = v('ap-ht') || v('pi-height');
+  const wt     = v('ap-wt') || v('pi-weight');
+  const bats   = v('pi-bats');
+  const throws = v('pi-throws');
+  const gpa    = v('ac-gpa');
+  const sat    = v('ac-sat');
+  const act    = v('ac-act');
+  const tone   = v('bio-tone');
+  const aud    = v('bio-audience');
+  const len    = v('bio-length');
+  const emph   = v('bio-emphasis');
+  const scout  = v('bio-scout-notes');
+  const score  = S.overallScore ? S.overallScore.toFixed(1) : null;
+  const lvl    = score ? levelDesc(Math.round(S.overallScore)) : null;
+  const rtgs   = Object.entries(S.ratings).filter(([,val]) => val > 0).map(([k,val]) => `${RBAR_DEFS[k]||k}: ${val}/10`).join(', ');
+  const majors = S.majors.join(', ');
+
+  const prompt = `You are writing a third-person baseball player scouting and recruiting bio for college coaching staffs.
+
+Instructions:
+- Tone: ${tone}
+- Audience: ${aud}
+- Length: ${len}
+- Emphasis: ${emph}
+- Write in third person. No bullet points. No em dashes. No emojis.
+- Be specific, factual, and concrete. Do not use hollow filler phrases.
+- Do not begin any sentence with "I".
+- Never use the word "passionate" or "excited".
+
+Player data:
+Name: ${name}
+Position: ${pos}
+High School: ${hs || 'not listed'}
+Graduation Year: ${grad || 'not listed'}
+Physical: ${ht ? ht + '"' : '--'} / ${wt || '--'} lbs / Bats ${bats || '--'} / Throws ${throws || '--'}
+Showcase Overall Rating: ${score || 'not yet evaluated'}${lvl ? ' (' + lvl + ')' : ''}
+Skill Ratings: ${rtgs || 'not yet entered'}
+Academic: GPA ${gpa || '--'}, SAT ${sat || '--'} (CR+Math only), ACT ${act || '--'} sum
+Academic Interests: ${majors || 'not specified'}
+Scout Notes: ${scout || 'none'}
+
+Write the bio now.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || fallbackBio(name, pos, hs, grad, gpa, score, lvl);
+    box.innerHTML = '';
+    box.textContent = text;
+  } catch(e) {
+    box.innerHTML = '';
+    box.textContent = fallbackBio(name, pos, hs, grad, gpa, score, lvl);
+  }
+}
+
+function fallbackBio(name, pos, hs, grad, gpa, score, lvl) {
+  const n = name || 'This athlete';
+  const p = pos  || 'baseball player';
+  const s = hs   ? ' at ' + hs : '';
+  const g = grad ? ', Class of ' + grad + ',' : '';
+  const scoreStr = score ? ` His All-American Showcase evaluation places him at ${score} out of 10, a rating corresponding to a ${lvl}.` : '';
+  const gpaStr   = gpa   ? ` In the classroom he maintains a ${gpa} GPA and takes seriously the academic responsibilities that come with competing at the next level.` : '';
+  return `${n} is a ${p}${s}${g} who has developed into a credible college prospect through consistent work and dedication at the showcase level.${scoreStr}${gpaStr} He is actively pursuing programs where he can contribute immediately and grow as a student-athlete over four years.`;
+}
+
+/* ══════════════════════════════════════════════
+   LETTER GENERATOR
+══════════════════════════════════════════════ */
+async function genLetter() {
+  const out = document.getElementById('letter-output');
+  out.innerHTML = '<div class="ai-spin"><div class="spinner"></div><div class="ai-spin-t">Drafting letter</div></div>';
+  const coach   = v('lb-coach') || 'Coach';
+  const college = v('lb-college') || 'your program';
+  const city    = v('lb-city');
+  const type    = v('lb-type');
+  const tone    = v('lb-tone');
+  const len     = v('lb-len');
+  const pName   = [v('pi-first'), v('pi-last')].filter(Boolean).join(' ') || 'the player';
+  const pos     = v('pi-pos') || 'position player';
+  const hs      = v('pi-hs');
+  const grad    = v('pi-grad');
+  const gpa     = v('ac-gpa');
+  const score   = S.overallScore ? S.overallScore.toFixed(1) : null;
+  const lvl     = score ? levelDesc(Math.round(S.overallScore)) : null;
+  const majors  = S.majors.join(', ');
+
+  // Update letter meta
+  document.getElementById('lm-to').textContent   = [coach, college].filter(Boolean).join(' / ');
+  document.getElementById('lm-from').textContent = pName;
+  document.getElementById('lm-type').textContent = type;
+
+  const prompt = `Write a ${type} recruiting letter from a high school baseball player to a college baseball coach.
+
+Letter details:
+- Addressed to: ${coach} at ${college}${city ? ', ' + city : ''}
+- Tone: ${tone}
+- Length: ${len}
+- Player: ${pName}, ${pos}, ${hs ? hs + ',' : ''} Class of ${grad || '--'}
+- Academic: GPA ${gpa || '--'}${score ? ', Showcase Rating ' + score + '/10 (' + lvl + ')' : ''}
+- Academic Interests: ${majors || 'not specified'}
+- References to include: Bill Stonis c/o Scanzano Sports, 300 Kings Highway, Haddon Heights NJ 08036, 856-546-6166; Mike Scanzano, Scanzano Sports, 5 Carnegie Way, Cherry Hill NJ
+
+Instructions:
+- Write in first person from the player's perspective.
+- Be sincere, specific, and professional. No em dashes. No emojis.
+- Reference the specific school by name.
+- Include the Scanzano Sports references naturally.
+- Close with "Sincerely, ${pName}".`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 900, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || fallbackLetter(pName, coach, college, pos, hs, grad);
+    out.innerHTML = '';
+    out.textContent = text;
+    S.letterCount++;
+    set('kpi-letters', S.letterCount);
+  } catch(e) {
+    out.innerHTML = '';
+    out.textContent = fallbackLetter(pName, coach, college, pos, hs, grad);
+  }
+}
+
+function fallbackLetter(pName, coach, college, pos, hs, grad) {
+  const d = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  return `${d}
+
+Dear ${coach},
+
+I am writing to express my sincere interest in playing baseball for you at ${college}. I am a ${pos}${hs ? ' at ' + hs : ''}${grad ? ', Class of ' + grad + ',' : ''} and I am actively pursuing programs where I can compete at a high level while earning a meaningful degree.
+
+Enclosed you will find my player information sheet, most recent statistics, and letters of recommendation from my coaches. I believe my work ethic, competitive makeup, and academic commitment make me a strong fit for your program.
+
+I have worked closely with Bill Stonis (856-546-6166) and Mike Scanzano of Scanzano Sports, who have evaluated my game extensively and can speak to my ability and character. I encourage you to reach out to them directly.
+
+Thank you for your time and consideration. I would welcome the opportunity to visit your campus and speak with you further.
+
+Sincerely,
+${pName}`;
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  buildRatingBars();
+  buildQA();
+  renderColleges();
+  syncBanner();
+  setRole(document.querySelector('.role-btn.active'), 'player');
+
+
+});
+
+
+/* ── LOGIN LOGIC ── */
+(function(){
+  const PASS = 'AIM';
+  const STEPS = [
+    {pct:18,  ms:320,  msg:'Connecting to server...'},
+    {pct:41,  ms:480,  msg:'Verifying credentials...'},
+    {pct:67,  ms:520,  msg:'Loading athlete profile...'},
+    {pct:88,  ms:380,  msg:'Decrypting vault...'},
+    {pct:100, ms:280,  msg:'Access granted.'},
+  ];
+
+  window.doLogin = function() {
+    const pass = (document.getElementById('login-pass').value || '').trim();
+    const btn  = document.getElementById('login-btn');
+    const prog = document.getElementById('login-prog');
+    const txt  = document.getElementById('login-btn-txt');
+    const stat = document.getElementById('login-status');
+    const pInput = document.getElementById('login-pass');
+
+    if (!pass) {
+      pInput.classList.add('error');
+      stat.textContent = 'Password required.';
+      stat.className = 'login-status err';
+      setTimeout(()=>pInput.classList.remove('error'), 400);
+      return;
+    }
+
+    if (pass.trim().toUpperCase() !== PASS) {
+      pInput.classList.add('error');
+      pInput.value = '';
+      stat.textContent = 'Invalid credentials.';
+      stat.className = 'login-status err';
+      setTimeout(()=>{ pInput.classList.remove('error'); stat.textContent=''; stat.className='login-status'; }, 1800);
+      return;
+    }
+
+    /* correct — run the auth sequence */
+    btn.classList.add('loading');
+    stat.className = 'login-status chk';
+    let delay = 0;
+
+    STEPS.forEach((step, i) => {
+      setTimeout(()=>{
+        prog.style.width = step.pct + '%';
+        txt.textContent = step.msg;
+        stat.textContent = step.msg;
+        if (i === STEPS.length - 1) {
+          stat.className = 'login-status ok';
+          setTimeout(()=>{
+            document.getElementById('login-screen').classList.add('out');
+            setTimeout(()=>{ document.getElementById('login-screen').style.display='none'; }, 650);
+          }, 420);
+        }
+      }, delay);
+      delay += step.ms;
+    });
+  };
+})();
+
+/* ── MOBILE NAV — must be global scope, called by onclick attributes ── */
+function mobNav(btn, page) {
+  document.querySelectorAll('.mob-ni').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.ni').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+  if (page === 'college-match') renderColleges();
+  if (page === 'ai-bio') updateBioPreview();
+  if (page === 'position-scores') { const p=v('pi-pos'); const ps=document.getElementById('ps-pos'); if(ps&&p) ps.value=p; }
+}
+function mobNavDrawer(ni, page) {
+  closeDrawer();
+  document.querySelectorAll('.ni').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.querySelectorAll('.mob-ni').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+  if (page === 'college-match') renderColleges();
+  if (page === 'ai-bio') updateBioPreview();
+}
+function openDrawer() {
+  document.getElementById('mob-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('mob-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+<!-- MOBILE BOTTOM NAV -->
+<div class="mob-nav">
+  <button class="mob-ni active" data-page="dashboard" onclick="mobNav(this,'dashboard')">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+    Dash
+  </button>
+  <button class="mob-ni" data-page="player-info" onclick="mobNav(this,'player-info')">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="7" r="4"/><path d="M3 18c0-3.87 3.13-7 7-7s7 3.13 7 7"/></svg>
+    Profile
+  </button>
+  <button class="mob-ni" data-page="position-scores" onclick="mobNav(this,'position-scores')">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2l2.4 5 5.6.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.6-.8z"/></svg>
+    Scores
+  </button>
+  <button class="mob-ni" data-page="college-match" onclick="mobNav(this,'college-match')">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="9" r="5"/><path d="M15 15l-3.5-3.5"/></svg>
+    Match
+  </button>
+  <button class="mob-ni" onclick="openDrawer()">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h14M3 10h14M3 14h14"/></svg>
+    More
+  </button>
+</div>
+
+<!-- MOBILE DRAWER -->
+<div class="mob-drawer" id="mob-drawer">
+  <div class="mob-drawer-bg" onclick="closeDrawer()"></div>
+  <div class="mob-drawer-panel">
+    <div class="mob-drawer-hd">
+      <div class="mob-drawer-title">Navigation</div>
+      <button class="mob-drawer-x" onclick="closeDrawer()">×</button>
+    </div>
+    <div class="ns">
+      <div class="ns-head">Profile</div>
+      <div class="ni" data-page="athletic" onclick="mobNavDrawer(this,'athletic')">Athletic Profile</div>
+      <div class="ni" data-page="academics" onclick="mobNavDrawer(this,'academics')">Academics &amp; NCAA</div>
+    </div>
+    <div class="ns">
+      <div class="ns-head">Recruiting</div>
+      <div class="ni" data-page="letter-builder" onclick="mobNavDrawer(this,'letter-builder')">Letter Builder</div>
+      <div class="ni" data-page="cost-tracker" onclick="mobNavDrawer(this,'cost-tracker')">Cost Tracker</div>
+      <div class="ni" data-page="checklist" onclick="mobNavDrawer(this,'checklist')">Checklist &amp; Q&amp;A</div>
+    </div>
+    <div class="ns">
+      <div class="ns-head">Tools</div>
+      <div class="ni" data-page="ai-bio" onclick="mobNavDrawer(this,'ai-bio')">AI Bio Generator</div>
+      <div class="ni" data-page="pitch-log" onclick="mobNavDrawer(this,'pitch-log')">Pitching Log</div>
+    </div>
+  </div>
+</div>
+</body></html>
