@@ -62,3 +62,62 @@ export async function getColleges(): Promise<College[]> {
   }
   return data ?? [];
 }
+
+export type Metric = Database["public"]["Tables"]["metrics"]["Row"];
+export type ChecklistItem = Database["public"]["Tables"]["checklist_items"]["Row"];
+export type Evaluation = Database["public"]["Tables"]["evaluations"]["Row"];
+
+export async function getMetrics(playerId: string | null): Promise<Metric[]> {
+  if (!supabaseConfigured() || !playerId) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("metrics")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("measured_at", { ascending: false });
+
+  if (error) {
+    console.error("getMetrics:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+export async function getChecklistItems(
+  playerId: string | null
+): Promise<ChecklistItem[]> {
+  if (!supabaseConfigured() || !playerId) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("checklist_items")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("sort_order");
+
+  if (error) {
+    console.error("getChecklistItems:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+export async function getEvaluations(
+  playerId: string | null
+): Promise<Evaluation[]> {
+  if (!supabaseConfigured() || !playerId) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("evaluations")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("evaluated_at", { ascending: false });
+
+  if (error) {
+    console.error("getEvaluations:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
