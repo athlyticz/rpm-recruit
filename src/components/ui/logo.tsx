@@ -47,7 +47,7 @@ export function Logo({ size = "default" }: { size?: "default" | "large" }) {
       <span
         className={`font-display ${
           size === "large" ? "text-3xl" : "text-xl"
-        } font-bold text-bone`}
+        } font-bold text-bone whitespace-nowrap`}
       >
         <em className="text-gold not-italic">RPM</em> Recruit
       </span>

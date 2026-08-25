@@ -116,7 +116,7 @@ export function CardSkeleton({ rows = 5 }: { rows?: number }) {
 
 export function LoadingScreen({ label }: { label: string }) {
   return (
-    <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-4">
+    <div className="space-y-4">
       <p className="sr-only" role="status">
         {label}
       </p>

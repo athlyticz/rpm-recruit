@@ -10,7 +10,7 @@ export default function LoginPage() {
       <LoginForm />
       <p className="text-center text-sm text-slate mt-6">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-gold hover:text-gold-2 font-medium">
+        <Link href="/signup" className="min-h-touch inline-flex items-center text-gold hover:text-gold-2 font-medium transition-colors dur-fast">
           Sign up
         </Link>
       </p>

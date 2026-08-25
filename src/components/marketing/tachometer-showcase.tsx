@@ -107,7 +107,7 @@ export function TachometerShowcase() {
               </p>
               <Link
                 href="/signup"
-                className="font-condensed text-xs font-bold tracking-[0.13em] uppercase bg-gold text-ink px-5 py-2.5 hover:bg-gold-2 transition-colors"
+                className="min-h-touch inline-flex items-center justify-center font-condensed text-xs font-bold tracking-[0.13em] uppercase bg-gold text-ink px-5 py-2.5 hover:bg-gold-2 transition-colors dur-fast"
               >
                 Get Your Score
               </Link>

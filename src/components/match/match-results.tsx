@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronDown, Info, MapPin, ExternalLink, Trophy } from "lucide-react";
 import { Tachometer } from "@/components/ui/tachometer";
 import { LEVELS, type Division } from "./level-constants";
@@ -65,6 +65,14 @@ const BANDS: Band[] = [
     blurb: "The gap here is wide. Shown because hiding it would not help you.",
   },
 ];
+
+const COMPONENT_COLOUR: Record<string, string> = {
+  athletic: "bg-redline",
+  academic: "bg-blue-2",
+  cost: "bg-green-2",
+  major: "bg-gold",
+  geography: "bg-slate-2",
+};
 
 function fitBand(score: number): Band {
   return BANDS.find((b) => score >= b.min) ?? BANDS[BANDS.length - 1];
@@ -167,6 +175,46 @@ function Breakdown({ result }: { result: MatchResult }) {
   );
 }
 
+/**
+ * A compact reading of where the score came from, sized by each component's
+ * real contribution. This replaces a decorative meter that only restated the
+ * score: it says which components carried the result and which did not, and it
+ * previews the full breakdown one tap below.
+ */
+function ContributionStack({ result }: { result: RankedMatch }) {
+  const available = result.components.filter((c) => c.score !== null);
+  if (available.length === 0) return null;
+  const total = available.reduce((sum, c) => sum + c.contribution, 0);
+  if (total <= 0) return null;
+
+  return (
+    <div className="px-4 pb-3">
+      <div className="flex h-1.5 rounded-pill overflow-hidden bg-bone-2 motion-safe:animate-meter origin-left">
+        {available.map((c) => (
+          <span
+            key={c.key}
+            className={COMPONENT_COLOUR[c.key] ?? "bg-slate"}
+            style={{ width: `${(c.contribution / total) * 100}%` }}
+            title={`${c.label}: ${c.contribution.toFixed(1)} points`}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5">
+        {available.map((c) => (
+          <span key={c.key} className="inline-flex items-center gap-1 text-micro text-ink-5">
+            <span
+              aria-hidden
+              className={`size-1.5 rounded-pill ${COMPONENT_COLOUR[c.key] ?? "bg-slate"}`}
+            />
+            {c.label.replace(" projection", "").replace(" fit", "").replace(" overlap", "")}
+            <span className="font-mono num text-slate">{c.contribution.toFixed(0)}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Height-animated disclosure using the grid 0fr to 1fr technique. */
 function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
   return (
@@ -184,7 +232,16 @@ function Collapse({ open, children }: { open: boolean; children: React.ReactNode
 /*  Result cards                                                       */
 /* ------------------------------------------------------------------ */
 
-function PodiumCard({ result, index }: { result: RankedMatch; index: number }) {
+function PodiumCard({
+  result,
+  index,
+  grouped = false,
+}: {
+  result: RankedMatch;
+  index: number;
+  /** True when the card sits inside a tie group, which owns the framing. */
+  grouped?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const { college, score, rank, tied } = result;
   const band = score === null ? null : fitBand(score);
@@ -194,19 +251,19 @@ function PodiumCard({ result, index }: { result: RankedMatch; index: number }) {
   return (
     <article
       style={stagger(index)}
-      className={`bg-white border-2 rounded-lg shadow-sm overflow-hidden motion-safe:animate-rise ${style.ring}`}
+      className={
+        grouped
+          ? "bg-white overflow-hidden motion-safe:animate-rise"
+          : `bg-white border-2 rounded-lg shadow-sm overflow-hidden motion-safe:animate-rise ${style.ring}`
+      }
     >
-      <div className={`flex items-center gap-2 px-4 pt-3 ${first ? "" : "pb-0"}`}>
-        <span
-          className={`inline-flex items-center gap-1.5 font-condensed text-micro font-bold tracking-[0.18em] uppercase px-2 py-1 rounded-xs ${style.chip}`}
-        >
-          {first && <Trophy size={11} aria-hidden />}
-          {style.label}
-          {tied && <span className="font-normal opacity-80">&nbsp;· tied</span>}
-        </span>
-        {tied && (
-          <span className="text-micro text-slate">
-            same score, {TIE_BREAK_LABEL}
+      <div className={`flex items-center gap-2 px-4 ${grouped ? "pt-2.5" : "pt-3"} ${first ? "" : "pb-0"}`}>
+        {!tied && (
+          <span
+            className={`inline-flex items-center gap-1.5 font-condensed text-micro font-bold tracking-[0.18em] uppercase px-2 py-1 rounded-xs ${style.chip}`}
+          >
+            {first && <Trophy size={11} aria-hidden />}
+            {style.label}
           </span>
         )}
       </div>
@@ -257,21 +314,6 @@ function PodiumCard({ result, index }: { result: RankedMatch; index: number }) {
               {band.label}
             </span>
           )}
-          {first && score !== null && (
-            /* Needle-physics moment: the meter sweeps to the score. The digits
-               never animate. A number that animates is a number that can be
-               caught mid-flight showing something untrue, and every figure in
-               this product has to be defensible at any instant. */
-            <span
-              aria-hidden
-              className="mt-1.5 block h-[3px] w-16 ml-auto rounded-pill bg-bone-2 overflow-hidden"
-            >
-              <span
-                className={`block h-full rounded-pill origin-left motion-safe:animate-meter ${band?.bar ?? "bg-gold"}`}
-                style={{ width: `${score}%` }}
-              />
-            </span>
-          )}
         </span>
 
         <ChevronDown
@@ -283,10 +325,59 @@ function PodiumCard({ result, index }: { result: RankedMatch; index: number }) {
         />
       </button>
 
+      {!open && <ContributionStack result={result} />}
+
       <Collapse open={open}>
         <Breakdown result={result} />
       </Collapse>
     </article>
+  );
+}
+
+/**
+ * One container per tie group. Two programs on the same score were previously
+ * two identically bordered cards each repeating the tie note, which read as a
+ * rendering fault before it read as a tie. The group states it once.
+ */
+function TieGroup({
+  results,
+  startIndex,
+}: {
+  results: RankedMatch[];
+  startIndex: number;
+}) {
+  const rank = results[0].rank;
+  const style = PODIUM[rank - 1] ?? PODIUM[PODIUM.length - 1];
+  const label = (PODIUM[rank - 1] ?? PODIUM[PODIUM.length - 1]).label;
+
+  return (
+    <section
+      style={stagger(startIndex)}
+      className={`border-2 rounded-lg shadow-sm overflow-hidden motion-safe:animate-rise ${style.ring}`}
+    >
+      <header className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2.5 bg-bone-2/70 border-b border-black/[0.06]">
+        <span
+          className={`inline-flex items-center gap-1.5 font-condensed text-micro font-bold tracking-[0.18em] uppercase px-2 py-1 rounded-xs ${style.chip}`}
+        >
+          {rank === 1 && <Trophy size={11} aria-hidden />}
+          {label}
+        </span>
+        <span className="text-micro text-ink-5">
+          {results.length} programs tied, {TIE_BREAK_LABEL}
+        </span>
+      </header>
+
+      <div className="divide-y divide-black/[0.06]">
+        {results.map((result, i) => (
+          <PodiumCard
+            key={result.college.id}
+            result={result}
+            index={startIndex + i}
+            grouped
+          />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -384,19 +475,17 @@ export function MatchResults({
   hasPlayer: boolean;
 }) {
   const [level, setLevel] = useState<Division>("d1");
-  const tabListRef = useRef<HTMLDivElement | null>(null);
-  const tabRefs = useRef<Partial<Record<Division, HTMLButtonElement | null>>>({});
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
-
-  // The selected level rides a bar that slides on the needle curve. Tab
-  // switching is the main interaction on this screen, so the movement carries
-  // the eye from the old selection to the new one instead of teleporting.
-  useLayoutEffect(() => {
-    const list = tabListRef.current;
-    const tab = tabRefs.current[level];
-    if (!list || !tab) return;
-    setIndicator({ left: tab.offsetLeft - list.scrollLeft, width: tab.offsetWidth });
-  }, [level]);
+  /**
+   * There is deliberately no sliding tab indicator here.
+   *
+   * One was built and measured: it sat correctly on load, went 191px adrift
+   * after selecting an off-screen level, and did not follow the strip when it
+   * scrolled sideways. It was decoration, not information, and the selected
+   * tab already reads unambiguously from its redline border and gold label.
+   * A decorative flourish that is visibly wrong is worse than no flourish, so
+   * it was removed rather than patched. The motion budget on this screen is
+   * spent where it carries meaning: the contribution stack and the gauge.
+   */
 
   const byLevel = useMemo(() => {
     const map = new Map<Division, MatchResult[]>();
@@ -414,6 +503,18 @@ export function MatchResults({
   // shows three leaders rather than silently demoting one of them.
   const podium = active.filter((r) => r.rank <= 3);
   const rest = active.filter((r) => r.rank > 3);
+
+  // Consecutive rows sharing a rank become one group, so a tie is presented
+  // once rather than repeated on every card in it.
+  const podiumGroups = useMemo(() => {
+    const groups: { rank: number; startIndex: number; results: RankedMatch[] }[] = [];
+    podium.forEach((result, i) => {
+      const last = groups[groups.length - 1];
+      if (last && last.rank === result.rank) last.results.push(result);
+      else groups.push({ rank: result.rank, startIndex: i, results: [result] });
+    });
+    return groups;
+  }, [podium]);
 
   // Everything below the podium is grouped by fit band, so a run of near
   // identical rows becomes a shape the eye can read.
@@ -476,27 +577,30 @@ export function MatchResults({
       </section>
 
       {/* ── Level selector ──────────────────────────────────────── */}
-      <div className="relative">
-        {indicator && (
-          <span
-            aria-hidden
-            className="pointer-events-none absolute bottom-0 h-[2px] rounded-pill bg-redline shadow-redline transition-[left,width] dur-base ease-needle"
-            style={{ left: indicator.left, width: indicator.width }}
-          />
-        )}
-        <div
-          ref={tabListRef}
+      {/* The band key sits above the tabs and is stated once. Repeating four
+          sentences on every level switch was noise, not guidance. */}
+      <details className="bg-white border border-black/[0.07] rounded-md shadow-sm">
+        <summary className="min-h-touch flex items-center gap-2 px-4 cursor-pointer font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 select-none">
+          How to read these bands
+        </summary>
+        <dl className="px-4 pb-3 pt-1 space-y-1.5">
+          {BANDS.map((band) => (
+            <div key={band.key} className="flex flex-wrap items-baseline gap-x-2">
+              <dt
+                className={`font-condensed text-micro font-bold tracking-[0.16em] uppercase ${band.text}`}
+              >
+                {band.label}
+              </dt>
+              <dd className="font-mono num text-micro text-slate">{bandRange(band)}</dd>
+              <dd className="text-caption text-ink-5 basis-full text-pretty">{band.blurb}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+
+      <div
           role="tablist"
           aria-label="Division level"
-          onScroll={(e) => {
-            const tab = tabRefs.current[level];
-            if (tab) {
-              setIndicator({
-                left: tab.offsetLeft - e.currentTarget.scrollLeft,
-                width: tab.offsetWidth,
-              });
-            }
-          }}
           className="flex gap-1.5 overflow-x-auto -mx-gutter px-gutter lg:mx-0 lg:px-0 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
         {LEVELS.map((meta) => {
@@ -505,9 +609,6 @@ export function MatchResults({
           return (
             <button
               key={meta.key}
-              ref={(el) => {
-                tabRefs.current[meta.key] = el;
-              }}
               role="tab"
               aria-selected={selected}
               onClick={() => setLevel(meta.key)}
@@ -528,7 +629,6 @@ export function MatchResults({
             </button>
           );
         })}
-        </div>
       </div>
 
       {/* Keyed on level so switching tabs replays the staggered entrance. */}
@@ -537,9 +637,21 @@ export function MatchResults({
           <EmptyLevel division={level} />
         ) : (
           <>
-            {podium.map((result, i) => (
-              <PodiumCard key={result.college.id} result={result} index={i} />
-            ))}
+            {podiumGroups.map((group) =>
+              group.results.length > 1 ? (
+                <TieGroup
+                  key={`tie-${group.rank}`}
+                  results={group.results}
+                  startIndex={group.startIndex}
+                />
+              ) : (
+                <PodiumCard
+                  key={group.results[0].college.id}
+                  result={group.results[0]}
+                  index={group.startIndex}
+                />
+              )
+            )}
 
             {grouped.map((group, gi) => (
               <div key={group.band.key} className="pt-2">
@@ -557,10 +669,6 @@ export function MatchResults({
                     {bandRange(group.band)}
                   </span>
                 </div>
-
-                <p className="text-caption text-ink-5 mb-2.5 text-pretty">
-                  {group.band.blurb}
-                </p>
 
                 <div className="space-y-2">
                   {group.rows.map((result, i) => (

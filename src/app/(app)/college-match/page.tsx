@@ -47,10 +47,10 @@ function componentsMissingEverywhere(results: MatchResult[]): string[] {
   );
 }
 
-export default async function CollegeMatchPage() {
-  const [player, collegesResult] = await Promise.all([getCurrentPlayer(), getColleges()]);
+const SHELL = "px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14";
 
-  const header = (
+function Header() {
+  return (
     <PageHeader
       eyebrow="Match Engine"
       title="College Program Finder"
@@ -58,22 +58,36 @@ export default async function CollegeMatchPage() {
       bgText="MATCH"
     />
   );
-  const shell = "px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14";
+}
+
+/**
+ * There is deliberately no Suspense boundary or loading.tsx on this route.
+ *
+ * Both were tried and both silently broke hydration on a hard load: the server
+ * HTML rendered correctly, no error surfaced in the console or the server log,
+ * and the entire results subtree never became interactive. Tabs and
+ * disclosures did nothing until the user navigated client-side. Verified three
+ * ways: with route-level loading.tsx (dead), with an in-page Suspense boundary
+ * (dead), and with neither (alive), against a clean production build. Dev mode
+ * hydrates fine in all three, which is why this survived a previous review.
+ *
+ * A skeleton is worth having and this one is written and ready in
+ * components/ui/states.tsx, but it is not worth a flagship screen that cannot
+ * be clicked. Restore it once the boundary can be added without killing
+ * hydration on this Next version.
+ */
+async function MatchResultsSection() {
+  const [player, collegesResult] = await Promise.all([getCurrentPlayer(), getColleges()]);
 
   // A failed load and an empty table are different facts and get different
   // screens. Never let one read as the other.
   if (collegesResult.error !== null) {
     return (
-      <>
-        {header}
-        <div className={shell}>
-          <LoadFailure
-            title="Could not load the program database"
-            what="The college programs"
-            reason={collegesResult.error}
-          />
-        </div>
-      </>
+      <LoadFailure
+        title="Could not load the program database"
+        what="The college programs"
+        reason={collegesResult.error}
+      />
     );
   }
 
@@ -81,30 +95,30 @@ export default async function CollegeMatchPage() {
 
   if (colleges.length === 0) {
     return (
-      <>
-        {header}
-        <div className={shell}>
-          <EmptyState
-            title="No programs in the database yet"
-            body="The program database loaded correctly and is empty. Once programs are seeded they will be scored against your profile here."
-          />
-        </div>
-      </>
+      <EmptyState
+        title="No programs in the database yet"
+        body="The program database loaded correctly and is empty. Once programs are seeded they will be scored against your profile here."
+      />
     );
   }
 
   const results = scoreAll(player ?? EMPTY_PLAYER, colleges);
-  const missing = componentsMissingEverywhere(results);
 
   return (
+    <MatchResults
+      results={results}
+      missingComponents={componentsMissingEverywhere(results)}
+      hasPlayer={player !== null}
+    />
+  );
+}
+
+export default function CollegeMatchPage() {
+  return (
     <>
-      {header}
-      <div className={shell}>
-        <MatchResults
-          results={results}
-          missingComponents={missing}
-          hasPlayer={player !== null}
-        />
+      <Header />
+      <div className={SHELL}>
+        <MatchResultsSection />
       </div>
     </>
   );

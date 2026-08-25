@@ -75,7 +75,7 @@ export default function HomePage() {
               The complete college baseball recruiting platform. Build your
               player profile, get evaluated on the 1&ndash;10 showcase scale,
               match with D1/D2/D3 programs, and generate professional outreach
-              materials — all in one place.
+              materials, all in one place.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -125,7 +125,7 @@ export default function HomePage() {
           />
           <FeatureCard
             title="Athletic Profile"
-            description="Track measurables — 60-yard dash, bat speed, exit velocity, arm strength — with D1 benchmarks."
+            description="Track measurables (60-yard dash, bat speed, exit velocity, arm strength) against D1 benchmarks."
           />
           <FeatureCard
             title="Recruiting Toolkit"
@@ -225,7 +225,7 @@ export default function HomePage() {
               </ul>
               <Link
                 href="/signup"
-                className={`block text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-2.5 transition-colors ${
+                className={`flex items-center justify-center min-h-touch text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-2.5 transition-colors dur-fast ${
                   key === "showcase"
                     ? "bg-ink text-bone hover:bg-gold hover:text-ink"
                     : "bg-bone text-ink-4 hover:bg-ink hover:text-bone"

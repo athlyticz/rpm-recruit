@@ -5,7 +5,7 @@ import { PLANS, type PlanKey } from "@/config/pricing";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "RPM Recruit pricing — Showcase Package, Monthly, Scout/Coach, and Organization plans.",
+    "RPM Recruit pricing: Showcase Package, Monthly, Scout/Coach, and Organization plans.",
 };
 
 export default function PricingPage() {
@@ -73,7 +73,7 @@ export default function PricingPage() {
                 </ul>
                 <Link
                   href="/signup"
-                  className={`block text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-3 transition-colors ${
+                  className={`flex items-center justify-center min-h-touch text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-3 transition-colors dur-fast ${
                     featured
                       ? "bg-ink text-bone hover:bg-gold hover:text-ink"
                       : "bg-bone text-ink-4 hover:bg-ink hover:text-bone"

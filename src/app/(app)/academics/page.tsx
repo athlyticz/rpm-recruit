@@ -157,7 +157,7 @@ export default function AcademicsPage() {
               Academic Interests
             </h2>
             <p className="text-meta text-slate">
-              Select intended major areas — used by college match engine.
+              Select intended major areas. These feed the college match engine.
             </p>
           </div>
 
@@ -215,7 +215,7 @@ export default function AcademicsPage() {
               NCAA Core Course Reference
             </h2>
             <p className="text-meta text-slate">
-              Quick reference — verify at ncaa.org.
+              Quick reference. Verify at ncaa.org.
             </p>
           </div>
 
@@ -224,7 +224,7 @@ export default function AcademicsPage() {
               {/* Division I */}
               <div>
                 <h3 className="font-display text-body-lg font-semibold text-ink mb-3">
-                  Division I — 16 Core Courses
+                  Division I: 16 Core Courses
                 </h3>
 
                 <ul className="space-y-1.5 text-caption text-ink leading-relaxed">
@@ -237,7 +237,7 @@ export default function AcademicsPage() {
                 </ul>
 
                 <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-meta px-3.5 py-3 mt-4 leading-relaxed">
-                  D-I uses a sliding GPA/SAT scale. Min SAT not fixed — depends on GPA.
+                  D-I uses a sliding GPA/SAT scale. Min SAT is not fixed; it depends on GPA.
                   Use NCAA code 9999 when registering for SAT/ACT.
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function AcademicsPage() {
               {/* Division II */}
               <div>
                 <h3 className="font-display text-body-lg font-semibold text-ink mb-3">
-                  Division II — 14 Core Courses
+                  Division II: 14 Core Courses
                 </h3>
 
                 <ul className="space-y-1.5 text-caption text-ink leading-relaxed">

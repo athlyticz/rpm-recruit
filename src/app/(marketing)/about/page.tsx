@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "RPM Recruit — Recruit, Profile, Match by Scanzano Baseball.",
+    "RPM Recruit. Recruit, Profile, Match by Scanzano Baseball.",
 };
 
 export default function AboutPage() {
@@ -19,7 +19,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-slate-2 mt-3 max-w-2xl">
             RPM Recruit is the digital recruiting platform built by the team
-            behind All-American Baseball Talent Showcases — connecting high
+            behind All-American Baseball Talent Showcases, connecting high
             school players with college programs for over two decades.
           </p>
         </div>
@@ -34,7 +34,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-ink-5 leading-relaxed">
               Every year, thousands of talented high school baseball players fall
-              through the cracks — not because they lack ability, but because
+              through the cracks, not because they lack ability, but because
               they lack exposure, tools, and guidance. RPM Recruit exists to
               change that. We give every player the same professional-grade
               evaluation, matching, and outreach tools that were once reserved
@@ -49,7 +49,7 @@ export default function AboutPage() {
             <p className="text-ink-5 leading-relaxed">
               Our 1&ndash;10 showcase evaluation scale is the foundation. Every
               skill rating, overall score, and college recommendation flows from
-              this standard — the same methodology used at All-American Baseball
+              this standard, the same methodology used at All-American Baseball
               Talent Showcases since their inception. When a coach sees an RPM
               score, they know exactly what it means.
             </p>
@@ -73,7 +73,7 @@ export default function AboutPage() {
               2018.
             </p>
             <p className="text-ink-5 leading-relaxed mb-4">
-              Managing Partner at Scanzano Baseball in Cherry Hill, NJ — over 7
+              Managing Partner at Scanzano Baseball in Cherry Hill, NJ, with over 7
               years building one of the region&apos;s premier player development
               programs, training 300-350 athletes annually and producing 150+
               college commitments across all NCAA and NJCAA levels.
@@ -87,7 +87,7 @@ export default function AboutPage() {
               post-graduate baseball program.
             </p>
             <p className="text-ink-5 leading-relaxed">
-              Pro scouting background. Lifelong athlete — Cherokee High School,
+              Pro scouting background. Lifelong athlete: Cherokee High School,
               Milford Academy Prep, Rowan Burlington County College.
             </p>
           </div>

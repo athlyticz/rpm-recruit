@@ -4,42 +4,42 @@ import { Logo } from "@/components/ui/logo";
 export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-50 bg-ink border-b-2 border-gold">
-      <div className="mx-auto max-w-7xl flex items-center justify-between px-6 h-14">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 px-gutter lg:px-6 h-topbar">
+        <Link href="/" className="flex items-center gap-3 min-h-touch min-w-0 shrink">
           <Logo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
           <Link
             href="/pricing"
-            className="font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors"
+            className="min-h-touch inline-flex items-center font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors dur-fast"
           >
             Pricing
           </Link>
           <Link
             href="/about"
-            className="font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors"
+            className="min-h-touch inline-flex items-center font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors dur-fast"
           >
             About
           </Link>
           <Link
             href="/contact"
-            className="font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors"
+            className="min-h-touch inline-flex items-center font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-bone transition-colors dur-fast"
           >
             Contact
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/login"
-            className="font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-gold px-4 py-2 border border-ink-3 transition-colors"
+            className="hidden sm:inline-flex items-center min-h-touch whitespace-nowrap font-condensed text-xs font-bold tracking-widest uppercase text-slate-2 hover:text-gold px-4 border border-ink-3 rounded-sm transition-colors dur-fast"
           >
             Sign In
           </Link>
           <Link
             href="/signup"
-            className="font-condensed text-xs font-bold tracking-widest uppercase bg-gold text-ink px-4 py-2 hover:bg-gold-2 transition-colors"
+            className="inline-flex items-center min-h-touch whitespace-nowrap font-condensed text-xs font-bold tracking-widest uppercase bg-gold text-ink px-4 rounded-sm hover:bg-gold-2 transition-colors dur-fast"
           >
             Get Started
           </Link>

@@ -38,7 +38,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "RPM Recruit — Recruit · Profile · Match",
+    default: "RPM Recruit · Recruit, Profile, Match",
     template: "%s | RPM Recruit",
   },
   description:

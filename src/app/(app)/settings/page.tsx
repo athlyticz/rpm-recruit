@@ -14,7 +14,7 @@ export default function SettingsPage() {
       />
       <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14">
         <div className="bg-white border border-black/[0.06] shadow-sm p-5">
-          <p className="text-sm text-slate">Account settings & billing — to be implemented.</p>
+          <p className="text-sm text-slate">Account settings and billing. Not yet implemented.</p>
         </div>
       </div>
     </>
