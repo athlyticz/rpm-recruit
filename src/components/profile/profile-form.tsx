@@ -127,7 +127,9 @@ export function ProfileForm() {
   const isHitting = activeTab === "HS Hitting" || activeTab === "Summer Hitting";
 
   return (
-    <div className="space-y-6">
+    // min-w-0: as a grid child, the default min-width:auto lets wide content
+    // push the column past the viewport.
+    <div className="space-y-6 min-w-0">
 
               {/* ── Personal Details ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
