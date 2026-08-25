@@ -7,8 +7,15 @@ import { useState, useEffect, useMemo } from "react";
 /* ------------------------------------------------------------------ */
 
 interface TachometerProps {
-  /** Player score on a 1-10 scale */
-  score: number;
+  /** Score on a 1-10 scale. Pass null for the "not yet rated" state. */
+  score: number | null;
+  /** Decimal places on the centre readout. Fit scores read better at 1. */
+  precision?: 0 | 1;
+  /** Replaces the derived level label. Use when the gauge is not showing a
+   *  Scanzano-ladder rating (a program fit, for example). */
+  label?: string;
+  /** Shown in place of the score when score is null. */
+  emptyText?: string;
   /** Rendered size of the gauge */
   size?: "sm" | "md" | "lg" | "xl";
   /** Animate the needle on mount (default true) */
@@ -132,22 +139,33 @@ export function Tachometer({
   size = "md",
   animated = true,
   showLabel = true,
+  precision = 0,
+  label: labelOverride,
+  emptyText = "--",
   className = "",
 }: TachometerProps) {
-  const clampedScore = Math.min(Math.max(Math.round(score), 1), 10);
+  const hasScore = score !== null && Number.isFinite(score);
+  // The needle uses the exact value; only the readout rounds.
+  const exactScore = hasScore ? Math.min(Math.max(score as number, 1), 10) : 1;
+  const clampedScore = Math.min(Math.max(Math.round(exactScore), 1), 10);
 
   /* ---- animation state ---- */
   const [displayDeg, setDisplayDeg] = useState<number>(
-    animated ? ARC_START_DEG : scoreToDeg(clampedScore)
+    animated ? ARC_START_DEG : scoreToDeg(exactScore)
   );
 
   useEffect(() => {
-    if (!animated) {
-      setDisplayDeg(scoreToDeg(clampedScore));
+    const targetDeg = scoreToDeg(exactScore);
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!animated || !hasScore || prefersReducedMotion) {
+      setDisplayDeg(targetDeg);
       return;
     }
 
-    const targetDeg = scoreToDeg(clampedScore);
     const startDeg = ARC_START_DEG;
     const startTime = performance.now();
 
@@ -156,8 +174,10 @@ export function Tachometer({
     function tick(now: number) {
       const elapsed = now - startTime;
       const t = Math.min(elapsed / ANIMATION_DURATION_MS, 1);
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - t, 3);
+      // Needle physics: fast attack off the peg, then a damped settle that
+      // slightly overshoots and returns. Matches --ease-needle in globals.css.
+      const eased =
+        t >= 1 ? 1 : 1 - Math.pow(2, -9 * t) * Math.cos(t * Math.PI * 2.15);
       setDisplayDeg(startDeg + (targetDeg - startDeg) * eased);
 
       if (t < 1) {
@@ -167,7 +187,7 @@ export function Tachometer({
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [clampedScore, animated]);
+  }, [exactScore, hasScore, animated]);
 
   /* ---- derived geometry ---- */
   const needleEnd = useMemo(
@@ -194,7 +214,9 @@ export function Tachometer({
   const scoreFontSize = isSmall ? 28 : 36;
   const labelFontSize = isSmall ? 7 : 9;
 
-  const label = LEVEL_LABELS[clampedScore] ?? "";
+  const label = labelOverride ?? (hasScore ? LEVEL_LABELS[clampedScore] ?? "" : "Not yet rated");
+  const readout = hasScore ? exactScore.toFixed(precision) : emptyText;
+  const needleColor = hasScore ? COLOR_GOLD : "#4A4A4A";
 
   return (
     <div
@@ -234,6 +256,7 @@ export function Tachometer({
             stroke={seg.color}
             strokeWidth={8}
             strokeLinecap="butt"
+            opacity={hasScore ? 1 : 0.28}
           />
         ))}
 
@@ -256,13 +279,13 @@ export function Tachometer({
           y1={CY}
           x2={needleEnd.x}
           y2={needleEnd.y}
-          stroke={COLOR_GOLD}
+          stroke={needleColor}
           strokeWidth={2}
           strokeLinecap="round"
         />
 
         {/* Needle pivot dot */}
-        <circle cx={CX} cy={CY} r={4} fill={COLOR_GOLD} />
+        <circle cx={CX} cy={CY} r={4} fill={needleColor} />
 
         {/* Score text (center) */}
         <text
@@ -275,7 +298,7 @@ export function Tachometer({
           fontFamily="'Cormorant Garamond', serif"
           fontWeight={700}
         >
-          {clampedScore}
+          {readout}
         </text>
 
         {/* Level label */}
@@ -285,7 +308,7 @@ export function Tachometer({
             y={CY + 24}
             textAnchor="middle"
             dominantBaseline="central"
-            fill={zoneColor(clampedScore)}
+            fill={hasScore ? zoneColor(clampedScore) : "#666666"}
             fontSize={labelFontSize}
             fontFamily="'Cormorant Garamond', serif"
             fontWeight={600}
