@@ -140,3 +140,97 @@ export async function getEvaluations(
   }
   return data ?? [];
 }
+
+/**
+ * Metric history grouped by type, with the scale bands that belong to whichever
+ * skill each metric drives. Types with no measurements are still returned so
+ * the caller can decide what to show; nothing here invents a data point.
+ */
+export interface ScaleBandRow {
+  score: number;
+  min_value: number | null;
+  max_value: number | null;
+}
+
+export async function getTrajectory(playerId: string | null): Promise<{
+  types: { key: string; label: string; unit: string; lower_is_better: boolean }[];
+  metrics: Metric[];
+  bands: Map<string, ScaleBandRow[]>;
+}> {
+  if (!supabaseConfigured()) {
+    return { types: [], metrics: [], bands: new Map<string, ScaleBandRow[]>() };
+  }
+
+  const supabase = await createClient();
+
+  const [{ data: types }, { data: skills }] = await Promise.all([
+    supabase
+      .from("metric_types")
+      .select("key,label,unit,lower_is_better,sort_order")
+      .eq("is_active", true)
+      .order("sort_order"),
+    supabase
+      .from("skill_definitions")
+      .select("scale_metric_type,skill_scale_bands(score,min_value,max_value)")
+      .not("scale_metric_type", "is", null),
+  ]);
+
+  const bands = new Map<string, ScaleBandRow[]>();
+  for (const skill of skills ?? []) {
+    if (!skill.scale_metric_type) continue;
+    if (!bands.has(skill.scale_metric_type)) {
+      bands.set(skill.scale_metric_type, skill.skill_scale_bands ?? []);
+    }
+  }
+
+  const metrics = await getMetrics(playerId);
+
+  return { types: types ?? [], metrics, bands };
+}
+
+/**
+ * The player's skill shape for their own position: the most authoritative
+ * rating per skill from themselves and, separately, from a coach or scout.
+ * Skills with no rating come back null rather than zero, so the chart can
+ * refuse to draw a shape rather than draw a misleading one.
+ */
+export async function getSkillShape(player: Player | null) {
+  if (!supabaseConfigured() || !player) return { position: null, axes: [] };
+
+  const supabase = await createClient();
+
+  const { data: definitions } = await supabase
+    .from("skill_definitions")
+    .select("id,position,label,sort_order")
+    .eq("is_active", true)
+    .order("sort_order");
+
+  const { data: evaluations } = await supabase
+    .from("evaluations")
+    .select("skill_definition_id,score,evaluator_role,evaluated_at")
+    .eq("player_id", player.id)
+    .order("evaluated_at", { ascending: true });
+
+  const rated = new Set((evaluations ?? []).map((e) => e.skill_definition_id));
+  const positions = new Map<string, number>();
+  for (const d of definitions ?? []) {
+    if (rated.has(d.id)) positions.set(d.position, (positions.get(d.position) ?? 0) + 1);
+  }
+
+  // Use whichever position actually has ratings, falling back to none.
+  const position = [...positions.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  if (!position) return { position: null, axes: [] };
+
+  const forPosition = (definitions ?? []).filter((d) => d.position === position);
+
+  const axes = forPosition.map((d) => {
+    const rows = (evaluations ?? []).filter((e) => e.skill_definition_id === d.id);
+    const self = rows.filter((r) => r.evaluator_role === "self").at(-1)?.score ?? null;
+    const coach =
+      rows.filter((r) => r.evaluator_role === "coach" || r.evaluator_role === "scout").at(-1)
+        ?.score ?? null;
+    return { label: d.label, self, coach };
+  });
+
+  return { position, axes };
+}
