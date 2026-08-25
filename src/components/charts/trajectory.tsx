@@ -162,6 +162,10 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
 
 export function Trajectory({ series }: { series: TrajectorySeries[] }) {
   const withPoints = series.filter((s) => s.points.length > 0);
+  // The empty state teaches using a real banded metric when one exists, so the
+  // reference lines a player sees are the ones they will actually be measured
+  // against.
+  const teachable = series.find((s) => s.bands.length > 0) ?? null;
 
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm overflow-hidden">
@@ -175,34 +179,97 @@ export function Trajectory({ series }: { series: TrajectorySeries[] }) {
       </div>
 
       {withPoints.length === 0 ? (
-        <div className="px-4 py-6 text-center">
-          {/* The dormant state is designed, not a placeholder, because most
-              accounts start here. It shows the shape of what will appear and
-              says plainly there is nothing yet, rather than drawing a sample
-              line a player could mistake for their own data. */}
-          <svg viewBox={`0 0 ${W} 56`} width="100%" aria-hidden className="mb-3 opacity-45">
-            <line x1={PAD_L} y1={40} x2={W - PAD_R} y2={40} stroke="var(--color-bone-3)" strokeWidth={0.75} strokeDasharray="2 3" />
-            <line x1={PAD_L} y1={22} x2={W - PAD_R} y2={22} stroke="var(--color-bone-3)" strokeWidth={0.75} strokeDasharray="2 3" />
-            {[0, 1, 2, 3].map((i) => (
-              <circle
-                key={i}
-                cx={PAD_L + i * ((W - PAD_L - PAD_R) / 3)}
-                cy={31}
-                r={3.4}
-                fill="white"
-                stroke="var(--color-bone-3)"
-                strokeWidth={1.5}
-              />
-            ))}
-          </svg>
-          <p className="font-display text-title-sm font-bold text-ink text-balance">
-            No measurements on file yet
-          </p>
-          <p className="text-caption text-ink-5 max-w-[44ch] mx-auto mt-1 text-pretty">
-            Once a 60-yard dash, bat speed or velocity is recorded, each one plots here over
-            time against the scale bands, so you can see the next band as a line to cross.
-            Nothing is shown until it is real.
-          </p>
+        /*
+         * Dormant parity: this is drawn to the same bar as the populated
+         * chart, because most accounts start here and an empty state is the
+         * first thing many players will ever see. It shows the real axes and
+         * the real scale bands with their real score labels, so the chart
+         * teaches how it will be read before there is anything to read. What
+         * it never draws is a data line, because a sample trend is
+         * indistinguishable from a real one.
+         */
+        <div className="px-4 py-4">
+          {teachable ? (
+            <>
+              <div className="flex items-baseline justify-between gap-3 mb-1">
+                <span className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-4">
+                  {teachable.type.label}
+                </span>
+                <span className="text-micro text-slate">awaiting first measurement</span>
+              </div>
+
+              <svg
+                viewBox={`0 0 ${W} ${H}`}
+                width="100%"
+                role="img"
+                aria-label={`${teachable.type.label} chart, no measurements yet. Scale bands shown.`}
+              >
+                {teachable.bands.map((band) => {
+                  const edge = teachable.type.lower_is_better ? band.max_value : band.min_value;
+                  if (edge === null) return null;
+                  const edges = teachable.bands
+                    .map((b) => (teachable.type.lower_is_better ? b.max_value : b.min_value))
+                    .filter((v): v is number => v !== null);
+                  const lo = Math.min(...edges);
+                  const hi = Math.max(...edges);
+                  const t = (edge - lo) / (hi - lo || 1);
+                  const yy =
+                    PAD_T + (teachable.type.lower_is_better ? t : 1 - t) * (H - PAD_T - PAD_B);
+                  return (
+                    <g key={band.score}>
+                      <line
+                        x1={PAD_L}
+                        y1={yy}
+                        x2={W - PAD_R}
+                        y2={yy}
+                        stroke="var(--color-bone-3)"
+                        strokeWidth={0.75}
+                        strokeDasharray="2 3"
+                      />
+                      <text
+                        x={W - PAD_R + 4}
+                        y={yy + 3}
+                        fontSize={8}
+                        fontFamily="var(--font-mono)"
+                        fill="var(--color-slate)"
+                      >
+                        {band.score}
+                      </text>
+                      <text
+                        x={PAD_L + 2}
+                        y={yy - 2}
+                        fontSize={7}
+                        fontFamily="var(--font-mono)"
+                        fill="var(--color-bone-3)"
+                      >
+                        {edge}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+
+              <p className="text-caption text-ink-5 mt-1 text-pretty">
+                Those lines are the real {teachable.type.label.toLowerCase()} bands: hit{" "}
+                {(() => {
+                  const target = teachable.bands.find((b) => b.score === 8);
+                  const edge = target
+                    ? teachable.type.lower_is_better
+                      ? target.max_value
+                      : target.min_value
+                    : null;
+                  return edge !== null ? `${edge} ${teachable.type.unit}` : "the next band";
+                })()}{" "}
+                and you are an 8. Your first logged measurement plots here, and every one
+                after it joins the line.
+              </p>
+            </>
+          ) : (
+            <p className="text-caption text-ink-5 text-pretty">
+              Your first logged measurement plots here, and every one after it joins the
+              line, drawn against the scale bands for that metric.
+            </p>
+          )}
         </div>
       ) : (
         <>

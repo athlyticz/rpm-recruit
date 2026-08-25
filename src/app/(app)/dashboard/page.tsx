@@ -24,6 +24,7 @@ import {
   verificationMix,
 } from "@/lib/progression";
 import { scoreAll } from "@/lib/match/interim-scorer";
+import { LandscapeTeaser } from "@/components/match/landscape-teaser";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -139,6 +140,8 @@ export default async function DashboardPage() {
           <ProfileStrengthCard strength={strength} />
           <ReadinessStages state={readiness} />
         </div>
+
+        {results.length > 0 && <LandscapeTeaser results={results} />}
 
         <VerificationLadder mix={mix} />
 

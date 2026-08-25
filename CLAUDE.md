@@ -109,6 +109,37 @@ app-like rather than like a desktop page that was shrunk.
 Wiring without the design pass is not done. The college match page is the reference implementation
 of the bar: see the Showcase Surface item in ROADMAP.md.
 
+### Motion Policy: geometry moves, digits cut
+
+The rule that kept getting re-litigated case by case, written down.
+
+**Motion is allowed on geometry. Motion is banned on the number itself.**
+
+A dot may travel to its new position on the needle curve. A needle may sweep.
+A bar may grow. A polygon may morph. These are pictures, and a picture caught
+mid-transition is still an honest picture of something in motion.
+
+A numeral may not animate. It cuts, instantly, to its true value. A number
+caught mid-flight is a false number, and this product's entire claim is that
+every figure traces to a database row. This is not a stylistic preference: a
+count-up on the fit score was built and removed after it froze mid-animation
+and left 74 on screen for a program that scored 80.
+
+The practical split, for a value that changes:
+
+- The dot slides, the label beside it updates on the same frame it changes.
+- The gauge needle sweeps, the readout in its centre cuts.
+- The meter animates its width, the figure above it cuts.
+
+Corollary, learned the hard way twice: **motion may never gate content.**
+Entrance animations animate transform only, never opacity with a fill mode
+that can strand an element invisible if the animation does not run. If a
+motion moment is decorative rather than informative, and it fails
+verification, delete it rather than patch it.
+
+Everything above is additionally subject to `prefers-reduced-motion`, which
+gets instant states with no exceptions.
+
 ### Route Transitions (read this if a link misbehaves)
 
 `src/components/app/view-transitions.tsx` intercepts same-origin anchor clicks

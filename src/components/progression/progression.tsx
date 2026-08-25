@@ -16,6 +16,25 @@ import {
 /*  Profile Strength                                                   */
 /* ------------------------------------------------------------------ */
 
+/** Where each strength factor is actually improved. */
+const WEAKEST_LINK: Record<string, string> = {
+  "Player identity": "/profile",
+  Academics: "/academics",
+  "Intended majors": "/academics",
+  Evaluation: "/scores",
+  Measurables: "/athletic",
+  Verification: "/athletic",
+};
+
+const WEAKEST_CTA: Record<string, string> = {
+  "Player identity": "Complete your profile",
+  Academics: "Add academics",
+  "Intended majors": "Pick majors",
+  Evaluation: "Rate your skills",
+  Measurables: "Log a measurement",
+  Verification: "See your trajectory",
+};
+
 /** Sweeps the meter on mount with the needle curve, honouring reduced motion. */
 function useSweep(target: number) {
   const [value, setValue] = useState(0);
@@ -83,10 +102,19 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
       </ul>
 
       {strength.weakest && (
-        <p className="text-caption text-ink-5 leading-relaxed mt-3 pt-3 border-t border-black/[0.05] text-pretty">
-          Biggest gap: <strong className="text-ink">{strength.weakest.label}</strong>.{" "}
-          {strength.weakest.detail}.
-        </p>
+        <div className="mt-3 pt-3 border-t border-black/[0.05]">
+          <p className="text-caption text-ink-5 leading-relaxed text-pretty">
+            Biggest gap: <strong className="text-ink">{strength.weakest.label}</strong>.{" "}
+            {strength.weakest.detail}.
+          </p>
+          <Link
+            href={WEAKEST_LINK[strength.weakest.label] ?? "/profile"}
+            className="pressable focusable mt-2 inline-flex items-center gap-1.5 min-h-touch font-condensed text-micro font-bold tracking-[0.16em] uppercase text-ink-4 hover:text-gold transition-colors dur-fast"
+          >
+            {WEAKEST_CTA[strength.weakest.label] ?? "Open profile"}
+            <ArrowRight size={12} aria-hidden />
+          </Link>
+        </div>
       )}
     </section>
   );

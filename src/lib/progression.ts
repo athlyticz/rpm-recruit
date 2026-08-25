@@ -315,12 +315,12 @@ export function nextTierLevers(
   } else {
     candidates.push({
       action: `Raise your showcase rating from ${player.overall_score.toFixed(1)} to ${(player.overall_score + 0.5).toFixed(1)}`,
-      href: "/scores",
+      href: "/college-match?lever=rating",
       mutate: (p) => ({ ...p, overall_score: (p.overall_score ?? 0) + 0.5 }),
     });
     candidates.push({
       action: `Raise your showcase rating from ${player.overall_score.toFixed(1)} to ${(player.overall_score + 1).toFixed(1)}`,
-      href: "/scores",
+      href: "/college-match?lever=rating",
       mutate: (p) => ({ ...p, overall_score: (p.overall_score ?? 0) + 1 }),
     });
   }
@@ -335,7 +335,7 @@ export function nextTierLevers(
   } else {
     candidates.push({
       action: `Raise your SAT from ${player.sat_score} to ${player.sat_score + 60}`,
-      href: "/academics",
+      href: "/college-match?lever=sat",
       mutate: (p) => ({ ...p, sat_score: (p.sat_score ?? 0) + 60 }),
     });
   }

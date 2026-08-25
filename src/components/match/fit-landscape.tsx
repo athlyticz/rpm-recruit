@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import {
   scoreAll,
@@ -137,6 +137,34 @@ export function FitLandscape({
 }) {
   const [draft, setDraft] = useState<{ key: string; value: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const leversRef = useRef<HTMLDivElement | null>(null);
+
+  /*
+   * Arriving from a Next Tier lever on the dashboard, the panel scrolls into
+   * view and the named lever is highlighted. It is deliberately not dragged
+   * for the player: a projection is something you hold, and priming one on
+   * their behalf would put a number on screen nobody asked for.
+   */
+  /*
+   * Read from location rather than useSearchParams: that hook forces a
+   * Suspense boundary at the route level, and a Suspense boundary on this
+   * route silently breaks hydration. See the route notes in CLAUDE.md.
+   */
+  const [primed, setPrimed] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPrimed(new URLSearchParams(window.location.search).get("lever"));
+  }, []);
+
+  useEffect(() => {
+    if (!primed) return;
+    leversRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "center",
+    });
+  }, [primed]);
 
   /**
    * A metric lever moves the rating it drives, and the rating moves the mean
@@ -321,7 +349,10 @@ export function FitLandscape({
                 stroke={isSelected ? "var(--color-ink)" : "white"}
                 strokeWidth={isSelected ? 2 : 1}
                 opacity={result.score !== null && result.score >= IN_RANGE_THRESHOLD ? 1 : 0.42}
-                className="cursor-pointer motion-safe:transition-all motion-safe:dur-slow"
+                /* Geometry moves: the dot travels to its new score on the
+                   needle curve. The score text beside it cuts. See the Motion
+                   Policy in CLAUDE.md. */
+                className="cursor-pointer motion-safe:transition-[cx,cy,r,opacity] motion-safe:dur-slow"
                 style={{ transitionTimingFunction: "var(--ease-needle)" }}
                 onClick={() => onSelect(result)}
                 role="button"
@@ -359,7 +390,7 @@ export function FitLandscape({
       </div>
 
       {/* What-if levers */}
-      <div className="border-t border-black/[0.06] bg-bone/40 px-4 py-3">
+      <div ref={leversRef} className="border-t border-black/[0.06] bg-bone/40 px-4 py-3">
         <div className="flex items-baseline justify-between gap-3 mb-2">
           <h3 className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate">
             What if
@@ -459,7 +490,12 @@ export function FitLandscape({
           const value = isDrafting ? draft.value : anchor;
 
           return (
-            <div key={lever.key} className="mb-3 last:mb-0">
+            <div
+              key={lever.key}
+              className={`mb-3 last:mb-0 ${
+                primed === lever.key ? "ring-2 ring-gold/50 rounded-sm -mx-1.5 px-1.5 py-1" : ""
+              }`}
+            >
               <label className="flex items-baseline justify-between gap-2 mb-1">
                 <span className="text-caption text-ink-4">{lever.label}</span>
                 <span className="font-mono num text-meta">
