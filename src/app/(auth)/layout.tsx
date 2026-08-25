@@ -22,7 +22,7 @@ export default function AuthLayout({
 
       <div className="relative z-10 w-full max-w-[420px] px-7">
         <div className="flex flex-col items-center mb-8">
-          <Link href="/" className="mb-6">
+          <Link href="/" className="pressable focusable mb-6">
             <Image
               src="/full.png"
               alt="RPM Recruit"

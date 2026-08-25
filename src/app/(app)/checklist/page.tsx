@@ -193,7 +193,7 @@ export default function ChecklistPage() {
                   type="button"
                   onClick={() => toggleCheck(i)}
                   aria-pressed={checked[i]}
-                  className="size-touch -m-3 flex-shrink-0 flex items-center justify-center cursor-pointer"
+                  className="pressable focusable size-touch -m-3 flex-shrink-0 flex items-center justify-center cursor-pointer"
                 >
                   <span
                     aria-hidden
@@ -253,7 +253,7 @@ export default function ChecklistPage() {
                 <button
                   type="button"
                   onClick={() => toggleQ(i)}
-                  className="w-full text-left px-5 py-3 min-h-touch flex items-center gap-3 hover:bg-bone/30 transition-colors dur-fast cursor-pointer"
+                  className="pressable-sink focusable w-full text-left px-5 py-3 min-h-touch flex items-center gap-3 hover:bg-bone/30 transition-colors dur-fast cursor-pointer"
                 >
                   <span className="font-mono text-body font-medium text-gold w-6 flex-shrink-0">
                     {String(i + 1).padStart(2, "0")}

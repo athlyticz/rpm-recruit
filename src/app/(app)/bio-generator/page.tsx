@@ -129,7 +129,7 @@ export default function BioGeneratorPage() {
                 <button
                   type="button"
                   onClick={handleGenerate}
-                  className="w-full min-h-touch inline-flex items-center justify-center font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-3 transition-colors dur-fast bg-ink text-bone hover:bg-gold hover:text-ink"
+                  className="pressable-sink focusable w-full min-h-touch inline-flex items-center justify-center font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-3 transition-colors dur-fast bg-ink text-bone hover:bg-gold hover:text-ink"
                 >
                   Generate Bio
                 </button>
@@ -174,7 +174,7 @@ export default function BioGeneratorPage() {
           <button
             type="button"
             onClick={handleCopy}
-            className="font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 min-h-touch inline-flex items-center justify-center transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
+            className="pressable focusable font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 min-h-touch inline-flex items-center justify-center transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
           >
             Copy Bio
           </button>

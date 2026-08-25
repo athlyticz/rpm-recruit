@@ -190,7 +190,7 @@ export function NextTierPanel({ levers }: { levers: TierLever[] }) {
             <li key={`${lever.action}-${lever.level}-${i}`}>
               <Link
                 href={lever.href}
-                className="flex items-center gap-3 p-3 min-h-touch bg-ink-2 border border-ink-3 rounded-sm hover:border-gold transition-colors dur-fast group"
+                className="pressable focusable flex items-center gap-3 p-3 min-h-touch bg-ink-2 border border-ink-3 rounded-sm hover:border-gold transition-colors dur-fast group"
               >
                 <span className="flex-1 min-w-0">
                   <span className="block font-display text-title-sm font-bold text-gold-3 leading-tight text-balance">

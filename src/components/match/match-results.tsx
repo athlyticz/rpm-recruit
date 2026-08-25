@@ -165,7 +165,7 @@ function Breakdown({ result }: { result: MatchResult }) {
           href={`https://bigfuture.collegeboard.org/colleges/${college.college_board_slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 min-h-touch font-condensed text-label font-bold tracking-[0.16em] uppercase text-ink-4 hover:text-gold transition-colors dur-fast"
+          className="pressable focusable mt-3 inline-flex items-center gap-1.5 min-h-touch font-condensed text-label font-bold tracking-[0.16em] uppercase text-ink-4 hover:text-gold transition-colors dur-fast"
         >
           College Board profile
           <ExternalLink size={12} aria-hidden />
@@ -272,7 +272,7 @@ function PodiumCard({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="w-full text-left px-4 pt-2 pb-3.5 min-h-touch flex items-start gap-3 active:bg-bone/40 transition-colors dur-fast"
+        className="pressable-sink focusable w-full text-left px-4 pt-2 pb-3.5 min-h-touch flex items-start gap-3 active:bg-bone/40 transition-colors dur-fast"
       >
         <span className="flex-1 min-w-0">
           <span
@@ -395,7 +395,7 @@ function ListRow({ result, index }: { result: RankedMatch; index: number }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="w-full text-left px-4 py-3 min-h-touch flex items-center gap-3 active:bg-bone/40 transition-colors dur-fast"
+        className="pressable-sink focusable w-full text-left px-4 py-3 min-h-touch flex items-center gap-3 active:bg-bone/40 transition-colors dur-fast"
       >
         <span
           className="font-mono text-meta text-slate tabular-nums w-7 shrink-0"
@@ -580,7 +580,7 @@ export function MatchResults({
       {/* The band key sits above the tabs and is stated once. Repeating four
           sentences on every level switch was noise, not guidance. */}
       <details className="bg-white border border-black/[0.07] rounded-md shadow-sm">
-        <summary className="min-h-touch flex items-center gap-2 px-4 cursor-pointer font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 select-none">
+        <summary className="pressable focusable min-h-touch flex items-center gap-2 px-4 cursor-pointer font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 select-none">
           How to read these bands
         </summary>
         <dl className="px-4 pb-3 pt-1 space-y-1.5">
@@ -612,7 +612,7 @@ export function MatchResults({
               role="tab"
               aria-selected={selected}
               onClick={() => setLevel(meta.key)}
-              className={`shrink-0 min-h-touch px-3.5 rounded-sm border font-condensed text-meta font-bold tracking-[0.14em] uppercase transition-colors dur-fast inline-flex items-center gap-1.5 ${
+              className={`pressable focusable shrink-0 min-h-touch px-3.5 rounded-sm border font-condensed text-meta font-bold tracking-[0.14em] uppercase transition-colors dur-fast inline-flex items-center gap-1.5 ${
                 selected
                   ? "bg-ink border-redline text-gold-3"
                   : "bg-white border-bone-3 text-ink-4 active:bg-bone-2"

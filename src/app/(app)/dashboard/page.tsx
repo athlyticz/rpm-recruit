@@ -100,7 +100,7 @@ export default async function DashboardPage() {
               {!player?.overall_score && (
                 <Link
                   href="/scores"
-                  className="mt-3 inline-flex items-center gap-1.5 min-h-touch px-4 bg-gold text-ink font-condensed text-meta font-bold tracking-[0.14em] uppercase rounded-sm hover:bg-gold-2 transition-colors dur-fast"
+                  className="pressable focusable mt-3 inline-flex items-center gap-1.5 min-h-touch px-4 bg-gold text-ink font-condensed text-meta font-bold tracking-[0.14em] uppercase rounded-sm hover:bg-gold-2 transition-colors dur-fast"
                 >
                   Enter position scores
                   <ArrowRight size={14} aria-hidden />
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
         {topFit !== null && (
           <Link
             href="/college-match"
-            className="flex items-center gap-3 p-4 min-h-touch bg-white border border-black/[0.07] rounded-md shadow-sm hover:border-gold transition-colors dur-fast group"
+            className="pressable focusable flex items-center gap-3 p-4 min-h-touch bg-white border border-black/[0.07] rounded-md shadow-sm hover:border-gold transition-colors dur-fast group"
           >
             <span className="flex-1 min-w-0">
               <span className="block font-display text-title-sm font-bold text-ink leading-tight">

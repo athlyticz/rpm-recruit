@@ -55,7 +55,7 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="text"
-                    className="min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
+                    className="pressable-sink focusable min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
                     placeholder="First"
                   />
                 </div>
@@ -65,7 +65,7 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="text"
-                    className="min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
+                    className="pressable-sink focusable min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
                     placeholder="Last"
                   />
                 </div>
@@ -76,7 +76,7 @@ export default function ContactPage() {
                 </label>
                 <input
                   type="email"
-                  className="min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
+                  className="pressable-sink focusable min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors"
                   placeholder="you@email.com"
                 />
               </div>
@@ -86,13 +86,13 @@ export default function ContactPage() {
                 </label>
                 <textarea
                   rows={5}
-                  className="min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors resize-vertical"
+                  className="pressable-sink focusable min-h-touch w-full border border-bone-3 px-3 py-2.5 text-sm text-ink bg-white outline-none focus:border-gold focus:ring-2 focus:ring-gold/10 transition-colors resize-vertical"
                   placeholder="Your message..."
                 />
               </div>
               <button
                 type="submit"
-                className="min-h-touch inline-flex items-center justify-center font-condensed text-xs font-bold tracking-[0.13em] uppercase bg-ink text-bone px-6 py-3 hover:bg-gold hover:text-ink transition-colors dur-fast"
+                className="pressable focusable min-h-touch inline-flex items-center justify-center font-condensed text-xs font-bold tracking-[0.13em] uppercase bg-ink text-bone px-6 py-3 hover:bg-gold hover:text-ink transition-colors dur-fast"
               >
                 Send Message
               </button>

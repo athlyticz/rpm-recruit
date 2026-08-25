@@ -42,7 +42,7 @@ export function BottomNav() {
             type="button"
             aria-label="Close menu"
             onClick={() => setMenuOpen(false)}
-            className="absolute inset-0 bg-ink/70 animate-fade"
+            className="absolute inset-0 bg-ink/70 animate-fade cursor-default"
           />
 
           <div
@@ -59,7 +59,7 @@ export function BottomNav() {
                 type="button"
                 onClick={() => setMenuOpen(false)}
                 aria-label="Close menu"
-                className="flex items-center justify-center size-touch -mr-2 text-slate-2 hover:text-bone"
+                className="pressable focusable flex items-center justify-center size-touch -mr-2 text-slate-2 hover:text-bone"
               >
                 <X size={20} aria-hidden />
               </button>
@@ -74,7 +74,7 @@ export function BottomNav() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex items-center gap-2.5 px-3 min-h-touch rounded-sm border transition-colors dur-fast ${
+                    className={`pressable focusable flex items-center gap-2.5 px-3 min-h-touch rounded-sm border transition-colors dur-fast ${
                       active
                         ? "border-redline bg-redline/10 text-gold-3"
                         : "border-ink-3 text-slate-2 active:bg-white/5"
@@ -103,7 +103,7 @@ export function BottomNav() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className="relative flex flex-col items-center justify-center gap-1 min-h-touch"
+                className="pressable focusable relative flex flex-col items-center justify-center gap-1 min-h-touch"
               >
                 <span
                   aria-hidden
@@ -135,7 +135,7 @@ export function BottomNav() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-label="More destinations"
-            className="relative flex flex-col items-center justify-center gap-1 min-h-touch"
+            className="pressable focusable relative flex flex-col items-center justify-center gap-1 min-h-touch"
           >
             <span
               aria-hidden

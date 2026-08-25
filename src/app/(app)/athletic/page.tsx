@@ -38,7 +38,7 @@ function MeasurementField({
       <input
         type="text"
         placeholder={placeholder}
-        className="min-h-touch w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold focus:shadow-[0_0_0_3px_rgba(184,151,90,0.12)] transition-colors"
+        className="pressable-sink focusable min-h-touch w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold focus:shadow-[0_0_0_3px_rgba(184,151,90,0.12)] transition-colors"
       />
     </div>
   );
@@ -63,7 +63,7 @@ function MetricBox({
       <input
         type="text"
         placeholder={placeholder}
-        className="min-h-touch font-mono text-title-lg font-medium text-ink bg-transparent border-none border-b-2 border-bone-3 outline-none w-full py-1 focus:border-gold"
+        className="pressable-sink focusable min-h-touch font-mono text-title-lg font-medium text-ink bg-transparent border-none border-b-2 border-bone-3 outline-none w-full py-1 focus:border-gold"
       />
       <p className="text-label text-slate mt-1.5 leading-relaxed">
         {benchmark}

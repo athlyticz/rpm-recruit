@@ -25,17 +25,17 @@ export function MarketingFooter() {
             </h4>
             <ul className="space-y-2 text-sm text-slate">
               <li>
-                <Link href="/pricing" className="min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
+                <Link href="/pricing" className="pressable focusable min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
+                <Link href="/about" className="pressable focusable min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
+                <Link href="/contact" className="pressable focusable min-h-touch inline-flex items-center hover:text-gold transition-colors dur-fast">
                   Contact
                 </Link>
               </li>

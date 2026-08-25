@@ -49,8 +49,9 @@ export function ScoreBoard({
   const [position, setPosition] = useState(initialPosition);
   const [ratings, setRatings] = useState(initialRatings);
   const [overall, setOverall] = useState(initialOverall);
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const groups = useMemo(() => {
@@ -70,25 +71,54 @@ export function ScoreBoard({
     [skills, position]
   );
 
+  /**
+   * Optimistic, but never dishonest.
+   *
+   * The rating and the gauge move on the tap so the control never feels dead.
+   * The confirmation tick only appears once the server has acknowledged the
+   * write, and a failure rolls both the rating and the gauge back to their
+   * last server-known values. A success state the database has not confirmed
+   * is never shown.
+   */
   function setRating(skill: SkillDef, value: number) {
     const next = value === ratings[skill.id] ? 0 : value;
+    const previousRatings = ratings;
+    const previousOverall = overall;
+
     setRatings((prev) => ({ ...prev, [skill.id]: next }));
     setError(null);
+    setConfirmedId(null);
 
     if (!canSave || next === 0) return;
+
+    // Move the gauge immediately to the mean the tap implies, then let the
+    // server's own recomputation replace it.
+    const optimistic = { ...previousRatings, [skill.id]: next };
+    const entered = Object.values(optimistic).filter((v) => v > 0);
+    if (entered.length > 0) {
+      setOverall(
+        Math.round((entered.reduce((a, b) => a + b, 0) / entered.length) * 10) / 10
+      );
+    }
 
     setSavingId(skill.id);
     startTransition(async () => {
       const result = await saveSkillRating(skill.id, next);
       setSavingId(null);
+
       if (!result.ok) {
         setError(result.error ?? "Could not save that rating.");
-        // Roll the optimistic value back, so the screen never shows an unsaved
-        // number as though it were stored.
-        setRatings((prev) => ({ ...prev, [skill.id]: initialRatings[skill.id] ?? 0 }));
+        setRatings(previousRatings);
+        setOverall(previousOverall);
         return;
       }
+
+      // The server's number wins over the optimistic one.
       setOverall(result.overallScore ?? null);
+      setConfirmedId(skill.id);
+      window.setTimeout(() => {
+        setConfirmedId((current) => (current === skill.id ? null : current));
+      }, 1600);
     });
   }
 
@@ -129,7 +159,7 @@ export function ScoreBoard({
           id="position"
           value={position}
           onChange={(e) => setPosition(e.target.value)}
-          className="min-h-touch border-[1.5px] border-bone-3 rounded-sm px-3 text-sm text-ink bg-white outline-none focus:border-gold transition-colors dur-fast"
+          className="pressable focusable min-h-touch border-[1.5px] border-bone-3 rounded-sm px-3 text-sm text-ink bg-white outline-none focus:border-gold transition-colors dur-fast"
         >
           {positions.map((p) => (
             <option key={p.value} value={p.value}>
@@ -161,7 +191,8 @@ export function ScoreBoard({
           <div className="px-4 py-2">
             {groupSkills.map((skill) => {
               const value = ratings[skill.id] ?? 0;
-              const saving = savingId === skill.id && pending;
+              const saving = savingId === skill.id;
+              const confirmed = confirmedId === skill.id;
 
               return (
                 <div key={skill.id} className="py-2 border-b border-black/[0.04] last:border-0">
@@ -171,10 +202,21 @@ export function ScoreBoard({
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
                       {saving && (
-                        <Loader2 size={12} className="animate-spin text-slate" aria-hidden />
+                        <Loader2
+                          size={12}
+                          className="motion-safe:animate-spin text-slate"
+                          aria-hidden
+                        />
                       )}
-                      {!saving && value > 0 && canSave && (
-                        <Check size={12} className="text-green-2" aria-hidden />
+                      {!saving && confirmed && (
+                        <Check
+                          size={13}
+                          className="text-green-2 motion-safe:animate-confirm"
+                          aria-hidden
+                        />
+                      )}
+                      {!saving && !confirmed && value > 0 && canSave && (
+                        <Check size={12} className="text-green-2/45" aria-hidden />
                       )}
                       <span className="font-mono text-caption font-bold text-ink tabular-nums w-4 text-right">
                         {value > 0 ? value : "—"}
@@ -193,7 +235,7 @@ export function ScoreBoard({
                           aria-label={`${skill.label}: ${n}`}
                           aria-pressed={peak}
                           onClick={() => setRating(skill, n)}
-                          className={`flex-1 min-w-0 h-11 sm:h-8 rounded-xs border text-label font-mono transition-all dur-fast ${
+                          className={`pressable focusable flex-1 min-w-0 h-11 sm:h-8 rounded-xs border text-label font-mono transition-all dur-fast ${
                             on
                               ? n >= 9
                                 ? "bg-redline border-redline text-white"

@@ -126,6 +126,7 @@
   --animate-fade: fade var(--duration-base) var(--ease-settle) both;
   --animate-shimmer: shimmer 1.6s var(--ease-settle) infinite;
   --animate-meter: meter var(--duration-sweep) var(--ease-needle) both;
+  --animate-confirm: confirm var(--duration-slow) var(--ease-needle) both;
 }
 
 @keyframes needle-sweep {
@@ -134,6 +135,23 @@
   }
   to {
     transform: rotate(var(--needle-to, 0deg));
+  }
+}
+
+/* The save landing. Overshoots and settles, like the needle finding its
+   value, so a write that succeeded is felt rather than merely reported. */
+@keyframes confirm {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -200,6 +218,12 @@ body {
     transition-duration: 1ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* A compression the user cannot perceive is just a layout jitter. */
+  .pressable:active:not(:disabled),
+  .pressable-sink:active:not(:disabled) {
+    transform: none !important;
+  }
 }
 
 /* Safe-area helpers for the phone tab bar and any fixed bottom chrome. */
@@ -231,6 +255,68 @@ body {
    and wrong for a score readout, where "71" and "80" then sit at visibly
    different heights. Any number presented as data gets lining, tabular
    figures so digits align and columns do not jitter as values change. */
+/* ── Interaction primitives ──
+   Every control in this product answers the finger within one frame. Press
+   compresses on the needle curve's attack, hover lifts, focus is always
+   visible for keyboard users, and disabled reads as inert rather than broken.
+   These are utilities rather than repeated class strings so a control cannot
+   accidentally ship without a state set. */
+
+/* Press compression. The 90ms attack matches the needle coming off the peg. */
+@utility pressable {
+  transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-settle);
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+    transition-duration: var(--duration-instant);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+/* For wide or block controls, where a scale reads as a wobble. */
+@utility pressable-sink {
+  transition-property: transform, background-color, border-color, color, box-shadow, opacity;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-settle);
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+    transition-duration: var(--duration-instant);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+/* Keyboard focus. Gold on light ground, and it never doubles as hover. */
+@utility focusable {
+  &:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+}
+
+/* Primary calls to action take the redline on press: the same accent the
+   active navigation tab uses, so "committing" reads consistently. */
+@utility press-redline {
+  &:active:not(:disabled) {
+    background-color: var(--color-redline);
+    color: #fff;
+    border-color: var(--color-redline);
+  }
+}
+
 @utility num {
   font-variant-numeric: lining-nums tabular-nums;
 }

@@ -170,7 +170,7 @@ export default function AcademicsPage() {
                     key={major}
                     type="button"
                     onClick={() => toggleMajor(major)}
-                    className={`px-3 py-1.5 min-h-touch inline-flex items-center text-caption font-medium rounded-sm transition-colors cursor-pointer ${
+                    className={`pressable focusable px-3 py-1.5 min-h-touch inline-flex items-center text-caption font-medium rounded-sm transition-colors cursor-pointer ${
                       active
                         ? "bg-ink border border-ink text-gold-3"
                         : "bg-bone border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"

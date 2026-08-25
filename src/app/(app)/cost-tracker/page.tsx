@@ -76,7 +76,7 @@ export default function CostTrackerPage() {
             <button
               type="button"
               onClick={addRow}
-              className="font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 min-h-touch inline-flex items-center justify-center transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
+              className="pressable focusable font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 min-h-touch inline-flex items-center justify-center transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
             >
               + Add Row
             </button>

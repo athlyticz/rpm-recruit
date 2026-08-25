@@ -109,7 +109,7 @@ function StatTable({ columns }: { columns: string[] }) {
               <td key={col} className="px-0.5 py-1">
                 <input
                   type="text"
-                  className="min-h-touch font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-14 focus:border-gold"
+                  className="pressable focusable min-h-touch font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-14 focus:border-gold"
                 />
               </td>
             ))}
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`font-condensed text-meta font-bold tracking-[0.11em] uppercase py-2 px-4 cursor-pointer border-b-2 transition-colors ${
+                  className={`pressable focusable min-h-touch font-condensed text-meta font-bold tracking-[0.11em] uppercase py-2 px-4 cursor-pointer border-b-2 transition-colors ${
                     activeTab === tab
                       ? "text-ink border-gold"
                       : "text-slate border-transparent hover:text-ink"

@@ -80,13 +80,13 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/signup"
-                className="font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-7 py-3.5 hover:bg-gold-2 transition-colors"
+                className="pressable focusable press-redline font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-7 py-3.5 hover:bg-gold-2 transition-colors"
               >
                 Start Your Profile
               </Link>
               <Link
                 href="/pricing"
-                className="font-condensed text-sm font-bold tracking-[0.13em] uppercase text-slate-2 border border-ink-3 px-7 py-3.5 hover:border-gold hover:text-gold transition-colors"
+                className="pressable focusable press-redline font-condensed text-sm font-bold tracking-[0.13em] uppercase text-slate-2 border border-ink-3 px-7 py-3.5 hover:border-gold hover:text-gold transition-colors"
               >
                 View Pricing
               </Link>
@@ -155,7 +155,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/signup"
-                className="inline-block font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-6 py-3 hover:bg-gold-2 transition-colors"
+                className="pressable-sink focusable press-redline inline-block font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-6 py-3 hover:bg-gold-2 transition-colors"
               >
                 Get Evaluated
               </Link>
@@ -225,7 +225,7 @@ export default function HomePage() {
               </ul>
               <Link
                 href="/signup"
-                className={`flex items-center justify-center min-h-touch text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-2.5 transition-colors dur-fast ${
+                className={`pressable focusable flex items-center justify-center min-h-touch text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-2.5 transition-colors dur-fast ${
                   key === "showcase"
                     ? "bg-ink text-bone hover:bg-gold hover:text-ink"
                     : "bg-bone text-ink-4 hover:bg-ink hover:text-bone"
@@ -250,7 +250,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/signup"
-            className="inline-block font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-8 py-3.5 hover:bg-gold-2 transition-colors"
+            className="pressable-sink focusable press-redline inline-block font-condensed text-sm font-bold tracking-[0.13em] uppercase bg-gold text-ink px-8 py-3.5 hover:bg-gold-2 transition-colors"
           >
             Create Your Profile
           </Link>
