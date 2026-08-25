@@ -53,8 +53,8 @@ export default function BioGeneratorPage() {
     <>
       <PageHeader
         eyebrow="Tools"
-        title="AI Bio Generator"
-        subtitle="Generates a third-person player narrative for coaches from your profile data."
+        title="Bio Draft Builder"
+        subtitle="Builds a third-person player narrative draft for coaches from your profile data."
         bgText="BIO"
       />
 
@@ -120,7 +120,7 @@ export default function BioGeneratorPage() {
               <Field label="Additional Scout Notes">
                 <textarea
                   className={`${inputCls} min-h-[80px] resize-y leading-relaxed`}
-                  placeholder="Any extra context for the AI to include..."
+                  placeholder="Any extra context to include..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 />
@@ -144,7 +144,7 @@ export default function BioGeneratorPage() {
                 Profile Data Preview
               </h2>
               <p className="text-[11px] text-slate">
-                What the AI will use
+                What the draft will use
               </p>
             </div>
             <div className="px-5 py-4">

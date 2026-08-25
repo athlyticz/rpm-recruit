@@ -7,7 +7,7 @@ export const PLANS = {
     features: [
       "Complete player profile & evaluation",
       "College match engine (D1/D2/D3)",
-      "AI bio generator",
+      "Bio draft builder",
       "Letter builder with unlimited drafts",
       "Cost tracker & comparison tools",
       "Recruiting checklist & interview prep",

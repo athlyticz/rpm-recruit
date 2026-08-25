@@ -57,7 +57,7 @@ export default function LetterBuilderPage() {
       <PageHeader
         eyebrow="Recruiting"
         title="Letter Builder"
-        subtitle="AI-generated recruiting letters. Scanzano Baseball references pre-filled."
+        subtitle="Recruiting letter drafts from templates. Scanzano Baseball references pre-filled."
         bgText="LETTER"
       />
 

@@ -1,21 +1,6 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const APP_ROUTES = [
-  "/dashboard",
-  "/profile",
-  "/athletic",
-  "/academics",
-  "/scores",
-  "/college-match",
-  "/letter-builder",
-  "/bio-generator",
-  "/cost-tracker",
-  "/checklist",
-  "/pitch-log",
-  "/settings",
-];
-
 export async function middleware(request: NextRequest) {
   return updateSession(request);
 }

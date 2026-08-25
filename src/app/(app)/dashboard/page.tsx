@@ -51,7 +51,7 @@ const CHECKLIST = [
   { title: "Enter Position Scores", sub: "Rate your skills 1-10 to generate overall score" },
   { title: "Set Academic Info", sub: "GPA, SAT/ACT, intended majors" },
   { title: "Run College Match Engine", sub: "Find programs aligned to your profile" },
-  { title: "Generate AI Bio", sub: "Create your player narrative for coaches" },
+  { title: "Build Bio Draft", sub: "Create your player narrative for coaches" },
   { title: "Send 5 Letters", sub: "Use the letter builder to contact programs" },
 ];
 

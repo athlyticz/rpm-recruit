@@ -49,7 +49,7 @@ export function MarketingFooter() {
             </h4>
             <ul className="space-y-2 text-sm text-slate">
               <li>College Match Engine</li>
-              <li>AI Bio Generator</li>
+              <li>Bio Draft Builder</li>
               <li>Letter Builder</li>
               <li>Scouting Evaluations</li>
             </ul>

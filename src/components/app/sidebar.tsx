@@ -27,7 +27,7 @@ const NAV_SECTIONS = [
   {
     label: "Tools",
     items: [
-      { href: "/bio-generator", label: "AI Bio Generator" },
+      { href: "/bio-generator", label: "Bio Draft Builder" },
       { href: "/pitch-log", label: "Pitching Log" },
     ],
   },

@@ -112,12 +112,12 @@ export default function HomePage() {
             description="Score and rank D1, D2, and D3 programs based on your athletic profile, academics, and campus preferences."
           />
           <FeatureCard
-            title="AI Bio Generator"
-            description="Generate professional third-person scouting narratives tailored for college coaching staffs."
+            title="Bio Draft Builder"
+            description="Build professional third-person scouting narrative drafts tailored for college coaching staffs."
           />
           <FeatureCard
             title="Letter Builder"
-            description="Draft personalized recruiting letters to coaches with AI assistance, referencing your real evaluation data."
+            description="Draft personalized recruiting letters to coaches from proven templates, referencing your real evaluation data."
           />
           <FeatureCard
             title="Position Evaluations"
