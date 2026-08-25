@@ -95,15 +95,25 @@ Two schools that looked like candidates and are not: Cairn University (Langhorne
 NCAA Division III in the United East Conference, not NAIA. The Penn-Jersey Athletic
 Association is a high school conference, not an NAIA college conference.
 
-**Decision needed:** either accept that the NAIA half of this seed is two Pittsburgh schools,
-or widen the NAIA footprint beyond NJ/PA/DE to somewhere the level is actually represented
-(NAIA has real density in the Midwest and South). Leaving `naia` in the enum with two distant
-rows behind it means the UI will show a level that is functionally empty for these players.
+**Decided 2026-08-25: seed Point Park and Carlow only. Do not widen the footprint.**
+
+The level is not padded and not hidden. Per the CLAUDE.md Match Engine Direction rule on thin
+regional coverage, the UI states plainly that most NAIA baseball is played in the Midwest and
+South and that national coverage arrives with the full dataset. Full NAIA membership moves to
+the national dataset pipeline in ROADMAP.md Later.
+
+Both rows still need their `BASEBALL?` flag resolved before seeding. Point Park has NAIA World
+Series history; Carlow's baseball sponsorship is unconfirmed. If Carlow does not field
+baseball, drop the row rather than carry a program that does not exist.
 
 ## What I could not verify
 
 - Which Region 19 members currently sponsor baseball. Region19.org and TheBaseballCube both
   returned HTTP 403, so the roster below is conference membership, not a baseball roster.
+  njcaa.org was tried directly on 2026-08-25 (member directory, D-III baseball hub, D-III
+  rankings, and the baseball teams page) to shrink the BASEBALL? flag count. It is entirely
+  client-rendered and returns an empty shell to a plain fetch, so no sponsorship data could be
+  pulled. Resolving these flags needs a browser session or a call to the Region 19 office.
 - Per-school NJCAA division for baseball. The Wikipedia NJCAA Division III list is visibly
   stale, still using "Gloucester County College" and "Middlesex County College", so it was not
   trustworthy enough to assign divisions from.

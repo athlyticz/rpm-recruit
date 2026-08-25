@@ -66,4 +66,7 @@ Nothing below this line can meet the "type-check and lint passing" bar until the
   approximation and its out-of-state UI disclosure.
 - PBR / Perfect Game event data import.
 - Native mobile packaging (Expo or capacitor decision after PWA traction).
-- Full national college dataset pipeline with maintenance cadence (roster-cap opt-in status changes yearly).
+- Full national college dataset pipeline with maintenance cadence (roster-cap opt-in status
+  changes yearly). Includes full NAIA membership: the launch seed carries only the two NAIA
+  programs in the NJ/PA/DE footprint, both in Pittsburgh, so national coverage is what makes
+  the level genuinely usable.

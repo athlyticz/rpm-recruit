@@ -126,6 +126,12 @@ Replace the legacy if/else heuristic with a transparent weighted scoring model a
 - v1 cost scoring uses `net_price_avg`, the average price after aid. When a school is
   public and the player is out-of-state, the UI must disclose that the figure may
   understate their actual cost. Home-state-aware cost scoring is a later phase.
+- Levels with thin regional coverage get an explicit honest UI treatment, never padding.
+  Do not pad a level's results to make it look populated, and do not hide the level. Say
+  plainly what the data shows. NAIA in the Northeast is the canonical case: the copy notes
+  that most NAIA baseball is played in the Midwest and South, and that national coverage
+  arrives with the full dataset. A level being sparse near a player is information they
+  need, not a gap to paper over.
 
 ## Legacy Prototype
 
