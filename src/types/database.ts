@@ -34,6 +34,129 @@ export type Database = {
   }
   public: {
     Tables: {
+      colleges: {
+        Row: {
+          acceptance_rate: number | null
+          act_25: number | null
+          act_75: number | null
+          athletics_url: string | null
+          campus_setting: string | null
+          city: string | null
+          college_board_slug: string | null
+          conference: string | null
+          cost_of_attendance: number | null
+          created_at: string
+          data_source: string
+          division: Database["public"]["Enums"]["college_division"]
+          division_detail: string | null
+          enrollment: number | null
+          gpa_avg: number | null
+          id: string
+          ipeds_unitid: number | null
+          is_active: boolean
+          is_public: boolean | null
+          latitude: number | null
+          longitude: number | null
+          majors: string[]
+          name: string
+          net_price_avg: number | null
+          program_notes: string | null
+          region: string | null
+          roster_cap: number | null
+          roster_cap_optin: boolean | null
+          sat_25: number | null
+          sat_75: number | null
+          short_name: string | null
+          slug: string
+          source_updated_at: string | null
+          state: string
+          tuition_in_state: number | null
+          tuition_out_of_state: number | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          acceptance_rate?: number | null
+          act_25?: number | null
+          act_75?: number | null
+          athletics_url?: string | null
+          campus_setting?: string | null
+          city?: string | null
+          college_board_slug?: string | null
+          conference?: string | null
+          cost_of_attendance?: number | null
+          created_at?: string
+          data_source?: string
+          division: Database["public"]["Enums"]["college_division"]
+          division_detail?: string | null
+          enrollment?: number | null
+          gpa_avg?: number | null
+          id?: string
+          ipeds_unitid?: number | null
+          is_active?: boolean
+          is_public?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          majors?: string[]
+          name: string
+          net_price_avg?: number | null
+          program_notes?: string | null
+          region?: string | null
+          roster_cap?: number | null
+          roster_cap_optin?: boolean | null
+          sat_25?: number | null
+          sat_75?: number | null
+          short_name?: string | null
+          slug: string
+          source_updated_at?: string | null
+          state: string
+          tuition_in_state?: number | null
+          tuition_out_of_state?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          acceptance_rate?: number | null
+          act_25?: number | null
+          act_75?: number | null
+          athletics_url?: string | null
+          campus_setting?: string | null
+          city?: string | null
+          college_board_slug?: string | null
+          conference?: string | null
+          cost_of_attendance?: number | null
+          created_at?: string
+          data_source?: string
+          division?: Database["public"]["Enums"]["college_division"]
+          division_detail?: string | null
+          enrollment?: number | null
+          gpa_avg?: number | null
+          id?: string
+          ipeds_unitid?: number | null
+          is_active?: boolean
+          is_public?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          majors?: string[]
+          name?: string
+          net_price_avg?: number | null
+          program_notes?: string | null
+          region?: string | null
+          roster_cap?: number | null
+          roster_cap_optin?: boolean | null
+          sat_25?: number | null
+          sat_75?: number | null
+          short_name?: string | null
+          slug?: string
+          source_updated_at?: string | null
+          state?: string
+          tuition_in_state?: number | null
+          tuition_out_of_state?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           act_score: number | null
@@ -158,7 +281,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      college_division: "d1" | "d2" | "d3" | "naia" | "njcaa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -288,7 +411,9 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      college_division: ["d1", "d2", "d3", "naia", "njcaa"],
+    },
   },
 } as const
 

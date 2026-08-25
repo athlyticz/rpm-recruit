@@ -18,8 +18,13 @@ Nothing below this line can meet the "type-check and lint passing" bar until the
 ## Phase 1: Real data layer (make the app remember)
 
 - [ ] Migration 00002: `colleges` table per CLAUDE.md Data Model Direction. Include `division` enum covering D1, D2, D3, NAIA, NJCAA.
-- [ ] Migration 00003: `metrics`, `evaluations`, `matches`, `outreach_log`, `checklist_items`, `pitch_sessions` with RLS.
+- [ ] Migration 00003: grant table privileges on `profiles` and `players`. Migration 00001 created
+  them with RLS policies but no grants, so PostgREST denies every caller regardless of policy.
+- [ ] Migration 00004: `metrics`, `evaluations`, `matches`, `outreach_log`, `checklist_items`, `pitch_sessions` with RLS and grants.
 - [ ] Seed script: load the 31 legacy schools as a starter set, tagged `data_source = 'legacy_seed'`, then extend with NJCAA Region 19 and NAIA programs relevant to the NJ/PA/DE launch market.
+- [ ] College Scorecard enrichment script (separate from the seed): backfill numeric academics
+  and cost fields keyed on `ipeds_unitid`. The 31 legacy rows carry no unitid, so this needs a
+  name-plus-state matching step with manual review of ambiguous matches before it can key on them.
 - [ ] Wire `/profile`, `/athletic`, `/academics` to Supabase (server actions, optimistic UI). Player edits persist.
 - [ ] Wire `/scores` and `/pitch-log` to `metrics` and `pitch_sessions` with verification_status surfaced in the UI.
 - [ ] Wire `/checklist` to `checklist_items`, seeded by grad year from a playbook template table.
@@ -56,6 +61,9 @@ Nothing below this line can meet the "type-check and lint passing" bar until the
 ## Later / parked
 
 - Bayesian match engine v2 (hierarchical model, uncertainty intervals).
+- Home-state-aware cost scoring: score public schools against `tuition_in_state` vs
+  `tuition_out_of_state` based on the player's home state, replacing the v1 `net_price_avg`
+  approximation and its out-of-state UI disclosure.
 - PBR / Perfect Game event data import.
 - Native mobile packaging (Expo or capacitor decision after PWA traction).
 - Full national college dataset pipeline with maintenance cadence (roster-cap opt-in status changes yearly).

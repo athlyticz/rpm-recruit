@@ -110,6 +110,12 @@ Current schema has `profiles` and `players` only. Target schema (build via new m
 
 All tables get RLS. Players own their rows; scout/org roles get scoped read policies.
 
+Numeric academics and cost fields (SAT/ACT bands, GPA, acceptance rate, cost of
+attendance, net price, tuition) are sourced from the College Scorecard API, keyed on
+`ipeds_unitid`. The 31 legacy prototype rows are parsed into numerics once and tagged
+`data_source = 'legacy_seed'`. Prefer nulls over invented values: a missing band is a
+null the UI can disclose, not a guess the match engine will silently score against.
+
 ## Match Engine Direction
 
 Replace the legacy if/else heuristic with a transparent weighted scoring model as v1 (athletic projection vs division benchmarks, academic fit vs school bands, major overlap, geography, cost), with headroom for a Bayesian model as v2. Rules:
@@ -117,6 +123,9 @@ Replace the legacy if/else heuristic with a transparent weighted scoring model a
 - Never floor scores to guarantee matches. A bad fit scores badly.
 - Output includes the "why": each component's contribution, so the UI can explain the number.
 - Always return results across all five levels, sorted by fit, with the honest division recommendation.
+- v1 cost scoring uses `net_price_avg`, the average price after aid. When a school is
+  public and the player is out-of-state, the UI must disclose that the figure may
+  understate their actual cost. Home-state-aware cost scoring is a later phase.
 
 ## Legacy Prototype
 
