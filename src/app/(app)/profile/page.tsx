@@ -37,7 +37,7 @@ function Label({ children }: { children: React.ReactNode }) {
 }
 
 const inputCls =
-  "w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold focus:shadow-[0_0_0_3px_rgba(184,151,90,0.12)] transition-colors";
+  "min-h-touch w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold focus:shadow-[0_0_0_3px_rgba(184,151,90,0.12)] transition-colors";
 
 const selectCls = `${inputCls} cursor-pointer`;
 

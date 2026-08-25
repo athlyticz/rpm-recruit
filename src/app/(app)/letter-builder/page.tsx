@@ -14,7 +14,7 @@ function Label({ children }: { children: React.ReactNode }) {
 }
 
 const inputCls =
-  "w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold transition-colors";
+  "min-h-touch w-full border-[1.5px] border-bone-3 px-3 py-2 text-sm text-ink bg-white outline-none focus:border-gold transition-colors";
 const selectCls = `${inputCls} cursor-pointer`;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {

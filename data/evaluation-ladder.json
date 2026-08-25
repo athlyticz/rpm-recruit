@@ -1,0 +1,834 @@
+{
+  "metricTypes": [
+    {
+      "key": "height",
+      "label": "Height",
+      "unit": "inches",
+      "lower_is_better": false,
+      "category": "physical",
+      "sort_order": 1
+    },
+    {
+      "key": "weight",
+      "label": "Weight",
+      "unit": "lbs",
+      "lower_is_better": false,
+      "category": "physical",
+      "sort_order": 2
+    },
+    {
+      "key": "body_fat",
+      "label": "Body Fat",
+      "unit": "percent",
+      "lower_is_better": true,
+      "category": "physical",
+      "sort_order": 3
+    },
+    {
+      "key": "hand_strength_r",
+      "label": "Hand Strength R",
+      "unit": "lbs",
+      "lower_is_better": false,
+      "category": "physical",
+      "sort_order": 4
+    },
+    {
+      "key": "hand_strength_l",
+      "label": "Hand Strength L",
+      "unit": "lbs",
+      "lower_is_better": false,
+      "category": "physical",
+      "sort_order": 5
+    },
+    {
+      "key": "sixty_yard_dash",
+      "label": "60-Yard Dash",
+      "unit": "seconds",
+      "lower_is_better": true,
+      "category": "speed",
+      "sort_order": 10
+    },
+    {
+      "key": "thirty_yard_dash",
+      "label": "30-Yard Dash",
+      "unit": "seconds",
+      "lower_is_better": true,
+      "category": "speed",
+      "sort_order": 11
+    },
+    {
+      "key": "pro_agility",
+      "label": "Pro Agility",
+      "unit": "seconds",
+      "lower_is_better": true,
+      "category": "speed",
+      "sort_order": 12
+    },
+    {
+      "key": "bat_speed",
+      "label": "Bat Speed",
+      "unit": "mph",
+      "lower_is_better": false,
+      "category": "power",
+      "sort_order": 20
+    },
+    {
+      "key": "vertical_leap",
+      "label": "Vertical Leap",
+      "unit": "inches",
+      "lower_is_better": false,
+      "category": "power",
+      "sort_order": 21
+    },
+    {
+      "key": "standing_long_jump",
+      "label": "Standing Long Jump",
+      "unit": "inches",
+      "lower_is_better": false,
+      "category": "power",
+      "sort_order": 22
+    },
+    {
+      "key": "medicine_ball_throw",
+      "label": "Medicine Ball Throw",
+      "unit": "feet",
+      "lower_is_better": false,
+      "category": "power",
+      "sort_order": 23
+    },
+    {
+      "key": "fastball_velocity",
+      "label": "Fastball Velocity",
+      "unit": "mph",
+      "lower_is_better": false,
+      "category": "pitching",
+      "sort_order": 30
+    },
+    {
+      "key": "pop_time",
+      "label": "Pop Time",
+      "unit": "seconds",
+      "lower_is_better": true,
+      "category": "catching",
+      "sort_order": 40
+    }
+  ],
+  "skills": [
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "label": "Fastball Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 0,
+      "scale_metric_type": "fastball_velocity"
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_command",
+      "label": "Fastball Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "changeup_command",
+      "label": "Changeup Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "changeup_velocity",
+      "label": "Changeup Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "breaking_ball_command",
+      "label": "Breaking Ball Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "breaking_ball_velocity",
+      "label": "Breaking Ball Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "strikes_walks",
+      "label": "Strikes/Walks",
+      "group_heading": "Command & Other",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "pfp_fielding",
+      "label": "PFP/Fielding",
+      "group_heading": "Command & Other",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "label": "Fastball Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 0,
+      "scale_metric_type": "fastball_velocity"
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_command",
+      "label": "Fastball Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "changeup_command",
+      "label": "Changeup Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "changeup_velocity",
+      "label": "Changeup Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "breaking_ball_command",
+      "label": "Breaking Ball Command",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "breaking_ball_velocity",
+      "label": "Breaking Ball Velocity",
+      "group_heading": "Velocity & Stuff",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "strikes_walks",
+      "label": "Strikes/Walks",
+      "group_heading": "Command & Other",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "pfp_fielding",
+      "label": "PFP/Fielding",
+      "group_heading": "Command & Other",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "swing_quality_approach",
+      "label": "Swing Quality/Approach",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "speed_base_running",
+      "label": "Speed/Base Running",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "blocking",
+      "label": "Blocking",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "receiving",
+      "label": "Receiving",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "label": "Pop Time",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": "pop_time"
+    },
+    {
+      "position": "catcher",
+      "skill_key": "arm_accuracy",
+      "label": "Arm/Accuracy",
+      "group_heading": "Defense",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "swing_quality",
+      "label": "Swing Quality",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "speed",
+      "label": "Speed",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "throwing",
+      "label": "Throwing",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "stretching_footwork",
+      "label": "Stretching/Footwork",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "picking_scooping",
+      "label": "Picking/Scooping",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "first-baseman",
+      "skill_key": "fielding",
+      "label": "Fielding",
+      "group_heading": "Defense",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "swing_quality",
+      "label": "Swing Quality",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "speed",
+      "label": "Speed",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "throwing",
+      "label": "Throwing",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "arm_strength",
+      "label": "Arm Strength",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "charging_fielding",
+      "label": "Charging/Fielding",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "second-baseman",
+      "skill_key": "pivot_range",
+      "label": "Pivot/Range",
+      "group_heading": "Defense",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "swing_quality",
+      "label": "Swing Quality",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "speed",
+      "label": "Speed",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "throwing",
+      "label": "Throwing",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "arm_strength",
+      "label": "Arm Strength",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "charging_fielding",
+      "label": "Charging/Fielding",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "shortstop",
+      "skill_key": "pivot_range",
+      "label": "Pivot/Range",
+      "group_heading": "Defense",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "swing_quality",
+      "label": "Swing Quality",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "speed",
+      "label": "Speed",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "throwing",
+      "label": "Throwing",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "arm_strength",
+      "label": "Arm Strength",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "charging_fielding",
+      "label": "Charging/Fielding",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": null
+    },
+    {
+      "position": "third-baseman",
+      "skill_key": "pivot_range",
+      "label": "Pivot/Range",
+      "group_heading": "Defense",
+      "sort_order": 7,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "hitting",
+      "label": "Hitting",
+      "group_heading": "Offense",
+      "sort_order": 0,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "power",
+      "label": "Power",
+      "group_heading": "Offense",
+      "sort_order": 1,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "swing_quality",
+      "label": "Swing Quality",
+      "group_heading": "Offense",
+      "sort_order": 2,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "speed",
+      "label": "Speed",
+      "group_heading": "Offense",
+      "sort_order": 3,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "throwing",
+      "label": "Throwing",
+      "group_heading": "Defense",
+      "sort_order": 4,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "arm_strength",
+      "label": "Arm Strength",
+      "group_heading": "Defense",
+      "sort_order": 5,
+      "scale_metric_type": null
+    },
+    {
+      "position": "outfielder",
+      "skill_key": "tracking_routes",
+      "label": "Tracking/Routes",
+      "group_heading": "Defense",
+      "sort_order": 6,
+      "scale_metric_type": null
+    }
+  ],
+  "bands": [
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 1,
+      "min_value": null,
+      "max_value": 64
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 1,
+      "min_value": null,
+      "max_value": 64
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 2,
+      "min_value": 65,
+      "max_value": 69
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 2,
+      "min_value": 65,
+      "max_value": 69
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 3,
+      "min_value": 70,
+      "max_value": 72
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 3,
+      "min_value": 70,
+      "max_value": 72
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 4,
+      "min_value": 73,
+      "max_value": 74
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 4,
+      "min_value": 73,
+      "max_value": 74
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 5,
+      "min_value": 75,
+      "max_value": 77
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 5,
+      "min_value": 75,
+      "max_value": 77
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 6,
+      "min_value": 78,
+      "max_value": 80
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 6,
+      "min_value": 78,
+      "max_value": 80
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 7,
+      "min_value": 81,
+      "max_value": 83
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 7,
+      "min_value": 81,
+      "max_value": 83
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 8,
+      "min_value": 84,
+      "max_value": 85
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 8,
+      "min_value": 84,
+      "max_value": 85
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 9,
+      "min_value": 86,
+      "max_value": 87
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 9,
+      "min_value": 86,
+      "max_value": 87
+    },
+    {
+      "position": "pitcher-rhp",
+      "skill_key": "fastball_velocity",
+      "score": 10,
+      "min_value": 88,
+      "max_value": null
+    },
+    {
+      "position": "pitcher-lhp",
+      "skill_key": "fastball_velocity",
+      "score": 10,
+      "min_value": 88,
+      "max_value": null
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 1,
+      "min_value": 2.7,
+      "max_value": 2.79
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 2,
+      "min_value": 2.6,
+      "max_value": 2.69
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 3,
+      "min_value": 2.5,
+      "max_value": 2.59
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 4,
+      "min_value": 2.4,
+      "max_value": 2.49
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 5,
+      "min_value": 2.3,
+      "max_value": 2.39
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 6,
+      "min_value": 2.2,
+      "max_value": 2.29
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 7,
+      "min_value": 2.1,
+      "max_value": 2.19
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 8,
+      "min_value": 2.01,
+      "max_value": 2.1
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 9,
+      "min_value": 1.91,
+      "max_value": 2
+    },
+    {
+      "position": "catcher",
+      "skill_key": "pop_time",
+      "score": 10,
+      "min_value": null,
+      "max_value": 1.9
+    }
+  ]
+}
