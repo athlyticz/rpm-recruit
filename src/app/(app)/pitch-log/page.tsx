@@ -101,9 +101,9 @@ export default function PitchLogPage() {
   }
 
   const numCls =
-    "font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-full focus:border-gold";
+    "min-h-touch font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-full focus:border-gold";
   const cellCls =
-    "font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-full focus:border-gold";
+    "min-h-touch font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-full focus:border-gold";
 
   const TOTAL_FIELDS: { label: string; key: keyof PitchTotals }[] = [
     { label: "Total Pitches", key: "totalPitches" },

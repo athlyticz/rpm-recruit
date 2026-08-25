@@ -99,19 +99,19 @@ export function ScoreBoard({
       <section className="bg-ink border border-ink-2 rounded-lg flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-5 py-6">
         <Tachometer score={overall} size="lg" precision={1} className="shrink-0" />
         <div className="text-center sm:text-left min-w-0">
-          <p className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-1">
+          <p className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-1">
             Showcase Rating
           </p>
-          <p className="font-display text-[26px] sm:text-[30px] font-bold text-bone leading-tight">
+          <p className="font-display text-display sm:text-display-lg font-bold text-bone leading-tight">
             {overall === null ? "Not yet rated" : overall.toFixed(1)}
           </p>
-          <p className="text-[12.5px] text-slate-2 mt-1.5 leading-relaxed max-w-[44ch] text-pretty">
+          <p className="text-caption text-slate-2 mt-1.5 leading-relaxed max-w-[44ch] text-pretty">
             {entered === 0
               ? "Rate each skill 1 to 10. Your rating is the mean of every skill you have rated, and it saves as you go."
               : `Mean of ${entered} rated skill${entered === 1 ? "" : "s"}. Saves automatically.`}
           </p>
           {!canSave && (
-            <p className="text-[12px] text-gold mt-2 leading-relaxed">
+            <p className="text-caption text-gold mt-2 leading-relaxed">
               Create your player profile first and these ratings will save.
             </p>
           )}
@@ -121,7 +121,7 @@ export function ScoreBoard({
       <div className="flex flex-col sm:flex-row sm:items-center gap-2">
         <label
           htmlFor="position"
-          className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4"
+          className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4"
         >
           Position
         </label>
@@ -142,7 +142,7 @@ export function ScoreBoard({
       {error && (
         <p
           role="alert"
-          className="flex items-start gap-2 text-[12.5px] text-blood-2 bg-blood/[0.07] border border-blood/25 rounded-sm px-3 py-2.5"
+          className="flex items-start gap-2 text-caption text-blood-2 bg-blood/[0.07] border border-blood/25 rounded-sm px-3 py-2.5"
         >
           <TriangleAlert size={15} className="shrink-0 mt-0.5" aria-hidden />
           {error}
@@ -154,7 +154,7 @@ export function ScoreBoard({
           key={heading}
           className="bg-white border border-black/[0.07] rounded-md shadow-sm overflow-hidden"
         >
-          <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4 px-4 pt-3.5 pb-2 border-b border-black/[0.06]">
+          <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 px-4 pt-3.5 pb-2 border-b border-black/[0.06]">
             {heading}
           </h2>
 
@@ -166,7 +166,7 @@ export function ScoreBoard({
               return (
                 <div key={skill.id} className="py-2 border-b border-black/[0.04] last:border-0">
                   <div className="flex items-baseline justify-between gap-2 mb-1.5">
-                    <span className="text-[13px] font-medium text-ink-4 leading-tight">
+                    <span className="text-body font-medium text-ink-4 leading-tight">
                       {skill.label}
                     </span>
                     <span className="flex items-center gap-1.5 shrink-0">
@@ -176,7 +176,7 @@ export function ScoreBoard({
                       {!saving && value > 0 && canSave && (
                         <Check size={12} className="text-green-2" aria-hidden />
                       )}
-                      <span className="font-mono text-[12px] font-bold text-ink tabular-nums w-4 text-right">
+                      <span className="font-mono text-caption font-bold text-ink tabular-nums w-4 text-right">
                         {value > 0 ? value : "—"}
                       </span>
                     </span>
@@ -193,7 +193,7 @@ export function ScoreBoard({
                           aria-label={`${skill.label}: ${n}`}
                           aria-pressed={peak}
                           onClick={() => setRating(skill, n)}
-                          className={`flex-1 min-w-0 h-11 sm:h-8 rounded-xs border text-[10px] font-mono transition-all dur-fast ${
+                          className={`flex-1 min-w-0 h-11 sm:h-8 rounded-xs border text-label font-mono transition-all dur-fast ${
                             on
                               ? n >= 9
                                 ? "bg-redline border-redline text-white"
@@ -217,15 +217,15 @@ export function ScoreBoard({
 
       {scaled.length > 0 && (
         <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
-          <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4 mb-1">
+          <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 mb-1">
             Measured scale
           </h2>
-          <p className="text-[12px] text-ink-5 leading-relaxed mb-3 text-pretty">
+          <p className="text-caption text-ink-5 leading-relaxed mb-3 text-pretty">
             These skills have a measurable behind them, so the rating is not a matter of opinion.
           </p>
           {scaled.map((skill) => (
             <div key={skill.id} className="mb-3 last:mb-0">
-              <p className="font-condensed text-[11px] font-bold tracking-[0.14em] uppercase text-ink mb-1.5">
+              <p className="font-condensed text-meta font-bold tracking-[0.14em] uppercase text-ink mb-1.5">
                 {skill.label}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-1">
@@ -234,10 +234,10 @@ export function ScoreBoard({
                   .sort((a, b) => a.score - b.score)
                   .map((band) => (
                     <div key={band.score} className="border border-bone-3 rounded-xs px-2 py-1.5 text-center">
-                      <div className="font-mono text-[13px] font-bold text-ink tabular-nums">
+                      <div className="font-mono text-body font-bold text-ink tabular-nums">
                         {band.score}
                       </div>
-                      <div className="text-[10px] text-slate leading-tight">
+                      <div className="text-label text-slate leading-tight">
                         {bandText(band, skill.unit)}
                       </div>
                     </div>

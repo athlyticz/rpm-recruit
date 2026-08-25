@@ -109,7 +109,7 @@ function StatTable({ columns }: { columns: string[] }) {
               <td key={col} className="px-0.5 py-1">
                 <input
                   type="text"
-                  className="font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-14 focus:border-gold"
+                  className="min-h-touch font-mono text-xs font-medium text-ink bg-white border-none border-b-[1.5px] border-bone-3 px-1 py-0.5 outline-none w-14 focus:border-gold"
                 />
               </td>
             ))}

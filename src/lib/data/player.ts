@@ -1,6 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
+/**
+ * Every load either succeeds or fails, and the caller can tell which.
+ *
+ * Returning [] on error is what makes a broken query look identical to an
+ * empty table on screen, which is exactly the ambiguity this product exists
+ * to eliminate. Callers must handle `error` explicitly.
+ */
+export type Loaded<T> = { data: T; error: null } | { data: null; error: string };
+
+function ok<T>(data: T): Loaded<T> {
+  return { data, error: null };
+}
+
+function failed<T>(message: string): Loaded<T> {
+  return { data: null, error: message };
+}
+
 export type Player = Database["public"]["Tables"]["players"]["Row"];
 export type College = Database["public"]["Tables"]["colleges"]["Row"];
 
@@ -46,8 +63,10 @@ export async function getProfileName(): Promise<string> {
 }
 
 /** Every active program, ordered so the list is stable between renders. */
-export async function getColleges(): Promise<College[]> {
-  if (!supabaseConfigured()) return [];
+export async function getColleges(): Promise<Loaded<College[]>> {
+  if (!supabaseConfigured()) {
+    return failed("The program database is not configured in this environment.");
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -58,9 +77,9 @@ export async function getColleges(): Promise<College[]> {
 
   if (error) {
     console.error("getColleges:", error.message);
-    return [];
+    return failed(error.message);
   }
-  return data ?? [];
+  return ok(data ?? []);
 }
 
 export type Metric = Database["public"]["Tables"]["metrics"]["Row"];

@@ -59,11 +59,21 @@ const CX = 100;
 const CY = 100;
 const RADIUS = 78;
 
-const COLOR_GOLD = "#B8975A";
-const COLOR_OXBLOOD = "#7A1E1E";
-const COLOR_BRIGHT_RED = "#CC2222";
-const COLOR_ARC_BG = "#303030";
-const COLOR_BG = "#1A1A1A";
+/**
+ * The gauge is the brand's signature component, so it reads the same tokens as
+ * everything else. A client theme swap therefore reaches it, which it did not
+ * when these were hardcoded hex literals.
+ */
+const COLOR_GOLD = "var(--color-gold)";
+const COLOR_OXBLOOD = "var(--color-blood)";
+const COLOR_BRIGHT_RED = "var(--color-redline)";
+const COLOR_ARC_BG = "var(--color-ink-3)";
+const COLOR_BG = "var(--color-ink)";
+const COLOR_TICK = "var(--color-ink-5)";
+const COLOR_READOUT = "var(--color-bone-2)";
+const COLOR_DORMANT = "var(--color-ink-4)";
+const COLOR_DORMANT_LABEL = "var(--color-slate)";
+const FONT_DISPLAY = "var(--font-display)";
 
 const ANIMATION_DURATION_MS = 1200;
 
@@ -212,11 +222,15 @@ export function Tachometer({
 
   /* ---- label font sizing ---- */
   const scoreFontSize = isSmall ? 28 : 36;
-  const labelFontSize = isSmall ? 7 : 9;
+  const labelFontSize = isSmall ? 7 : 8;
+  // The readout sits slightly above centre so its optical mass is centred once
+  // the label below is accounted for.
+  const scoreY = CY - 4;
+  const labelY = CY + 22;
 
   const label = labelOverride ?? (hasScore ? LEVEL_LABELS[clampedScore] ?? "" : "Not yet rated");
   const readout = hasScore ? exactScore.toFixed(precision) : emptyText;
-  const needleColor = hasScore ? COLOR_GOLD : "#4A4A4A";
+  const needleColor = hasScore ? COLOR_GOLD : COLOR_DORMANT;
 
   return (
     <div
@@ -268,7 +282,7 @@ export function Tachometer({
             y1={t.y1}
             x2={t.x2}
             y2={t.y2}
-            stroke="#555"
+            stroke={COLOR_TICK}
             strokeWidth={1.2}
           />
         ))}
@@ -290,12 +304,12 @@ export function Tachometer({
         {/* Score text (center) */}
         <text
           x={CX}
-          y={CY + 2}
+          y={scoreY}
           textAnchor="middle"
           dominantBaseline="central"
-          fill="#EDEDED"
+          fill={COLOR_READOUT}
           fontSize={scoreFontSize}
-          fontFamily="'Cormorant Garamond', serif"
+          fontFamily={FONT_DISPLAY}
           fontWeight={700}
         >
           {readout}
@@ -305,14 +319,21 @@ export function Tachometer({
         {showLabel && !isSmall && (
           <text
             x={CX}
-            y={CY + 24}
+            y={labelY}
             textAnchor="middle"
             dominantBaseline="central"
-            fill={hasScore ? zoneColor(clampedScore) : "#666666"}
+            fill={
+              !hasScore
+                ? COLOR_DORMANT_LABEL
+                : labelOverride
+                  ? COLOR_GOLD
+                  : zoneColor(clampedScore)
+            }
             fontSize={labelFontSize}
-            fontFamily="'Cormorant Garamond', serif"
+            fontFamily={FONT_DISPLAY}
             fontWeight={600}
-            opacity={0.9}
+            letterSpacing={0.4}
+            opacity={0.92}
           >
             {label}
           </text>

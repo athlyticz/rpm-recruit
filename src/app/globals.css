@@ -39,6 +39,44 @@
   --font-condensed: "Barlow Condensed", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
+  /* ── Type scale ──
+     Named by role rather than by t-shirt size, so call sites read as intent
+     and the scale cannot silently collide with core Tailwind's text-sm/base.
+     Every size on the flagship and the dashboard comes from this list; there
+     are no arbitrary pixel values in those screens. */
+  --text-micro: 0.5625rem;      /* 9px  - tick labels, densest chrome */
+  --text-micro--line-height: 1.1;
+  --text-label: 0.625rem;       /* 10px - condensed uppercase eyebrows */
+  --text-label--line-height: 1.2;
+  --text-meta: 0.6875rem;       /* 11px - counts, units, timestamps */
+  --text-meta--line-height: 1.35;
+  --text-caption: 0.75rem;      /* 12px - secondary prose */
+  --text-caption--line-height: 1.5;
+  --text-body: 0.8125rem;       /* 13px - default reading size */
+  --text-body--line-height: 1.55;
+  --text-body-lg: 0.875rem;     /* 14px - emphasised body */
+  --text-body-lg--line-height: 1.5;
+  --text-title-sm: 1.0625rem;   /* 17px - card titles */
+  --text-title-sm--line-height: 1.25;
+  --text-title: 1.1875rem;      /* 19px - section titles */
+  --text-title--line-height: 1.22;
+  --text-title-lg: 1.3125rem;   /* 21px - prominent card titles */
+  --text-title-lg--line-height: 1.2;
+  --text-display-sm: 1.5rem;    /* 24px */
+  --text-display-sm--line-height: 1.15;
+  --text-display: 1.625rem;     /* 26px */
+  --text-display--line-height: 1.12;
+  --text-display-lg: 1.875rem;  /* 30px */
+  --text-display-lg--line-height: 1.1;
+  --text-display-xl: 2.125rem;  /* 34px - the headline fit number */
+  --text-display-xl--line-height: 1;
+  --text-numeral: 3.125rem;     /* 50px - the one hero figure per screen */
+  --text-numeral--line-height: 1;
+  --text-ghost: 3.5rem;         /* 56px - watermark type, phone */
+  --text-ghost--line-height: 1;
+  --text-ghost-lg: 5.5rem;      /* 88px - watermark type, desktop */
+  --text-ghost-lg--line-height: 1;
+
   /* ── Spacing ──
      Named steps for layout chrome that must agree across components. The
      numeric scale still covers everything else. */
@@ -86,6 +124,7 @@
   --animate-needle-sweep: needle-sweep var(--duration-sweep) var(--ease-needle) both;
   --animate-rise: rise var(--duration-base) var(--ease-sweep) both;
   --animate-fade: fade var(--duration-base) var(--ease-settle) both;
+  --animate-shimmer: shimmer 1.6s var(--ease-settle) infinite;
 }
 
 @keyframes needle-sweep {
@@ -97,17 +136,29 @@
   }
 }
 
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Entrance motion is transform-only on purpose.
+   An entrance that animates opacity from 0 with fill-mode: both leaves the
+   element permanently invisible if the animation never runs, which is a
+   catastrophic failure mode for content the user came to read. Animating only
+   the transform means the worst case is an element sitting 8px low, still
+   fully legible. Motion may enhance the reveal; it may never gate it. */
 @keyframes rise {
   from {
-    opacity: 0;
     transform: translateY(0.5rem);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
 
+/* Reserved for overlays and scrims, where a stuck start state hides nothing
+   the user needs. Do not use it on primary content: see the note above. */
 @keyframes fade {
   from {
     opacity: 0;

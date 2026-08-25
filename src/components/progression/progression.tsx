@@ -54,12 +54,12 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
       <div className="flex items-baseline justify-between gap-3 mb-3">
-        <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4">
+        <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4">
           Profile Strength
         </h2>
-        <span className="font-display text-[26px] font-bold text-ink leading-none tabular-nums">
+        <span className="font-display text-display font-bold text-ink leading-none tabular-nums">
           {Math.round(swept)}
-          <span className="text-[13px] text-slate font-body font-normal">/100</span>
+          <span className="text-body text-slate font-body font-normal">/100</span>
         </span>
       </div>
 
@@ -73,9 +73,9 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
       <ul className="space-y-1.5">
         {strength.factors.map((factor) => (
           <li key={factor.label} className="flex items-baseline justify-between gap-3">
-            <span className="text-[12px] text-ink-5 shrink-0">{factor.label}</span>
+            <span className="text-caption text-ink-5 shrink-0">{factor.label}</span>
             <span className="flex-1 border-b border-dotted border-bone-3 translate-y-[-3px]" />
-            <span className="font-mono text-[11px] text-slate tabular-nums shrink-0">
+            <span className="font-mono text-meta text-slate tabular-nums shrink-0">
               {Math.round(factor.value * 100)}%
             </span>
           </li>
@@ -83,7 +83,7 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
       </ul>
 
       {strength.weakest && (
-        <p className="text-[12px] text-ink-5 leading-relaxed mt-3 pt-3 border-t border-black/[0.05] text-pretty">
+        <p className="text-caption text-ink-5 leading-relaxed mt-3 pt-3 border-t border-black/[0.05] text-pretty">
           Biggest gap: <strong className="text-ink">{strength.weakest.label}</strong>.{" "}
           {strength.weakest.detail}.
         </p>
@@ -102,10 +102,10 @@ export function VerificationLadder({ mix }: { mix: VerificationMix }) {
 
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
-      <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4 mb-1">
+      <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 mb-1">
         Credibility
       </h2>
-      <p className="text-[12px] text-ink-5 leading-relaxed mb-3 text-pretty">
+      <p className="text-caption text-ink-5 leading-relaxed mb-3 text-pretty">
         In recruiting, who confirmed the number matters as much as the number.
       </p>
 
@@ -136,17 +136,17 @@ export function VerificationLadder({ mix }: { mix: VerificationMix }) {
               <span className="flex-1 min-w-0">
                 <span className="flex items-baseline justify-between gap-2">
                   <span
-                    className={`font-condensed text-[11px] font-bold tracking-[0.14em] uppercase ${
+                    className={`font-condensed text-meta font-bold tracking-[0.14em] uppercase ${
                       earned ? "text-ink" : "text-slate"
                     }`}
                   >
                     {rank.label}
                   </span>
-                  <span className="font-mono text-[11px] tabular-nums text-slate">
+                  <span className="font-mono text-meta tabular-nums text-slate">
                     {count}
                   </span>
                 </span>
-                <span className="block text-[11.5px] text-ink-5 leading-snug mt-0.5 text-pretty">
+                <span className="block text-meta text-ink-5 leading-snug mt-0.5 text-pretty">
                   {rank.blurb}
                 </span>
               </span>
@@ -156,7 +156,7 @@ export function VerificationLadder({ mix }: { mix: VerificationMix }) {
       </ol>
 
       {mix.total === 0 && (
-        <p className="text-[12px] text-slate leading-relaxed mt-3 text-pretty">
+        <p className="text-caption text-slate leading-relaxed mt-3 text-pretty">
           No measurables on file yet. Nothing here is estimated: these counts are zero because
           the table is empty.
         </p>
@@ -172,15 +172,15 @@ export function VerificationLadder({ mix }: { mix: VerificationMix }) {
 export function NextTierPanel({ levers }: { levers: TierLever[] }) {
   return (
     <section className="bg-ink border border-ink-2 rounded-md p-4">
-      <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-gold mb-1">
+      <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-gold mb-1">
         Next Tier
       </h2>
-      <p className="text-[12px] text-slate-2 leading-relaxed mb-3 text-pretty">
+      <p className="text-caption text-slate-2 leading-relaxed mb-3 text-pretty">
         What actually moves programs into range, measured by re-running the match engine.
       </p>
 
       {levers.length === 0 ? (
-        <p className="text-[12.5px] text-slate-2 leading-relaxed text-pretty">
+        <p className="text-caption text-slate-2 leading-relaxed text-pretty">
           No lever changes the result yet. Once your rating and academics are on file, this
           panel shows exactly how many programs each improvement would bring into range.
         </p>
@@ -193,14 +193,14 @@ export function NextTierPanel({ levers }: { levers: TierLever[] }) {
                 className="flex items-center gap-3 p-3 min-h-touch bg-ink-2 border border-ink-3 rounded-sm hover:border-gold transition-colors dur-fast group"
               >
                 <span className="flex-1 min-w-0">
-                  <span className="block font-display text-[17px] font-bold text-gold-3 leading-tight text-balance">
+                  <span className="block font-display text-title-sm font-bold text-gold-3 leading-tight text-balance">
                     {lever.effect}
                   </span>
-                  <span className="block text-[12px] text-slate-2 mt-0.5 text-pretty">
+                  <span className="block text-caption text-slate-2 mt-0.5 text-pretty">
                     {lever.action}
                   </span>
                   {lever.assumed && (
-                    <span className="inline-block mt-1 font-condensed text-[9px] font-bold tracking-[0.14em] uppercase text-gold/80 border border-gold/30 rounded-xs px-1.5 py-0.5">
+                    <span className="inline-block mt-1 font-condensed text-micro font-bold tracking-[0.14em] uppercase text-gold/80 border border-gold/30 rounded-xs px-1.5 py-0.5">
                       Projection
                     </span>
                   )}
@@ -227,11 +227,11 @@ export function ReadinessStages({ state }: { state: ReadinessState }) {
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
       <div className="flex items-baseline justify-between gap-3 mb-3">
-        <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-ink-4">
+        <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4">
           Recruiting Readiness
         </h2>
         {state.gradYear && (
-          <span className="font-mono text-[11px] text-slate tabular-nums">
+          <span className="font-mono text-meta text-slate tabular-nums">
             Class of {state.gradYear}
           </span>
         )}
@@ -270,13 +270,13 @@ export function ReadinessStages({ state }: { state: ReadinessState }) {
 
               <span className="flex-1 min-w-0 pt-0.5">
                 <span
-                  className={`block font-condensed text-[12px] font-bold tracking-[0.1em] uppercase ${
+                  className={`block font-condensed text-caption font-bold tracking-[0.1em] uppercase ${
                     reached ? "text-ink" : isNext ? "text-ink-4" : "text-slate"
                   }`}
                 >
                   {stage.name}
                 </span>
-                <span className="block text-[11.5px] text-ink-5 leading-snug mt-0.5 text-pretty">
+                <span className="block text-meta text-ink-5 leading-snug mt-0.5 text-pretty">
                   {isNext ? `Next: ${stage.requirement}` : stage.requirement}
                 </span>
               </span>
