@@ -64,7 +64,7 @@ export default async function DashboardPage() {
         bgText="DASH"
       />
 
-      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-4">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-4 max-w-[1100px]">
         {collegesError !== null && (
           <LoadFailure
             title="Could not load the program database"

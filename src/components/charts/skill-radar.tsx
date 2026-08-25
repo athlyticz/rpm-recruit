@@ -85,7 +85,7 @@ export function SkillRadar({
                 cy={CY}
                 r={(ring / 10) * R}
                 fill="none"
-                stroke="var(--color-bone-3)"
+                stroke="var(--viz-reference)"
                 strokeWidth={0.75}
               />
             ))}
@@ -116,7 +116,7 @@ export function SkillRadar({
                   cy={CY}
                   r={(ring / 10) * R}
                   fill="none"
-                  stroke="var(--color-bone-3)"
+                  stroke="var(--viz-reference)"
                   strokeWidth={ring === 10 ? 1 : 0.6}
                 />
               ))}
@@ -131,7 +131,7 @@ export function SkillRadar({
                       y1={CY}
                       x2={outer.x}
                       y2={outer.y}
-                      stroke="var(--color-bone-3)"
+                      stroke="var(--viz-reference)"
                       strokeWidth={0.6}
                     />
                     <text
@@ -160,9 +160,9 @@ export function SkillRadar({
               {selfPath && (
                 <path
                   d={selfPath}
-                  fill="var(--color-slate)"
+                  fill="var(--viz-verify-self)"
                   fillOpacity={0.16}
-                  stroke="var(--color-slate)"
+                  stroke="var(--viz-verify-self)"
                   strokeWidth={1.5}
                   strokeDasharray="4 3"
                   className="motion-safe:transition-all motion-safe:dur-slow"
@@ -172,9 +172,9 @@ export function SkillRadar({
               {coachPath && (
                 <path
                   d={coachPath}
-                  fill="var(--color-gold)"
+                  fill="var(--viz-verify-coach)"
                   fillOpacity={0.2}
-                  stroke="var(--color-gold)"
+                  stroke="var(--viz-verify-coach)"
                   strokeWidth={2}
                   className="motion-safe:transition-all motion-safe:dur-slow"
                   style={{ transitionTimingFunction: "var(--ease-needle)" }}
@@ -188,7 +188,7 @@ export function SkillRadar({
               {selfPath && (
                 <span className="inline-flex items-center gap-1.5 text-micro text-ink-5">
                   <svg width="16" height="8" aria-hidden>
-                    <line x1="0" y1="4" x2="16" y2="4" stroke="var(--color-slate)" strokeWidth="1.5" strokeDasharray="4 3" />
+                    <line x1="0" y1="4" x2="16" y2="4" stroke="var(--viz-verify-self)" strokeWidth="1.5" strokeDasharray="4 3" />
                   </svg>
                   Your rating
                 </span>
@@ -196,7 +196,7 @@ export function SkillRadar({
               {coachPath && (
                 <span className="inline-flex items-center gap-1.5 text-micro text-ink-5">
                   <svg width="16" height="8" aria-hidden>
-                    <line x1="0" y1="4" x2="16" y2="4" stroke="var(--color-gold)" strokeWidth="2" />
+                    <line x1="0" y1="4" x2="16" y2="4" stroke="var(--viz-verify-coach)" strokeWidth="2" />
                   </svg>
                   Coach evaluation
                 </span>

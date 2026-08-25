@@ -109,6 +109,51 @@ app-like rather than like a desktop page that was shrunk.
 Wiring without the design pass is not done. The college match page is the reference implementation
 of the bar: see the Showcase Surface item in ROADMAP.md.
 
+### Canonical Demo Fixture
+
+`npm run db:seed:demo -- <email>` seeds one coherent player who exercises every
+visualization at once. Run it after `db:seed` and `db:seed:ladder`.
+
+A right-handed pitcher, deliberately: fastball velocity is the metric with
+published scale bands, which is what makes the metric-driven what-if lever
+demonstrable. A shortstop cannot show that lever at all, so a shortstop fixture
+silently hides the best thing in the product.
+
+It produces a complete player row, four velocity measurements climbing 79 to 87
+across all three verification levels, sixty and bat speed histories, and self
+plus coach evaluations on the full pitcher skill set so the radar draws both
+polygons. It is idempotent: re-running replaces that player's metrics and
+evaluations rather than stacking duplicates.
+
+Use this fixture for demos and for verifying chart work. Verifying one chart
+against a shortstop and another against a pitcher, which is what happened
+before this existed, means no single state was ever checked end to end.
+
+### Visualization Colour Roles
+
+Charts encode with the `--viz-*` role tokens in `globals.css`, never with
+palette colours picked at the call site. Six views previously chose locally and
+gold ended up meaning a division, a component, a verification level, a
+projection, a trend line and the brand all at once.
+
+**Chrome and data are separate systems.** Gold remains the brand accent in
+chrome: navigation, calls to action, the gauge face. Inside a data encoding,
+**gold means verification and nothing else**, because credibility is the thing
+this product is actually selling. If a chart element is gold, it is telling you
+who stood behind the number.
+
+| Role | Tokens | Meaning |
+|---|---|---|
+| Level identity | `--viz-level-d1` … `-njcaa` | Which division a program plays in. Five categorical hues, none gold. |
+| Verification | `--viz-verify-self/coach/event` | Who confirmed a number. Hollow slate, gold, solid ink. |
+| Component contribution | `--viz-component-1` … `-5` | Parts of one score. A sequential ink ramp, so the eye reads magnitude. |
+| Reference | `--viz-reference`, `--viz-reference-strong` | Thresholds and scale bands. Always recessive; strong is reserved for the player's own marker. |
+| Fit quality | `--viz-fit-strong` … `-longshot` | How good a match is. Avoids amber so it cannot be read as verification. |
+| Projection | `--viz-projection-line` | A mode, not a category, so it carries no hue: dashed outline plus an explicit badge. |
+
+Adding a chart means picking a role, not picking a colour. If a new encoding
+does not fit a role, add the role here first.
+
 ### Motion Policy: geometry moves, digits cut
 
 The rule that kept getting re-litigated case by case, written down.

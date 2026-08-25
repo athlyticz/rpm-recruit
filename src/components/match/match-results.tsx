@@ -42,42 +42,47 @@ const BANDS: Band[] = [
     key: "strong",
     label: "Strong fit",
     min: 80,
-    text: "text-green-2",
-    bar: "bg-green-2",
+    text: "text-[var(--viz-fit-strong)]",
+    bar: "bg-[var(--viz-fit-strong)]",
     blurb: "Your profile clears what these programs look for.",
   },
   {
     key: "realistic",
     label: "Realistic",
     min: 65,
-    text: "text-gold-2",
-    bar: "bg-gold",
+    text: "text-[var(--viz-fit-realistic)]",
+    bar: "bg-[var(--viz-fit-realistic)]",
     blurb: "In range on the components that carry weight.",
   },
   {
     key: "reach",
     label: "Reach",
     min: 45,
-    text: "text-gold",
-    bar: "bg-gold/70",
+    text: "text-[var(--viz-fit-reach)]",
+    bar: "bg-[var(--viz-fit-reach)]",
     blurb: "Worth contacting, but something has to move first.",
   },
   {
     key: "longshot",
     label: "Long shot",
     min: 0,
-    text: "text-blood-2",
-    bar: "bg-blood-2",
+    text: "text-[var(--viz-fit-longshot)]",
+    bar: "bg-[var(--viz-fit-longshot)]",
     blurb: "The gap here is wide. Shown because hiding it would not help you.",
   },
 ];
 
+/**
+ * Components are parts of one score, so they take the sequential ramp rather
+ * than five categorical hues. Magnitude reads off the ramp; the legend carries
+ * the names. See the colour role table in CLAUDE.md.
+ */
 const COMPONENT_COLOUR: Record<string, string> = {
-  athletic: "bg-redline",
-  academic: "bg-blue-2",
-  cost: "bg-green-2",
-  major: "bg-gold",
-  geography: "bg-slate-2",
+  athletic: "bg-[var(--viz-component-1)]",
+  academic: "bg-[var(--viz-component-2)]",
+  cost: "bg-[var(--viz-component-3)]",
+  major: "bg-[var(--viz-component-4)]",
+  geography: "bg-[var(--viz-component-5)]",
 };
 
 function fitBand(score: number): Band {
@@ -100,10 +105,15 @@ function stagger(index: number): React.CSSProperties {
  * set mixed "Best fit", "Runner up" and "Third", which read as three different
  * ideas rather than three places in one order.
  */
+/*
+ * Rank emphasis is carried by weight and the ink family, not by gold. Gold in
+ * a result card would read as "verified", which is the one thing it is
+ * reserved for. See the colour role table in CLAUDE.md.
+ */
 const PODIUM = [
-  { ring: "border-gold shadow-gold", chip: "bg-gold text-ink", label: "1st best fit" },
-  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "2nd best fit" },
-  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "3rd best fit" },
+  { ring: "border-ink shadow-md", chip: "bg-ink text-bone", label: "1st best fit" },
+  { ring: "border-bone-3", chip: "bg-ink-3 text-bone-2", label: "2nd best fit" },
+  { ring: "border-bone-3", chip: "bg-ink-3 text-bone-2", label: "3rd best fit" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -290,7 +300,10 @@ function PodiumCard({
           </span>
 
           <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1.5">
-            <span className="font-condensed text-micro font-bold tracking-[0.14em] uppercase px-1.5 py-0.5 bg-ink text-gold-3 rounded-xs">
+            <span
+              className="font-condensed text-micro font-bold tracking-[0.14em] uppercase px-1.5 py-0.5 rounded-xs text-white"
+              style={{ background: `var(--viz-level-${college.division})` }}
+            >
               {college.division.toUpperCase()}
             </span>
             <span className="inline-flex items-center gap-1 text-meta text-slate">

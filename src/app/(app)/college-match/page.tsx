@@ -52,7 +52,7 @@ function componentsMissingEverywhere(results: MatchResult[]): string[] {
   );
 }
 
-const SHELL = "px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14";
+const SHELL = "px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 max-w-[1100px]";
 
 function Header() {
   return (

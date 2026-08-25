@@ -11,7 +11,8 @@
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "db:seed": "npx tsx scripts/seed-colleges.ts",
-    "db:seed:ladder": "npx tsx scripts/seed-ladder.ts"
+    "db:seed:ladder": "npx tsx scripts/seed-ladder.ts",
+    "db:seed:demo": "npx tsx scripts/seed-demo-player.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^5.3.0",

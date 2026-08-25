@@ -36,12 +36,12 @@ const PAD_B = 16;
 /** Event-verified reads as solid, self-reported as hollow. */
 function pointStyle(status: VerificationStatus) {
   if (status === "event_verified") {
-    return { fill: "var(--color-ink)", stroke: "var(--color-ink)", width: 1.5 };
+    return { fill: "var(--viz-verify-event)", stroke: "var(--viz-verify-event)", width: 1.5 };
   }
   if (status === "coach_verified") {
-    return { fill: "var(--color-gold)", stroke: "var(--color-ink)", width: 1.5 };
+    return { fill: "var(--viz-verify-coach)", stroke: "var(--viz-verify-event)", width: 1.5 };
   }
-  return { fill: "white", stroke: "var(--color-slate)", width: 1.5 };
+  return { fill: "white", stroke: "var(--viz-verify-self)", width: 1.5 };
 }
 
 function Sparkline({ series }: { series: TrajectorySeries }) {
@@ -79,7 +79,7 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
   const changed = values.length > 1 && last !== first;
 
   return (
-    <div className="py-3 border-b border-black/[0.05] last:border-0">
+    <div className="py-3 border-b border-black/[0.05] last:border-0 lg:border-0 max-w-[520px]">
       <div className="flex items-baseline justify-between gap-3 mb-1">
         <span className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-4">
           {series.type.label}
@@ -111,7 +111,7 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
                 y1={y(edge)}
                 x2={W - PAD_R}
                 y2={y(edge)}
-                stroke="var(--color-bone-3)"
+                stroke="var(--viz-reference)"
                 strokeWidth={0.75}
                 strokeDasharray="2 3"
               />
@@ -132,7 +132,7 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
           <path
             d={path}
             fill="none"
-            stroke="var(--color-gold)"
+            stroke="var(--viz-projection-line)"
             strokeWidth={1.75}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -162,10 +162,10 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
 
 export function Trajectory({ series }: { series: TrajectorySeries[] }) {
   const withPoints = series.filter((s) => s.points.length > 0);
-  // The empty state teaches using a real banded metric when one exists, so the
-  // reference lines a player sees are the ones they will actually be measured
-  // against.
-  const teachable = series.find((s) => s.bands.length > 0) ?? null;
+  // The empty state teaches every banded metric this position has, not just
+  // the first one. A pitcher has velocity, a catcher has pop time, and showing
+  // one of a set implied the set was one.
+  const teachable = series.filter((s) => s.bands.length > 0);
 
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm overflow-hidden">
@@ -188,79 +188,88 @@ export function Trajectory({ series }: { series: TrajectorySeries[] }) {
          * it never draws is a data line, because a sample trend is
          * indistinguishable from a real one.
          */
-        <div className="px-4 py-4">
-          {teachable ? (
+        <div className="px-4 py-4 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
+          {teachable.length > 0 ? (
             <>
-              <div className="flex items-baseline justify-between gap-3 mb-1">
-                <span className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-4">
-                  {teachable.type.label}
-                </span>
-                <span className="text-micro text-slate">awaiting first measurement</span>
-              </div>
+              {teachable.map((entry) => {
+                const edges = entry.bands
+                  .map((b) => (entry.type.lower_is_better ? b.max_value : b.min_value))
+                  .filter((v): v is number => v !== null);
+                const lo = Math.min(...edges);
+                const hi = Math.max(...edges);
+                const target = entry.bands.find((b) => b.score === 8);
+                const targetEdge = target
+                  ? entry.type.lower_is_better
+                    ? target.max_value
+                    : target.min_value
+                  : null;
 
-              <svg
-                viewBox={`0 0 ${W} ${H}`}
-                width="100%"
-                role="img"
-                aria-label={`${teachable.type.label} chart, no measurements yet. Scale bands shown.`}
-              >
-                {teachable.bands.map((band) => {
-                  const edge = teachable.type.lower_is_better ? band.max_value : band.min_value;
-                  if (edge === null) return null;
-                  const edges = teachable.bands
-                    .map((b) => (teachable.type.lower_is_better ? b.max_value : b.min_value))
-                    .filter((v): v is number => v !== null);
-                  const lo = Math.min(...edges);
-                  const hi = Math.max(...edges);
-                  const t = (edge - lo) / (hi - lo || 1);
-                  const yy =
-                    PAD_T + (teachable.type.lower_is_better ? t : 1 - t) * (H - PAD_T - PAD_B);
-                  return (
-                    <g key={band.score}>
-                      <line
-                        x1={PAD_L}
-                        y1={yy}
-                        x2={W - PAD_R}
-                        y2={yy}
-                        stroke="var(--color-bone-3)"
-                        strokeWidth={0.75}
-                        strokeDasharray="2 3"
-                      />
-                      <text
-                        x={W - PAD_R + 4}
-                        y={yy + 3}
-                        fontSize={8}
-                        fontFamily="var(--font-mono)"
-                        fill="var(--color-slate)"
-                      >
-                        {band.score}
-                      </text>
-                      <text
-                        x={PAD_L + 2}
-                        y={yy - 2}
-                        fontSize={7}
-                        fontFamily="var(--font-mono)"
-                        fill="var(--color-bone-3)"
-                      >
-                        {edge}
-                      </text>
-                    </g>
-                  );
-                })}
-              </svg>
+                return (
+                  <div key={entry.type.key} className="py-3 border-b border-black/[0.05] last:border-0">
+                    <div className="flex items-baseline justify-between gap-3 mb-1">
+                      <span className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-4">
+                        {entry.type.label}
+                      </span>
+                      <span className="text-micro text-slate">awaiting first measurement</span>
+                    </div>
 
-              <p className="text-caption text-ink-5 mt-1 text-pretty">
-                Those lines are the real {teachable.type.label.toLowerCase()} bands: hit{" "}
-                {(() => {
-                  const target = teachable.bands.find((b) => b.score === 8);
-                  const edge = target
-                    ? teachable.type.lower_is_better
-                      ? target.max_value
-                      : target.min_value
-                    : null;
-                  return edge !== null ? `${edge} ${teachable.type.unit}` : "the next band";
-                })()}{" "}
-                and you are an 8. Your first logged measurement plots here, and every one
+                    <svg
+                      viewBox={`0 0 ${W} ${H}`}
+                      width="100%"
+                      role="img"
+                      aria-label={`${entry.type.label} chart, no measurements yet. Scale bands shown.`}
+                    >
+                      {entry.bands.map((band) => {
+                        const edge = entry.type.lower_is_better ? band.max_value : band.min_value;
+                        if (edge === null) return null;
+                        const t = (edge - lo) / (hi - lo || 1);
+                        const yy =
+                          PAD_T + (entry.type.lower_is_better ? t : 1 - t) * (H - PAD_T - PAD_B);
+                        return (
+                          <g key={band.score}>
+                            <line
+                              x1={PAD_L}
+                              y1={yy}
+                              x2={W - PAD_R}
+                              y2={yy}
+                              stroke="var(--viz-reference)"
+                              strokeWidth={0.75}
+                              strokeDasharray="2 3"
+                            />
+                            <text
+                              x={W - PAD_R + 4}
+                              y={yy + 3}
+                              fontSize={8}
+                              fontFamily="var(--font-mono)"
+                              fill="var(--color-slate)"
+                            >
+                              {band.score}
+                            </text>
+                            <text
+                              x={PAD_L + 2}
+                              y={yy - 2}
+                              fontSize={7}
+                              fontFamily="var(--font-mono)"
+                              fill="var(--viz-reference)"
+                            >
+                              {edge}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+
+                    <p className="text-caption text-ink-5 mt-1 text-pretty">
+                      {targetEdge !== null
+                        ? `Those lines are the real ${entry.type.label.toLowerCase()} bands: hit ${targetEdge} ${entry.type.unit} and you are an 8.`
+                        : `Those lines are the real ${entry.type.label.toLowerCase()} bands.`}
+                    </p>
+                  </div>
+                );
+              })}
+
+              <p className="text-caption text-ink-5 pt-3 text-pretty">
+                Your first logged measurement plots on the matching chart, and every one
                 after it joins the line.
               </p>
             </>
@@ -273,7 +282,7 @@ export function Trajectory({ series }: { series: TrajectorySeries[] }) {
         </div>
       ) : (
         <>
-          <div className="px-4">
+          <div className="px-4 lg:grid lg:grid-cols-2 lg:gap-x-8">
             {withPoints.map((s) => (
               <Sparkline key={s.type.key} series={s} />
             ))}

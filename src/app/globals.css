@@ -44,6 +44,54 @@
   --color-redline: #C8102E;
   --color-redline-2: #E01B39;
 
+  /* ── Visualization roles ──
+     Charts encode with these, never with raw palette colours picked locally.
+     Six views previously chose their own and gold ended up meaning six
+     unrelated things: a division, a component, a verification level, a
+     projection, a trend line and the brand.
+
+     The rule: chrome and data are separate systems. Gold stays the brand
+     accent in chrome (navigation, calls to action, the gauge face). Inside a
+     data encoding gold means exactly one thing, verification, because
+     credibility is what this product is actually about. Nothing else in a
+     chart is gold. */
+
+  /* Level identity. Five categorical hues, deliberately none of them gold. */
+  --viz-level-d1: #C8102E;
+  --viz-level-d2: #9B2B2B;
+  --viz-level-d3: #2472BE;
+  --viz-level-naia: #3DAA6E;
+  --viz-level-njcaa: #7B5EA7;
+
+  /* Verification. The one data role gold carries. */
+  --viz-verify-self: #888888;
+  --viz-verify-coach: #B8975A;
+  --viz-verify-event: #1C1C1C;
+
+  /* Component contribution. Parts of one number, so a sequential ramp rather
+     than categories: the eye reads magnitude and the legend carries names. */
+  --viz-component-1: #1C1C1C;
+  --viz-component-2: #3D3D3D;
+  --viz-component-3: #5A5A5A;
+  --viz-component-4: #7A7A7A;
+  --viz-component-5: #9E9E9E;
+
+  /* Fit quality. A sequential judgement, deliberately avoiding amber so it
+     cannot be mistaken for the verification gold. The words carry most of the
+     meaning; the hue only reinforces direction. */
+  --viz-fit-strong: #2D7A50;
+  --viz-fit-realistic: #1C1C1C;
+  --viz-fit-reach: #7A7A7A;
+  --viz-fit-longshot: #9B2B2B;
+
+  /* Reference lines: thresholds and scale bands. Always recessive. */
+  --viz-reference: #D8CEBC;
+  --viz-reference-strong: #1C1C1C;
+
+  /* Projection is a mode, not a category, so it has no hue of its own. It is
+     drawn as a dashed outline plus an explicit badge. */
+  --viz-projection-line: #444444;
+
   /* ── Typography ── */
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "Barlow", sans-serif;

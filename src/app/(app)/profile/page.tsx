@@ -30,7 +30,7 @@ export default async function ProfilePage() {
         bgText="PLAYER"
       />
 
-      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-[340px_1fr] lg:gap-6 lg:items-start">
         <SkillRadar
           axes={axes}
           position={

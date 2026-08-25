@@ -28,7 +28,7 @@ export default async function AthleticPage() {
         bgText="ATHLETIC"
       />
 
-      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6 max-w-[1100px]">
         <Trajectory series={series} />
         <AthleticForm />
       </div>

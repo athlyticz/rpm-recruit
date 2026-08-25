@@ -28,11 +28,11 @@ const PLOT_TOP = 16;
 const DOT_R = 5.2;
 
 const LEVEL_COLOUR: Record<Division, string> = {
-  d1: "var(--color-redline)",
-  d2: "var(--color-blood-2)",
-  d3: "var(--color-gold)",
-  naia: "var(--color-blue-2)",
-  njcaa: "var(--color-green-2)",
+  d1: "var(--viz-level-d1)",
+  d2: "var(--viz-level-d2)",
+  d3: "var(--viz-level-d3)",
+  naia: "var(--viz-level-naia)",
+  njcaa: "var(--viz-level-njcaa)",
 };
 
 function xFor(score: number): number {
@@ -227,13 +227,38 @@ export function FitLandscape({
   const droppedByLevel = useMemo(() => {
     if (!projected) return null;
     const realById = new Map(real.map((r) => [r.college.id, r.score]));
+
     const dropped = projected.filter((r) => {
       const before = realById.get(r.college.id);
       return before !== undefined && before !== null && r.score !== null && r.score < before;
     });
     if (dropped.length === 0) return null;
+
+    /*
+     * Threshold. The explanation only earns its place when the drop is
+     * actually noticeable, otherwise nudging a slider one notch produces a
+     * paragraph about sixteen programs.
+     *
+     * Noticeable means either of two things: a program left the in-range set,
+     * which changes the answer to "where can I play", or the typical drop is
+     * at least three points, which is the smallest change visible as dot
+     * movement at this plot width. Anything quieter is arithmetic the player
+     * does not need narrated.
+     */
+    const leftRange = dropped.filter((r) => {
+      const before = realById.get(r.college.id) as number;
+      return before >= IN_RANGE_THRESHOLD && (r.score as number) < IN_RANGE_THRESHOLD;
+    }).length;
+
+    const deltas = dropped
+      .map((r) => (realById.get(r.college.id) as number) - (r.score as number))
+      .sort((a, b) => a - b);
+    const medianDrop = deltas[Math.floor(deltas.length / 2)] ?? 0;
+
+    if (leftRange === 0 && medianDrop < 3) return null;
+
     const levels = [...new Set(dropped.map((d) => d.college.division))];
-    return { count: dropped.length, levels };
+    return { count: dropped.length, levels, leftRange, medianDrop };
   }, [projected, real]);
 
   const best = real[0]?.score ?? null;
@@ -250,7 +275,11 @@ export function FitLandscape({
         </span>
       </div>
 
-      <div className="px-4">
+      {/* An SVG with width:100% scales its text with the viewport, so at desktop
+          the axis labels and markers ballooned. The plot is capped and centred
+          instead: the chart keeps its designed proportions and the extra width
+          becomes margin. */}
+      <div className="px-4 max-w-[680px]">
         <svg
           ref={svgRef}
           viewBox={`0 0 ${W} ${H}`}
@@ -265,7 +294,7 @@ export function FitLandscape({
             y1={PLOT_TOP - 6}
             x2={xFor(IN_RANGE_THRESHOLD)}
             y2={AXIS_Y}
-            stroke="var(--color-bone-3)"
+            stroke="var(--viz-reference)"
             strokeWidth={1}
             strokeDasharray="3 3"
           />
@@ -275,7 +304,7 @@ export function FitLandscape({
             fontSize={8}
             fontFamily="var(--font-condensed)"
             letterSpacing={1}
-            fill="var(--color-slate)"
+            fill="var(--viz-verify-self)"
           >
             IN RANGE
           </text>
@@ -286,7 +315,7 @@ export function FitLandscape({
             y1={AXIS_Y}
             x2={W - PAD_R}
             y2={AXIS_Y}
-            stroke="var(--color-bone-3)"
+            stroke="var(--viz-reference)"
             strokeWidth={1}
           />
           {[0, 25, 50, 75, 100].map((tick) => (
@@ -296,7 +325,7 @@ export function FitLandscape({
                 y1={AXIS_Y}
                 x2={xFor(tick)}
                 y2={AXIS_Y + 4}
-                stroke="var(--color-bone-3)"
+                stroke="var(--viz-reference)"
                 strokeWidth={1}
               />
               <text
@@ -305,7 +334,7 @@ export function FitLandscape({
                 textAnchor="middle"
                 fontSize={8}
                 fontFamily="var(--font-mono)"
-                fill="var(--color-slate)"
+                fill="var(--viz-verify-self)"
               >
                 {tick}
               </text>
@@ -321,7 +350,7 @@ export function FitLandscape({
                 y1={PLOT_TOP - 2}
                 x2={xFor(best)}
                 y2={AXIS_Y}
-                stroke="var(--color-ink)"
+                stroke="var(--viz-reference-strong)"
                 strokeWidth={1.25}
               />
               <text
@@ -346,8 +375,17 @@ export function FitLandscape({
                 cy={y}
                 r={isSelected ? DOT_R + 2 : DOT_R}
                 fill={LEVEL_COLOUR[result.college.division as Division]}
-                stroke={isSelected ? "var(--color-ink)" : "white"}
+                stroke={
+                  isSelected
+                    ? "var(--viz-reference-strong)"
+                    : draft
+                      ? "var(--viz-projection-line)"
+                      : "white"
+                }
                 strokeWidth={isSelected ? 2 : 1}
+                /* Projection is a mode, not a category: dots keep their level
+                   colour and take a dashed outline instead of a new hue. */
+                strokeDasharray={!isSelected && draft ? "2 2" : undefined}
                 opacity={result.score !== null && result.score >= IN_RANGE_THRESHOLD ? 1 : 0.42}
                 /* Geometry moves: the dot travels to its new score on the
                    needle curve. The score text beside it cuts. See the Motion
@@ -390,14 +428,14 @@ export function FitLandscape({
       </div>
 
       {/* What-if levers */}
-      <div ref={leversRef} className="border-t border-black/[0.06] bg-bone/40 px-4 py-3">
+      <div ref={leversRef} className="border-t border-black/[0.06] bg-bone/40 px-4 py-3 lg:max-w-[680px]">
         <div className="flex items-baseline justify-between gap-3 mb-2">
           <h3 className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate">
             What if
           </h3>
           {draft && (
             <span className="inline-flex items-center gap-1.5">
-              <span className="font-condensed text-micro font-bold tracking-[0.14em] uppercase text-gold border border-gold/40 rounded-xs px-1.5 py-0.5">
+              <span className="font-condensed text-micro font-bold tracking-[0.14em] uppercase text-ink-4 border border-dashed border-ink-4 rounded-xs px-1.5 py-0.5">
                 Projection
               </span>
               <span className="font-mono num text-meta text-ink">
@@ -428,12 +466,12 @@ export function FitLandscape({
                   )}
                 </span>
                 <span className="font-mono num text-meta">
-                  <span className={isDrafting ? "text-gold" : "text-ink"}>
+                  <span className={isDrafting ? "text-ink-4" : "text-ink"}>
                     {value.toFixed(lever.unit === "seconds" ? 2 : 0)}
                   </span>
                   <span className="text-slate"> {lever.unit}</span>
                   {projectedScore !== null && (
-                    <span className={isDrafting ? "text-gold" : "text-ink-5"}>
+                    <span className={isDrafting ? "text-ink-4" : "text-ink-5"}>
                       {" "}
                       = {projectedScore}
                     </span>
@@ -493,13 +531,13 @@ export function FitLandscape({
             <div
               key={lever.key}
               className={`mb-3 last:mb-0 ${
-                primed === lever.key ? "ring-2 ring-gold/50 rounded-sm -mx-1.5 px-1.5 py-1" : ""
+                primed === lever.key ? "ring-2 ring-ink-4/40 rounded-sm -mx-1.5 px-1.5 py-1" : ""
               }`}
             >
               <label className="flex items-baseline justify-between gap-2 mb-1">
                 <span className="text-caption text-ink-4">{lever.label}</span>
                 <span className="font-mono num text-meta">
-                  <span className={isDrafting ? "text-gold" : "text-ink"}>
+                  <span className={isDrafting ? "text-ink-4" : "text-ink"}>
                     {lever.format(value)}
                   </span>
                   {lever.actual === null ? (
@@ -535,11 +573,13 @@ export function FitLandscape({
         })}
 
         {droppedByLevel && (
-          <p className="text-caption text-ink-5 leading-relaxed text-pretty mt-1 mb-2 border-l-2 border-gold pl-2.5">
+          <p className="text-caption text-ink-5 leading-relaxed text-pretty mt-1 mb-2 border-l-2 border-ink-4 pl-2.5">
             {droppedByLevel.count} program
             {droppedByLevel.count === 1 ? "" : "s"} scored lower, mostly{" "}
-            {droppedByLevel.levels.map((l) => l.toUpperCase()).join(" and ")}. Stronger
-            players fit lower divisions less, and coaches know it too.
+            {droppedByLevel.levels.map((l) => l.toUpperCase()).join(" and ")}
+            {droppedByLevel.leftRange > 0 &&
+              `, and ${droppedByLevel.leftRange} dropped out of range`}
+            . Stronger players fit lower divisions less, and coaches know it too.
           </p>
         )}
 

@@ -13,11 +13,11 @@ const PAD = 6;
 const DOT_R = 3.4;
 
 const LEVEL_COLOUR: Record<Division, string> = {
-  d1: "var(--color-redline)",
-  d2: "var(--color-blood-2)",
-  d3: "var(--color-gold)",
-  naia: "var(--color-blue-2)",
-  njcaa: "var(--color-green-2)",
+  d1: "var(--viz-level-d1)",
+  d2: "var(--viz-level-d2)",
+  d3: "var(--viz-level-d3)",
+  naia: "var(--viz-level-naia)",
+  njcaa: "var(--viz-level-njcaa)",
 };
 
 function seeded(id: string): number {
@@ -57,7 +57,7 @@ export function LandscapeTeaser({ results }: { results: MatchResult[] }) {
         </span>
       </div>
 
-      <div className="px-4">
+      <div className="px-4 max-w-[560px]">
         <svg
           viewBox={`0 0 ${W} ${H}`}
           width="100%"
@@ -69,7 +69,7 @@ export function LandscapeTeaser({ results }: { results: MatchResult[] }) {
             y1={2}
             x2={x(IN_RANGE_THRESHOLD)}
             y2={H - 2}
-            stroke="var(--color-bone-3)"
+            stroke="var(--viz-reference)"
             strokeWidth={1}
             strokeDasharray="3 3"
           />
