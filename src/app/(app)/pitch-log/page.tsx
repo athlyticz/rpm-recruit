@@ -212,7 +212,7 @@ export default function PitchLogPage() {
           </div>
           <div className="px-5 py-4 space-y-3">
             {/* Gold notice */}
-            <div className="border-l-[3px] border-gold bg-gold/[0.08] text-[#5C4010] flex gap-2.5 px-3.5 py-3 text-xs">
+            <div className="border-l-[3px] border-gold bg-gold/[0.08] text-gold-ink flex gap-2.5 px-3.5 py-3 text-xs">
               <svg
                 className="w-4 h-4 flex-shrink-0 mt-px"
                 fill="none"

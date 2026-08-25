@@ -109,6 +109,27 @@ app-like rather than like a desktop page that was shrunk.
 Wiring without the design pass is not done. The college match page is the reference implementation
 of the bar: see the Showcase Surface item in ROADMAP.md.
 
+### Route Transitions (read this if a link misbehaves)
+
+`src/components/app/view-transitions.tsx` intercepts same-origin anchor clicks
+in the **capture phase** and runs `router.push` inside
+`document.startViewTransition`. Capture is required, not stylistic: Next's
+`Link` calls `preventDefault` on the anchor itself, so a bubble-phase listener
+always arrives after the navigation has been claimed.
+
+That means this component sees every internal link click in the authenticated
+shell before the framework does. **If a link in `(app)` behaves strangely,
+suspect this first.**
+
+Kill switch: set `NEXT_PUBLIC_ROUTE_TRANSITIONS=off` to disable every
+interception without touching a single call site. Navigation falls back to
+Next's own handling; the only loss is the cross-fade and the gauge morph.
+Prefer flipping the flag over debugging a link in place.
+
+Note that `experimental.viewTransition` in `next.config.ts` is deliberately not
+enabled: it only works on the experimental React channel, and this project runs
+React stable, where it is a silent no-op.
+
 ## Data Model Direction
 
 Current schema has `profiles` and `players` only. Target schema (build via new migrations, never edit applied ones):
@@ -170,3 +191,4 @@ See `.env.local.example` for required variables: Supabase URL/keys, Stripe keys/
 - Every user-visible number that comes from the match engine must be explainable in the UI.
 - Every page wired to data gets a design pass to the token system in the same session.
 - Every layout must work at 390px width. Check phone width before calling a screen done.
+- Verification happens against the deployed app, not localhost. The demo runs on the deployed build, so that is what gets measured.

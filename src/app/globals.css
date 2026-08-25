@@ -22,6 +22,17 @@
   --color-green: #2D7A50;
   --color-green-2: #3DAA6E;
 
+  /* Readable text on the gold and blue tinted callouts. These are the one
+     pairing the base palette did not cover: gold and blue themselves fail
+     contrast as text on their own 7-8% tints. */
+  --color-gold-ink: #5C4010;
+  --color-blue-ink: #1A4A78;
+
+  /* Warm muted greys for auth chrome, where neutral slate reads cold against
+     the bone ground. */
+  --color-sand: #9A8E7A;
+  --color-sand-2: #6A6054;
+
   --color-slate: #888888;
   --color-slate-2: #AAAAAA;
 
@@ -362,7 +373,6 @@ body {
   }
 }
 
-/* Forward: a small inward drift. */
 @keyframes vt-out {
   to {
     opacity: 0;
@@ -374,31 +384,6 @@ body {
   from {
     opacity: 0;
     transform: translateY(8px);
-  }
-}
-
-/* Lateral: peers on the tab bar slide sideways instead of drifting inward. */
-@media (prefers-reduced-motion: no-preference) {
-  :root[data-vt="lateral"]::view-transition-old(root) {
-    animation: vt-out-lateral 200ms var(--ease-settle) both;
-  }
-
-  :root[data-vt="lateral"]::view-transition-new(root) {
-    animation: vt-in-lateral 240ms var(--ease-sweep) both;
-  }
-}
-
-@keyframes vt-out-lateral {
-  to {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-}
-
-@keyframes vt-in-lateral {
-  from {
-    opacity: 0;
-    transform: translateX(14px);
   }
 }
 

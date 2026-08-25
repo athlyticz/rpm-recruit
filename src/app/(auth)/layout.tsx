@@ -35,7 +35,7 @@ export default function AuthLayout({
               priority
             />
           </Link>
-          <span className="font-condensed text-xs font-semibold tracking-[0.2em] uppercase text-[#9A8E7A] mt-1.5">
+          <span className="font-condensed text-xs font-semibold tracking-[0.2em] uppercase text-sand mt-1.5">
             Recruit &middot; Profile &middot; Match
           </span>
         </div>
@@ -43,7 +43,7 @@ export default function AuthLayout({
         {children}
 
         <div className="w-12 h-px bg-white/[0.08] mx-auto mt-8 mb-6" />
-        <p className="font-condensed text-label font-semibold tracking-[0.18em] uppercase text-[#6A6054] text-center">
+        <p className="font-condensed text-label font-semibold tracking-[0.18em] uppercase text-sand-2 text-center">
           Scanzano Baseball &middot; All-American Baseball Talent Showcases
         </p>
       </div>

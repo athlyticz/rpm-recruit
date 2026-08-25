@@ -4,22 +4,30 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 /**
- * Route transitions driven directly by the native View Transitions API.
+ * Route transitions, behind a single kill switch.
  *
- * Next's experimental.viewTransition flag only works on the experimental React
- * channel: this project runs React 19.2.4 stable, which exports no
- * ViewTransition component, so that flag is a no-op here. Rather than move a
- * demo-critical app onto an experimental React build, this intercepts
- * same-origin link clicks and runs router.push inside
- * document.startViewTransition. Link keeps its own prefetching; only the click
- * handling changes.
+ * ── If a link in the authenticated app misbehaves, look here first. ──
  *
- * Reduced motion takes the plain navigation with no transition at all.
+ * This intercepts same-origin anchor clicks in the CAPTURE phase, because
+ * Next's Link calls preventDefault on the anchor itself and a bubble-phase
+ * listener always arrives after the navigation has been claimed. Capture is
+ * the only place this can win the click, and that is also what makes it
+ * risky: it sees every internal link click in the app shell before the
+ * framework does.
+ *
+ * That risk is the reason for the flag below. Setting it to false disables
+ * every interception in one line, with no call sites to touch; navigation
+ * falls back to Next's own handling and the only thing lost is the cross-fade
+ * and the gauge morph. Prefer flipping this over debugging a link in place.
  */
+export const ROUTE_TRANSITIONS_ENABLED =
+  process.env.NEXT_PUBLIC_ROUTE_TRANSITIONS !== "off";
+
 export function ViewTransitions() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!ROUTE_TRANSITIONS_ENABLED) return;
     if (typeof document === "undefined") return;
     if (!("startViewTransition" in document)) return;
 
@@ -44,22 +52,14 @@ export function ViewTransitions() {
       if (anchor.hasAttribute("download")) return;
       if (href === window.location.pathname) return;
 
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
-
-      /*
-       * Direction is a property of where the tap came from, not of the route.
-       * A bottom-tab switch is a sideways move between peers, so it slides
-       * laterally. Sidebar and in-content links are a move inward, so they
-       * drift forward. The CSS reads this off the root element.
-       */
-      const fromTabBar = Boolean(anchor.closest('nav[aria-label="Primary"]'));
-      document.documentElement.dataset.vt = fromTabBar ? "lateral" : "forward";
+      // Reduced motion takes the plain navigation, with no transition at all.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       // Claim the navigation before Link does.
       event.preventDefault();
       event.stopPropagation();
-      const transition = document.startViewTransition(() => {
+
+      document.startViewTransition(() => {
         router.push(href);
         // Resolve on the next frame so the new route has committed before the
         // snapshot is taken.
@@ -67,17 +67,8 @@ export function ViewTransitions() {
           requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
         );
       });
-
-      transition.finished
-        .catch(() => {})
-        .finally(() => {
-          delete document.documentElement.dataset.vt;
-        });
     }
 
-    // Capture phase on purpose. Next's Link calls preventDefault on the anchor
-    // itself, so a bubble-phase listener here always arrives after the
-    // navigation has already been claimed and defaultPrevented is set.
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, [router]);

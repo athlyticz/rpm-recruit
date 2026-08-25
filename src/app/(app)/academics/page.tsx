@@ -236,7 +236,7 @@ export default function AcademicsPage() {
                   <li>4 yrs additional electives</li>
                 </ul>
 
-                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-meta px-3.5 py-3 mt-4 leading-relaxed">
+                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-blue-ink text-meta px-3.5 py-3 mt-4 leading-relaxed">
                   D-I uses a sliding GPA/SAT scale. Min SAT is not fixed; it depends on GPA.
                   Use NCAA code 9999 when registering for SAT/ACT.
                 </div>
@@ -257,7 +257,7 @@ export default function AcademicsPage() {
                   <li>3 yrs additional</li>
                 </ul>
 
-                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-meta px-3.5 py-3 mt-4 leading-relaxed">
+                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-blue-ink text-meta px-3.5 py-3 mt-4 leading-relaxed">
                   D-II minimum: SAT 820 (CR+Math) or ACT sum of 88. Min GPA 2.000.
                   Writing section of SAT is NOT used.
                 </div>

@@ -157,9 +157,9 @@ export default function BioGeneratorPage() {
         </div>
 
         {/* ── Output ──────────────────────────────────────────── */}
-        <div className="bg-[#1E1E1E] border border-[#2E2E2E] p-5 min-h-[180px]">
+        <div className="bg-ink border border-ink-3 p-5 min-h-[180px]">
           {bio ? (
-            <p className="font-body text-body leading-relaxed text-[#E8E0D0] whitespace-pre-wrap">
+            <p className="font-body text-body leading-relaxed text-bone-2 whitespace-pre-wrap">
               {bio}
             </p>
           ) : (

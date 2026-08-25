@@ -17,7 +17,7 @@ function CardHeader({ title, desc }: { title: string; desc: string }) {
 
 function GoldNotice({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex gap-2.5 px-3.5 py-3 mb-3.5 border-l-[3px] border-gold bg-gold/[0.08] text-[#5C4010] text-xs leading-relaxed">
+    <div className="flex gap-2.5 px-3.5 py-3 mb-3.5 border-l-[3px] border-gold bg-gold/[0.08] text-gold-ink text-xs leading-relaxed">
       {children}
     </div>
   );
