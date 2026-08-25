@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/app/page-header";
 import { MatchResults } from "@/components/match/match-results";
 import { LoadFailure, EmptyState } from "@/components/ui/states";
-import { getCurrentPlayer, getColleges } from "@/lib/data/player";
+import {
+  getCurrentPlayer,
+  getColleges,
+  getMetricLevers,
+  getCurrentRatings,
+} from "@/lib/data/player";
 import { scoreAll, type MatchResult } from "@/lib/match/interim-scorer";
 import type { Database } from "@/types/database";
 
@@ -78,6 +83,10 @@ function Header() {
  */
 async function MatchResultsSection() {
   const [player, collegesResult] = await Promise.all([getCurrentPlayer(), getColleges()]);
+  const [metricLevers, currentRatings] = await Promise.all([
+    getMetricLevers(player),
+    getCurrentRatings(player),
+  ]);
 
   // A failed load and an empty table are different facts and get different
   // screens. Never let one read as the other.
@@ -111,6 +120,8 @@ async function MatchResultsSection() {
       hasPlayer={player !== null}
       player={player ?? EMPTY_PLAYER}
       colleges={colleges}
+      metricLevers={metricLevers}
+      currentRatings={currentRatings}
     />
   );
 }

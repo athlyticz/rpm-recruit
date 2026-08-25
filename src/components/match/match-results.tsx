@@ -13,6 +13,7 @@ import {
   type ScoreComponent,
 } from "@/lib/match/interim-scorer";
 import type { Database } from "@/types/database";
+import type { MetricLever } from "@/lib/data/player";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type College = Database["public"]["Tables"]["colleges"]["Row"];
@@ -476,12 +477,16 @@ export function MatchResults({
   hasPlayer,
   player,
   colleges,
+  metricLevers,
+  currentRatings,
 }: {
   results: MatchResult[];
   missingComponents: string[];
   hasPlayer: boolean;
   player: Player;
   colleges: College[];
+  metricLevers?: MetricLever[];
+  currentRatings?: Record<string, number>;
 }) {
   const [level, setLevel] = useState<Division>("d1");
   const [focused, setFocused] = useState<MatchResult | null>(null);
@@ -605,6 +610,8 @@ export function MatchResults({
       <FitLandscape
         player={player}
         colleges={colleges}
+        metricLevers={metricLevers}
+        currentRatings={currentRatings}
         selectedId={focused?.college.id ?? null}
         onSelect={(result) =>
           setFocused((current) =>

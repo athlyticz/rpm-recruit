@@ -234,3 +234,120 @@ export async function getSkillShape(player: Player | null) {
 
   return { position, axes };
 }
+
+export interface MetricLever {
+  metricKey: string;
+  metricLabel: string;
+  unit: string;
+  lowerIsBetter: boolean;
+  skillDefinitionId: string;
+  skillLabel: string;
+  /** Band edges, ascending by score, for translating a raw value to 1-10. */
+  bands: ScaleBandRow[];
+  /** The player's most recent measurement for this metric, if any. */
+  currentValue: number | null;
+  /** The player's current rating for the skill this metric drives, if any. */
+  currentScore: number | null;
+}
+
+/**
+ * Levers where a raw measurable maps to a 1-10 rating through
+ * skill_scale_bands: a pitcher's fastball velocity, a catcher's pop time.
+ *
+ * This is the chain that makes "add 3 mph" answerable. The bands are the
+ * translation layer, so nothing here is estimated: a value either falls in a
+ * published band or it does not.
+ */
+/** Maps a stored players.position label onto a ladder position key. */
+function positionKey(stored: string | null): string | null {
+  if (!stored) return null;
+  const n = stored.toLowerCase();
+  if (n.includes("shortstop")) return "shortstop";
+  if (n.includes("catcher")) return "catcher";
+  if (n.includes("outfield")) return "outfielder";
+  if (n.includes("first")) return "first-baseman";
+  if (n.includes("second")) return "second-baseman";
+  if (n.includes("third")) return "third-baseman";
+  if (n.includes("lhp")) return "pitcher-lhp";
+  if (n.includes("pitcher") || n.includes("rhp")) return "pitcher-rhp";
+  return null;
+}
+
+export async function getMetricLevers(player: Player | null): Promise<MetricLever[]> {
+  if (!supabaseConfigured() || !player) return [];
+
+  const supabase = await createClient();
+
+  const { data: skills } = await supabase
+    .from("skill_definitions")
+    .select(
+      "id,position,label,scale_metric_type,skill_scale_bands(score,min_value,max_value),metric_types(key,label,unit,lower_is_better)"
+    )
+    .eq("is_active", true)
+    .not("scale_metric_type", "is", null);
+
+  if (!skills || skills.length === 0) return [];
+
+  const [{ data: evaluations }, metrics] = await Promise.all([
+    supabase
+      .from("evaluations")
+      .select("skill_definition_id,score,evaluated_at")
+      .eq("player_id", player.id)
+      .order("evaluated_at", { ascending: true }),
+    getMetrics(player.id),
+  ]);
+
+  /*
+   * Only the player's own position gets levers. A shortstop has no business
+   * dragging a fastball velocity slider, and an earlier version handed them
+   * one twice over because both pitcher positions define that skill.
+   */
+  const rated = new Set((evaluations ?? []).map((e) => e.skill_definition_id));
+  const ratedPositions = new Set(
+    skills.filter((s) => rated.has(s.id)).map((s) => s.position)
+  );
+  const own = positionKey(player.position);
+  const allowed =
+    ratedPositions.size > 0 ? ratedPositions : own ? new Set([own]) : new Set<string>();
+
+  return skills
+    .filter((s) => (own ? s.position === own : allowed.has(s.position)))
+    .map((skill) => {
+      const type = skill.metric_types;
+      if (!type) return null;
+      const latest = metrics.find((m) => m.metric_type === skill.scale_metric_type);
+      const score =
+        (evaluations ?? []).filter((e) => e.skill_definition_id === skill.id).at(-1)?.score ??
+        null;
+      return {
+        metricKey: type.key,
+        metricLabel: type.label,
+        unit: type.unit,
+        lowerIsBetter: type.lower_is_better,
+        skillDefinitionId: skill.id,
+        skillLabel: skill.label,
+        bands: (skill.skill_scale_bands ?? []).slice().sort((a, b) => a.score - b.score),
+        currentValue: latest ? Number(latest.value) : null,
+        currentScore: score,
+      } satisfies MetricLever;
+    })
+    .filter((l): l is MetricLever => l !== null && l.bands.length > 0);
+}
+
+/** Every current rating for the player, so a lever can recompute their mean. */
+export async function getCurrentRatings(
+  player: Player | null
+): Promise<Record<string, number>> {
+  if (!supabaseConfigured() || !player) return {};
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("evaluations")
+    .select("skill_definition_id,score,evaluated_at")
+    .eq("player_id", player.id)
+    .order("evaluated_at", { ascending: true });
+
+  const out: Record<string, number> = {};
+  for (const row of data ?? []) out[row.skill_definition_id] = row.score;
+  return out;
+}

@@ -7,6 +7,8 @@ import {
   IN_RANGE_THRESHOLD,
   type MatchResult,
 } from "@/lib/match/interim-scorer";
+import { scoreFromBands, bandRange, bandTicks } from "@/lib/match/bands";
+import type { MetricLever } from "@/lib/data/player";
 import { LEVELS, type Division } from "./level-constants";
 import type { Database } from "@/types/database";
 
@@ -37,21 +39,34 @@ function xFor(score: number): number {
   return PAD_L + (score / 100) * (W - PAD_L - PAD_R);
 }
 
+/** Stable hash of a school id, so jitter never reshuffles between renders. */
+function seeded(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ((h >>> 0) % 1000) / 1000;
+}
+
 /**
- * Beeswarm packing. Dots keep their true x (the score is never nudged) and are
- * stacked upward only when they would otherwise overlap, so vertical position
- * carries no meaning beyond "these share a score".
+ * Dots keep their true x, always: the score is never nudged. Vertical position
+ * is deterministic jitter seeded by school id, which spreads the field through
+ * the plot so density is legible. Stacking alone left the dots hugging the
+ * axis with two thirds of the box empty, which read as a chart that had not
+ * finished loading rather than as a populated landscape.
  */
 function pack(results: MatchResult[]) {
-  const rows: number[][] = [];
+  const top = PLOT_TOP + DOT_R;
+  const bottom = AXIS_Y - DOT_R - 6;
+  const band = bottom - top;
+
   return results
     .filter((r) => r.score !== null)
     .map((r) => {
       const x = xFor(r.score as number);
-      let row = 0;
-      while (rows[row]?.some((taken) => Math.abs(taken - x) < DOT_R * 2.05)) row++;
-      (rows[row] ??= []).push(x);
-      return { result: r, x, y: AXIS_Y - 12 - row * (DOT_R * 2.15) };
+      const y = top + seeded(r.college.id) * band;
+      return { result: r, x, y };
     });
 }
 
@@ -110,14 +125,34 @@ export function FitLandscape({
   colleges,
   onSelect,
   selectedId,
+  metricLevers = [],
+  currentRatings = {},
 }: {
   player: Player;
   colleges: College[];
   onSelect: (result: MatchResult) => void;
   selectedId: string | null;
+  metricLevers?: MetricLever[];
+  currentRatings?: Record<string, number>;
 }) {
-  const [draft, setDraft] = useState<{ key: Lever["key"]; value: number } | null>(null);
+  const [draft, setDraft] = useState<{ key: string; value: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
+
+  /**
+   * A metric lever moves the rating it drives, and the rating moves the mean
+   * that the scorer reads. metric -> band -> rating -> overall -> score.
+   */
+  function playerWithMetric(lever: MetricLever, rawValue: number): Player {
+    const bandScore = scoreFromBands(rawValue, lever.bands);
+    if (bandScore === null) return player;
+
+    const ratings = { ...currentRatings, [lever.skillDefinitionId]: bandScore };
+    const values = Object.values(ratings);
+    if (values.length === 0) return { ...player, overall_score: bandScore };
+
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    return { ...player, overall_score: Math.round(mean * 10) / 10 };
+  }
 
   const levers = useMemo(
     () =>
@@ -134,10 +169,16 @@ export function FitLandscape({
   // Projection: only while a slider is held. Released, it does not exist.
   const projected = useMemo(() => {
     if (!draft) return null;
+
+    const metric = metricLevers.find((l) => l.metricKey === draft.key);
+    if (metric) return scoreAll(playerWithMetric(metric, draft.value), colleges);
+
     const lever = levers.find((l) => l.key === draft.key);
     if (!lever) return null;
     return scoreAll(lever.apply(player, draft.value), colleges);
-  }, [draft, levers, player, colleges]);
+    // playerWithMetric is derived from props that are already dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft, levers, metricLevers, player, colleges, currentRatings]);
 
   const shown = projected ?? real;
   const packed = useMemo(() => pack(shown), [shown]);
@@ -149,6 +190,23 @@ export function FitLandscape({
     (r) => r.score !== null && r.score >= IN_RANGE_THRESHOLD
   ).length;
   const gained = shownInRange - realInRange;
+
+  /*
+   * Raising ability can lower a fit, because a stronger player is a worse
+   * match for a lower division. That is the honesty working, but in a demo it
+   * reads as a bug unless it is named the moment it happens.
+   */
+  const droppedByLevel = useMemo(() => {
+    if (!projected) return null;
+    const realById = new Map(real.map((r) => [r.college.id, r.score]));
+    const dropped = projected.filter((r) => {
+      const before = realById.get(r.college.id);
+      return before !== undefined && before !== null && r.score !== null && r.score < before;
+    });
+    if (dropped.length === 0) return null;
+    const levels = [...new Set(dropped.map((d) => d.college.division))];
+    return { count: dropped.length, levels };
+  }, [projected, real]);
 
   const best = real[0]?.score ?? null;
 
@@ -318,6 +376,83 @@ export function FitLandscape({
           )}
         </div>
 
+        {/* Metric levers first: a measurable is more concrete than a rating,
+            and the bands make the translation visible. */}
+        {metricLevers.map((lever) => {
+          const range = bandRange(lever.bands);
+          const ticks = bandTicks(lever.bands);
+          const isDrafting = draft?.key === lever.metricKey;
+          const anchorValue =
+            lever.currentValue ?? (range.min + range.max) / 2;
+          const value = isDrafting ? draft.value : anchorValue;
+          const projectedScore = scoreFromBands(value, lever.bands);
+
+          return (
+            <div key={lever.metricKey} className="mb-4 last:mb-0">
+              <label className="flex items-baseline justify-between gap-2 mb-1">
+                <span className="text-caption text-ink-4">
+                  {lever.metricLabel}
+                  {lever.skillLabel !== lever.metricLabel && (
+                    <span className="text-slate"> drives {lever.skillLabel}</span>
+                  )}
+                </span>
+                <span className="font-mono num text-meta">
+                  <span className={isDrafting ? "text-gold" : "text-ink"}>
+                    {value.toFixed(lever.unit === "seconds" ? 2 : 0)}
+                  </span>
+                  <span className="text-slate"> {lever.unit}</span>
+                  {projectedScore !== null && (
+                    <span className={isDrafting ? "text-gold" : "text-ink-5"}>
+                      {" "}
+                      = {projectedScore}
+                    </span>
+                  )}
+                </span>
+              </label>
+
+              {/* Band boundaries on the track, so the player can see exactly
+                  where one score becomes the next. */}
+              <div className="relative h-3 mb-0.5" aria-hidden>
+                {ticks.map((tick) => (
+                  <span
+                    key={tick.score}
+                    className="absolute top-0 flex flex-col items-center"
+                    style={{ left: `${Math.min(Math.max(tick.at, 0), 1) * 100}%`, transform: "translateX(-50%)" }}
+                  >
+                    <span className="block w-px h-1.5 bg-bone-3" />
+                    <span className="font-mono num text-[7px] leading-none text-slate">
+                      {tick.score}
+                    </span>
+                  </span>
+                ))}
+              </div>
+
+              <input
+                type="range"
+                min={range.min}
+                max={range.max}
+                step={lever.unit === "seconds" ? 0.01 : 1}
+                value={value}
+                aria-label={`${lever.metricLabel} projection`}
+                onChange={(e) => setDraft({ key: lever.metricKey, value: Number(e.target.value) })}
+                onPointerUp={() => setDraft(null)}
+                onPointerCancel={() => setDraft(null)}
+                onBlur={() => setDraft(null)}
+                onKeyUp={(e) => {
+                  if (e.key !== "Tab") setDraft(null);
+                }}
+                className="focusable w-full accent-gold h-touch cursor-pointer"
+              />
+
+              {lever.currentValue === null && (
+                <p className="text-micro text-slate mt-0.5">
+                  No {lever.metricLabel.toLowerCase()} on file, so this starts mid-scale.
+                </p>
+              )}
+            </div>
+          );
+        })}
+
         {levers.map((lever) => {
           const isDrafting = draft?.key === lever.key;
           const anchor = lever.actual ?? lever.fallback;
@@ -362,6 +497,15 @@ export function FitLandscape({
             </div>
           );
         })}
+
+        {droppedByLevel && (
+          <p className="text-caption text-ink-5 leading-relaxed text-pretty mt-1 mb-2 border-l-2 border-gold pl-2.5">
+            {droppedByLevel.count} program
+            {droppedByLevel.count === 1 ? "" : "s"} scored lower, mostly{" "}
+            {droppedByLevel.levels.map((l) => l.toUpperCase()).join(" and ")}. Stronger
+            players fit lower divisions less, and coaches know it too.
+          </p>
+        )}
 
         <p className="text-micro text-slate leading-relaxed text-pretty">
           {draft
