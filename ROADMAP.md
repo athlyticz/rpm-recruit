@@ -21,32 +21,35 @@ Nothing below this line can meet the "type-check and lint passing" bar until the
 - [x] Migration 00003: grant table privileges on `profiles` and `players`. Migration 00001 created
   them with RLS policies but no grants, so PostgREST denies every caller regardless of policy.
 - [x] Seed script: load the 31 legacy schools as a starter set, tagged `data_source = 'legacy_seed'`, then extend with NJCAA Region 19 and NAIA programs relevant to the NJ/PA/DE launch market.
-- [ ] Migration 00004: `metrics`, `evaluations`, `matches`, `outreach_log`, `checklist_items`, `pitch_sessions` with RLS and grants.
+- [x] Migration 00004: `metrics`, `evaluations`, `matches`, `outreach_log`, `checklist_items`, `pitch_sessions` with RLS and grants.
 
 ### Showcase Surface (next after 00004)
 
 The college match page is the product's flagship screen and the reference implementation of the
 design bar. Everything wired after it is held to the same standard.
 
-- [ ] Responsive app shell first, because a mobile-first page cannot live inside a fixed desktop
+- [x] Responsive app shell first, because a mobile-first page cannot live inside a fixed desktop
   grid. `(app)/layout.tsx` is currently `grid-cols-[236px_1fr]` with no breakpoints; the whole app
   carries 21 breakpoint utilities and all of them are on marketing pages. Collapsible sidebar at
   tablet, bottom-tab navigation at phone width, safe-area insets respected.
-- [ ] Rebuild `/college-match` to full design ambition: mobile-first from 390px up, real seeded
+- [x] Rebuild `/college-match` to full design ambition: mobile-first from 390px up, real seeded
   college data rather than the hardcoded six, the tachometer as the visual centerpiece, and results
   across all five levels.
-- [ ] Honest thin-coverage treatment for NAIA per the CLAUDE.md Match Engine Direction rule. No
+- [x] Honest thin-coverage treatment for NAIA per the CLAUDE.md Match Engine Direction rule. No
   padding, no hiding.
-- [ ] Component-level "why this score" breakdown on every result, so the number is explainable.
+- [x] Component-level "why this score" breakdown on every result, so the number is explainable.
   The engine behind it stays the interim heuristic until Phase 3; the breakdown UI is built now and
   the real engine slots into it.
-- [ ] Bar to clear: this one screen would not embarrass a premium consumer app.
+- [x] Bar to clear: this one screen would not embarrass a premium consumer app. See the delivery
+  self-critique; the screen clears it on structure and honesty, less so on typographic finish.
 
 - [ ] College Scorecard enrichment script (separate from the seed): backfill numeric academics
   and cost fields keyed on `ipeds_unitid`. The 31 legacy rows carry no unitid, so this needs a
   name-plus-state matching step with manual review of ambiguous matches before it can key on them.
 - [ ] Wire `/profile`, `/athletic`, `/academics` to Supabase (server actions, optimistic UI). Player edits persist.
-- [ ] Wire `/scores` and `/pitch-log` to `metrics` and `pitch_sessions` with verification_status surfaced in the UI.
+- [~] Wire `/scores` and `/pitch-log`. `/scores` is wired to `evaluations` with the overall_score
+  cache written in the same server action. `/pitch-log` is not started, and `verification_status`
+  is surfaced on the dashboard credibility ladder but not yet on individual metrics.
 - [ ] Wire `/checklist` to `checklist_items`, seeded by grad year from a playbook template table.
 - [ ] Wire checkout. `/api/checkout` is never called from anywhere in the app; the pricing CTAs are plain links to `/signup`, so no user can start a purchase. Add the client call and the plan-selection path.
 - [ ] Entitlement gating. Nothing anywhere reads `plan`, `subscription_status`, or `access_expires_at`, so a free signup and a $1,499 purchaser get identical access. Add a server-side entitlement check and gate paid surfaces on it.
