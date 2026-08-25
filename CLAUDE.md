@@ -94,7 +94,20 @@ Run `npm run type-check` and `npm run lint` before considering any task complete
 
 ### Design System
 
-Colors defined as Tailwind `@theme` tokens: `bone`, `ink`, `gold`, `blood`, `green`, `slate`, `blue` (each with variants). Mapped to Tailwind classes like `bg-ink`, `text-gold`, `border-bone-3`, etc. Data and metrics render in JetBrains Mono. Copy rules: no em dashes, no emojis, coach's voice.
+Colors defined as Tailwind `@theme` tokens in `src/app/globals.css`: `bone`, `ink`, `gold`, `blood`, `green`, `slate`, `blue` (each with variants). Mapped to Tailwind classes like `bg-ink`, `text-gold`, `border-bone-3`, etc. Data and metrics render in JetBrains Mono. Copy rules: no em dashes, no emojis, coach's voice.
+
+Tokens are the only source of styling values. Do not introduce raw hex, one-off font stacks, or
+ad hoc shadows; if a value is missing from the token set, add it to `@theme` rather than inlining it.
+
+**Responsive bar: every layout must work at 390px width.** Design mobile-first and let the desktop
+layout be the enhancement, not the other way round. The authenticated shell is responsive: the
+sidebar collapses and a bottom-tab pattern carries primary navigation at phone width. Native mobile
+packaging stays in ROADMAP.md Later; the near-term bar is that the web app at phone width feels
+app-like rather than like a desktop page that was shrunk.
+
+**Every page that gets wired to data gets a design pass to this token system in the same session.**
+Wiring without the design pass is not done. The college match page is the reference implementation
+of the bar: see the Showcase Surface item in ROADMAP.md.
 
 ## Data Model Direction
 
@@ -155,3 +168,5 @@ See `.env.local.example` for required variables: Supabase URL/keys, Stripe keys/
 - `src/types/database.ts` is generated output. Never hand-edit it; regenerate via `npm run db:types` after any migration.
 - Prefer server components and server actions for data access; client components only where interactivity requires it.
 - Every user-visible number that comes from the match engine must be explainable in the UI.
+- Every page wired to data gets a design pass to the token system in the same session.
+- Every layout must work at 390px width. Check phone width before calling a screen done.

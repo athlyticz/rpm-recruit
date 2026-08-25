@@ -17,11 +17,31 @@ Nothing below this line can meet the "type-check and lint passing" bar until the
 
 ## Phase 1: Real data layer (make the app remember)
 
-- [ ] Migration 00002: `colleges` table per CLAUDE.md Data Model Direction. Include `division` enum covering D1, D2, D3, NAIA, NJCAA.
-- [ ] Migration 00003: grant table privileges on `profiles` and `players`. Migration 00001 created
+- [x] Migration 00002: `colleges` table per CLAUDE.md Data Model Direction. Include `division` enum covering D1, D2, D3, NAIA, NJCAA.
+- [x] Migration 00003: grant table privileges on `profiles` and `players`. Migration 00001 created
   them with RLS policies but no grants, so PostgREST denies every caller regardless of policy.
+- [x] Seed script: load the 31 legacy schools as a starter set, tagged `data_source = 'legacy_seed'`, then extend with NJCAA Region 19 and NAIA programs relevant to the NJ/PA/DE launch market.
 - [ ] Migration 00004: `metrics`, `evaluations`, `matches`, `outreach_log`, `checklist_items`, `pitch_sessions` with RLS and grants.
-- [ ] Seed script: load the 31 legacy schools as a starter set, tagged `data_source = 'legacy_seed'`, then extend with NJCAA Region 19 and NAIA programs relevant to the NJ/PA/DE launch market.
+
+### Showcase Surface (next after 00004)
+
+The college match page is the product's flagship screen and the reference implementation of the
+design bar. Everything wired after it is held to the same standard.
+
+- [ ] Responsive app shell first, because a mobile-first page cannot live inside a fixed desktop
+  grid. `(app)/layout.tsx` is currently `grid-cols-[236px_1fr]` with no breakpoints; the whole app
+  carries 21 breakpoint utilities and all of them are on marketing pages. Collapsible sidebar at
+  tablet, bottom-tab navigation at phone width, safe-area insets respected.
+- [ ] Rebuild `/college-match` to full design ambition: mobile-first from 390px up, real seeded
+  college data rather than the hardcoded six, the tachometer as the visual centerpiece, and results
+  across all five levels.
+- [ ] Honest thin-coverage treatment for NAIA per the CLAUDE.md Match Engine Direction rule. No
+  padding, no hiding.
+- [ ] Component-level "why this score" breakdown on every result, so the number is explainable.
+  The engine behind it stays the interim heuristic until Phase 3; the breakdown UI is built now and
+  the real engine slots into it.
+- [ ] Bar to clear: this one screen would not embarrass a premium consumer app.
+
 - [ ] College Scorecard enrichment script (separate from the seed): backfill numeric academics
   and cost fields keyed on `ipeds_unitid`. The 31 legacy rows carry no unitid, so this needs a
   name-plus-state matching step with manual review of ambiguous matches before it can key on them.
