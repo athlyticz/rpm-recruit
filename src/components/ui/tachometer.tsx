@@ -39,15 +39,21 @@ interface TachometerProps {
 /*  Constants                                                          */
 /* ------------------------------------------------------------------ */
 
-const SIZE_PX: Record<NonNullable<TachometerProps["size"]>, number> = {
-  inline: 68,
-  card: 168,
-  hero: 264,
+/**
+ * Sizes resolve to the --size-gauge-* tokens rather than pixel literals, so
+ * the dimension lives in exactly one place. Declaring the tokens in @theme and
+ * then hardcoding matching numbers here was two sources for one fact, and they
+ * would have drifted the first time either changed.
+ */
+const SIZE_VAR: Record<NonNullable<TachometerProps["size"]>, string> = {
+  inline: "var(--size-gauge-inline)",
+  card: "var(--size-gauge-card)",
+  hero: "var(--size-gauge-hero)",
   // Aliases onto the role scale, so no call site invents its own dimension.
-  sm: 68,
-  md: 168,
-  lg: 264,
-  xl: 264,
+  sm: "var(--size-gauge-inline)",
+  md: "var(--size-gauge-card)",
+  lg: "var(--size-gauge-hero)",
+  xl: "var(--size-gauge-hero)",
 };
 
 /**
@@ -247,7 +253,7 @@ export function Tachometer({
     [displayDeg]
   );
 
-  const px = SIZE_PX[size];
+  const sizeVar = SIZE_VAR[size];
   const tier = tierOf(size);
   const proportions = PROPORTIONS[tier];
 
@@ -279,15 +285,15 @@ export function Tachometer({
     <div
       className={`inline-flex items-center justify-center ${className}`}
       style={{
-        width: px,
-        height: px,
+        width: sizeVar,
+        height: sizeVar,
         ...(transitionName ? { viewTransitionName: transitionName } : {}),
       }}
     >
       <svg
         viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}
-        width={px}
-        height={px}
+        width="100%"
+        height="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
         {/* Background circle */}
