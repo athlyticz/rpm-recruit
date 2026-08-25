@@ -7,10 +7,10 @@ import { PageHeader } from "@/components/app/page-header";
 function CardHeader({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-      <h2 className="font-display text-[17px] font-semibold text-ink">
+      <h2 className="font-display text-title-sm font-semibold text-ink">
         {title}
       </h2>
-      <p className="text-[11px] text-slate">{desc}</p>
+      <p className="text-meta text-slate">{desc}</p>
     </div>
   );
 }
@@ -32,7 +32,7 @@ function MeasurementField({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+      <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
         {label}
       </label>
       <input
@@ -57,15 +57,15 @@ function MetricBox({
 }) {
   return (
     <div>
-      <div className="font-condensed text-[9px] font-bold tracking-[0.18em] uppercase text-slate">
+      <div className="font-condensed text-micro font-bold tracking-[0.18em] uppercase text-slate">
         {label}
       </div>
       <input
         type="text"
         placeholder={placeholder}
-        className="min-h-touch font-mono text-[22px] font-medium text-ink bg-transparent border-none border-b-2 border-bone-3 outline-none w-full py-1 focus:border-gold"
+        className="min-h-touch font-mono text-title-lg font-medium text-ink bg-transparent border-none border-b-2 border-bone-3 outline-none w-full py-1 focus:border-gold"
       />
-      <p className="text-[10.5px] text-slate mt-1.5 leading-relaxed">
+      <p className="text-label text-slate mt-1.5 leading-relaxed">
         {benchmark}
       </p>
       {progressPercent !== undefined && (

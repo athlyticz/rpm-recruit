@@ -172,10 +172,10 @@ export default function ChecklistPage() {
         {/* ── Package Checklist ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Package Checklist
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               What to include when contacting coaches.
             </p>
           </div>
@@ -222,13 +222,13 @@ export default function ChecklistPage() {
                 </button>
                 <div>
                   <strong
-                    className={`text-[13px] font-semibold block transition-colors ${
+                    className={`text-body font-semibold block transition-colors ${
                       checked[i] ? "text-slate line-through" : "text-ink"
                     }`}
                   >
                     {i + 1}. {item.title}
                   </strong>
-                  <span className="text-[11px] text-slate leading-relaxed">
+                  <span className="text-meta text-slate leading-relaxed">
                     {item.desc}
                   </span>
                 </div>
@@ -240,10 +240,10 @@ export default function ChecklistPage() {
         {/* ── 20 Questions ────────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               20 Questions College Coaches Ask
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Click any question to expand.
             </p>
           </div>
@@ -255,10 +255,10 @@ export default function ChecklistPage() {
                   onClick={() => toggleQ(i)}
                   className="w-full text-left px-5 py-3 min-h-touch flex items-center gap-3 hover:bg-bone/30 transition-colors dur-fast cursor-pointer"
                 >
-                  <span className="font-mono text-[13px] font-medium text-gold w-6 flex-shrink-0">
+                  <span className="font-mono text-body font-medium text-gold w-6 flex-shrink-0">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="text-[13px] text-ink font-semibold flex-1">
+                  <span className="text-body text-ink font-semibold flex-1">
                     {qa.question}
                   </span>
                   <svg
@@ -297,7 +297,7 @@ export default function ChecklistPage() {
                       <span>{qa.tip}</span>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+                      <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
                         Your Practice Answer
                       </label>
                       <textarea

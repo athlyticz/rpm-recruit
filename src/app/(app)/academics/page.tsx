@@ -41,7 +41,7 @@ const DISTANCE_OPTIONS = [
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+    <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
       {children}
     </label>
   );
@@ -134,7 +134,7 @@ export default function AcademicsPage() {
         {/* ── Academic Profile ─────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Academic Profile
             </h2>
           </div>
@@ -153,10 +153,10 @@ export default function AcademicsPage() {
         {/* ── Academic Interests ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Academic Interests
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Select intended major areas — used by college match engine.
             </p>
           </div>
@@ -170,7 +170,7 @@ export default function AcademicsPage() {
                     key={major}
                     type="button"
                     onClick={() => toggleMajor(major)}
-                    className={`px-3 py-1.5 min-h-touch inline-flex items-center text-[12px] font-medium rounded-sm transition-colors cursor-pointer ${
+                    className={`px-3 py-1.5 min-h-touch inline-flex items-center text-caption font-medium rounded-sm transition-colors cursor-pointer ${
                       active
                         ? "bg-ink border border-ink text-gold-3"
                         : "bg-bone border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
@@ -187,7 +187,7 @@ export default function AcademicsPage() {
         {/* ── Campus Preference ────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Campus Preference
             </h2>
           </div>
@@ -211,10 +211,10 @@ export default function AcademicsPage() {
         {/* ── NCAA Core Course Reference ───────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               NCAA Core Course Reference
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Quick reference — verify at ncaa.org.
             </p>
           </div>
@@ -223,11 +223,11 @@ export default function AcademicsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Division I */}
               <div>
-                <h3 className="font-display text-[14px] font-semibold text-ink mb-3">
+                <h3 className="font-display text-body-lg font-semibold text-ink mb-3">
                   Division I — 16 Core Courses
                 </h3>
 
-                <ul className="space-y-1.5 text-[12.5px] text-ink leading-relaxed">
+                <ul className="space-y-1.5 text-caption text-ink leading-relaxed">
                   <li>4 yrs English</li>
                   <li>3 yrs Math (Algebra I+)</li>
                   <li>2 yrs Natural/Physical Science (1 lab)</li>
@@ -236,7 +236,7 @@ export default function AcademicsPage() {
                   <li>4 yrs additional electives</li>
                 </ul>
 
-                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-[11.5px] px-3.5 py-3 mt-4 leading-relaxed">
+                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-meta px-3.5 py-3 mt-4 leading-relaxed">
                   D-I uses a sliding GPA/SAT scale. Min SAT not fixed — depends on GPA.
                   Use NCAA code 9999 when registering for SAT/ACT.
                 </div>
@@ -244,11 +244,11 @@ export default function AcademicsPage() {
 
               {/* Division II */}
               <div>
-                <h3 className="font-display text-[14px] font-semibold text-ink mb-3">
+                <h3 className="font-display text-body-lg font-semibold text-ink mb-3">
                   Division II — 14 Core Courses
                 </h3>
 
-                <ul className="space-y-1.5 text-[12.5px] text-ink leading-relaxed">
+                <ul className="space-y-1.5 text-caption text-ink leading-relaxed">
                   <li>3 yrs English</li>
                   <li>2 yrs Math</li>
                   <li>2 yrs Natural/Physical Science</li>
@@ -257,7 +257,7 @@ export default function AcademicsPage() {
                   <li>3 yrs additional</li>
                 </ul>
 
-                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-[11.5px] px-3.5 py-3 mt-4 leading-relaxed">
+                <div className="border-l-[3px] border-blue bg-blue/[0.07] text-[#1A4A78] text-meta px-3.5 py-3 mt-4 leading-relaxed">
                   D-II minimum: SAT 820 (CR+Math) or ACT sum of 88. Min GPA 2.000.
                   Writing section of SAT is NOT used.
                 </div>

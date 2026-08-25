@@ -20,7 +20,7 @@ export function Sidebar() {
     >
       {NAV_SECTIONS.map((section) => (
         <div key={section.label} className="mb-5">
-          <div className="font-condensed text-[9px] font-bold tracking-[0.24em] uppercase text-ink-4 mb-1.5 px-0 xl:px-5 text-center xl:text-left">
+          <div className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-ink-4 mb-1.5 px-0 xl:px-5 text-center xl:text-left">
             <span className="hidden xl:inline">{section.label}</span>
             <span
               aria-hidden
@@ -50,12 +50,12 @@ export function Sidebar() {
                   className={active ? "text-gold" : ""}
                   aria-hidden
                 />
-                <span className="hidden xl:inline text-[13px] leading-none">
+                <span className="hidden xl:inline text-body leading-none">
                   {item.label}
                 </span>
 
                 {/* Collapsed-rail tooltip. */}
-                <span className="xl:hidden pointer-events-none absolute left-full ml-2 z-50 whitespace-nowrap rounded-sm bg-ink-2 border border-ink-3 px-2 py-1 text-[11px] text-bone-2 opacity-0 shadow-md transition-opacity dur-fast group-hover:opacity-100">
+                <span className="xl:hidden pointer-events-none absolute left-full ml-2 z-50 whitespace-nowrap rounded-sm bg-ink-2 border border-ink-3 px-2 py-1 text-meta text-bone-2 opacity-0 shadow-md transition-opacity dur-fast group-hover:opacity-100">
                   {item.label}
                 </span>
               </Link>
@@ -66,13 +66,13 @@ export function Sidebar() {
 
       <div className="mt-auto px-3.5 hidden xl:block">
         <div className="p-4 bg-ink-2 border border-ink-3 rounded-sm">
-          <div className="font-condensed text-[9px] font-bold tracking-[0.2em] uppercase text-slate mb-2">
+          <div className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-slate mb-2">
             Overall Rating
           </div>
-          <div className="font-display text-[50px] font-bold text-gold leading-none tracking-tight">
+          <div className="font-display text-numeral font-bold num text-gold leading-none tracking-tight">
             --
           </div>
-          <p className="text-[11px] text-slate mt-1.5 leading-snug">
+          <p className="text-meta text-slate mt-1.5 leading-snug">
             Enter scores to generate rating
           </p>
           <div className="h-[3px] bg-ink-3 mt-2.5 rounded-pill overflow-hidden">

@@ -54,7 +54,7 @@ export default function HomePage() {
       <section className="relative bg-ink overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 py-24 md:py-36 relative z-10">
           <div className="max-w-2xl">
-            <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-6">
+            <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-6">
               Scanzano Baseball &middot; All-American Baseball Talent Showcases
             </div>
             <Image
@@ -99,7 +99,7 @@ export default function HomePage() {
       {/* ── FEATURES GRID ── */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="text-center mb-14">
-          <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-3">
+          <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-3">
             Platform
           </div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
@@ -142,7 +142,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-3">
+              <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-3">
                 Showcase Scale
               </div>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-bone mb-4">
@@ -161,7 +161,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="bg-ink-2 border border-ink-3 p-6">
-              <div className="font-condensed text-[9px] font-bold tracking-[0.2em] uppercase text-slate mb-4">
+              <div className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-slate mb-4">
                 Player Evaluation Ladder
               </div>
               <EvaluationLadder />
@@ -173,7 +173,7 @@ export default function HomePage() {
       {/* ── PRICING PREVIEW ── */}
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="text-center mb-14">
-          <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-3">
+          <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-3">
             Pricing
           </div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-ink">
@@ -196,7 +196,7 @@ export default function HomePage() {
               }`}
             >
               {key === "showcase" && (
-                <div className="font-condensed text-[9px] font-bold tracking-[0.17em] uppercase text-gold mb-2">
+                <div className="font-condensed text-micro font-bold tracking-[0.17em] uppercase text-gold mb-2">
                   Most Popular
                 </div>
               )}

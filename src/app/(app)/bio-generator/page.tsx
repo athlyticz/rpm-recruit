@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/app/page-header";
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+    <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
       {children}
     </label>
   );
@@ -64,10 +64,10 @@ export default function BioGeneratorPage() {
           {/* Generation Settings */}
           <div className="bg-white border border-black/[0.06] shadow-sm">
             <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-              <h2 className="font-display text-[17px] font-semibold text-ink">
+              <h2 className="font-display text-title-sm font-semibold text-ink">
                 Generation Settings
               </h2>
-              <p className="text-[11px] text-slate">
+              <p className="text-meta text-slate">
                 Control tone, audience, and output format.
               </p>
             </div>
@@ -140,10 +140,10 @@ export default function BioGeneratorPage() {
           {/* Profile Data Preview */}
           <div className="bg-white border border-black/[0.06] shadow-sm">
             <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-              <h2 className="font-display text-[17px] font-semibold text-ink">
+              <h2 className="font-display text-title-sm font-semibold text-ink">
                 Profile Data Preview
               </h2>
-              <p className="text-[11px] text-slate">
+              <p className="text-meta text-slate">
                 What the draft will use
               </p>
             </div>
@@ -159,11 +159,11 @@ export default function BioGeneratorPage() {
         {/* ── Output ──────────────────────────────────────────── */}
         <div className="bg-[#1E1E1E] border border-[#2E2E2E] p-5 min-h-[180px]">
           {bio ? (
-            <p className="font-body text-[13.5px] leading-relaxed text-[#E8E0D0] whitespace-pre-wrap">
+            <p className="font-body text-body leading-relaxed text-[#E8E0D0] whitespace-pre-wrap">
               {bio}
             </p>
           ) : (
-            <p className="font-body text-[13.5px] leading-relaxed text-slate italic">
+            <p className="font-body text-body leading-relaxed text-slate italic">
               Your generated bio will appear here.
             </p>
           )}

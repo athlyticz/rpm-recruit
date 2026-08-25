@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/app/page-header";
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+    <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
       {children}
     </label>
   );
@@ -67,10 +67,10 @@ export default function LetterBuilderPage() {
           {/* Coach Details */}
           <div className="bg-white border border-black/[0.06] shadow-sm">
             <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-              <h2 className="font-display text-[17px] font-semibold text-ink">
+              <h2 className="font-display text-title-sm font-semibold text-ink">
                 Coach Details
               </h2>
-              <p className="text-[11px] text-slate">
+              <p className="text-meta text-slate">
                 Recipient information for the letter.
               </p>
             </div>
@@ -129,10 +129,10 @@ export default function LetterBuilderPage() {
           {/* Letter Controls */}
           <div className="bg-white border border-black/[0.06] shadow-sm">
             <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-              <h2 className="font-display text-[17px] font-semibold text-ink">
+              <h2 className="font-display text-title-sm font-semibold text-ink">
                 Letter Controls
               </h2>
-              <p className="text-[11px] text-slate">
+              <p className="text-meta text-slate">
                 Adjust tone, length, and generate.
               </p>
             </div>
@@ -177,17 +177,17 @@ export default function LetterBuilderPage() {
         <div className="bg-white border border-black/[0.06] shadow-sm overflow-hidden">
           {/* Dark header bar */}
           <div className="bg-ink px-5 py-2.5 flex items-center justify-between">
-            <span className="font-condensed text-[11px] font-bold tracking-[0.15em] uppercase text-bone/70">
+            <span className="font-condensed text-meta font-bold tracking-[0.15em] uppercase text-bone/70">
               RPM Recruit &middot; Letter
             </span>
-            <span className="font-condensed text-[11px] font-bold tracking-[0.15em] uppercase text-bone/70">
+            <span className="font-condensed text-meta font-bold tracking-[0.15em] uppercase text-bone/70">
               All-American Baseball Talent Showcases
             </span>
           </div>
 
           {/* Meta bar */}
           {generated && (
-            <div className="px-5 py-2.5 border-b border-black/[0.06] flex gap-6 text-[11px] text-slate">
+            <div className="px-5 py-2.5 border-b border-black/[0.06] flex gap-6 text-meta text-slate">
               <span>
                 <strong className="text-ink font-medium">To:</strong>{" "}
                 {coachName || "—"}, {college || "—"}
@@ -206,7 +206,7 @@ export default function LetterBuilderPage() {
           {/* Letter body */}
           <div className="px-5 py-5 min-h-[460px]">
             {letterBody ? (
-              <p className="text-[13.5px] text-ink leading-relaxed whitespace-pre-wrap">
+              <p className="text-body text-ink leading-relaxed whitespace-pre-wrap">
                 {letterBody}
               </p>
             ) : (

@@ -43,7 +43,7 @@ export default function AuthLayout({
         {children}
 
         <div className="w-12 h-px bg-white/[0.08] mx-auto mt-8 mb-6" />
-        <p className="font-condensed text-[10px] font-semibold tracking-[0.18em] uppercase text-[#6A6054] text-center">
+        <p className="font-condensed text-label font-semibold tracking-[0.18em] uppercase text-[#6A6054] text-center">
           Scanzano Baseball &middot; All-American Baseball Talent Showcases
         </p>
       </div>

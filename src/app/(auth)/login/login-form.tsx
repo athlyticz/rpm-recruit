@@ -41,7 +41,7 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
           required
-          className="w-full bg-white/[0.04] border border-white/10 rounded-sm text-bone font-body text-[15px] font-medium px-4 py-3.5 outline-none focus:border-gold/50 focus:bg-gold/[0.04] transition-colors placeholder:text-ink-4 placeholder:font-normal"
+          className="w-full bg-white/[0.04] border border-white/10 rounded-sm text-bone font-body text-body-lg font-medium px-4 py-3.5 outline-none focus:border-gold/50 focus:bg-gold/[0.04] transition-colors placeholder:text-ink-4 placeholder:font-normal"
         />
       </div>
       <div>
@@ -51,7 +51,7 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
-          className="w-full bg-white/[0.04] border border-white/10 rounded-sm text-bone font-body text-[15px] font-medium px-4 py-3.5 outline-none focus:border-gold/50 focus:bg-gold/[0.04] transition-colors placeholder:text-ink-4 placeholder:font-normal"
+          className="w-full bg-white/[0.04] border border-white/10 rounded-sm text-bone font-body text-body-lg font-medium px-4 py-3.5 outline-none focus:border-gold/50 focus:bg-gold/[0.04] transition-colors placeholder:text-ink-4 placeholder:font-normal"
         />
       </div>
       {error && (

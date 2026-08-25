@@ -30,7 +30,7 @@ const PITCHING_COLS = ["W", "L", "SV", "ERA", "G", "CG", "IP", "H", "BB", "K", "
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+    <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
       {children}
     </label>
   );
@@ -96,7 +96,7 @@ function StatTable({ columns }: { columns: string[] }) {
             {columns.map((col) => (
               <th
                 key={col}
-                className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-1.5 px-1"
+                className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-1.5 px-1"
               >
                 {col}
               </th>
@@ -140,10 +140,10 @@ export default function ProfilePage() {
         {/* ── Personal Details ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Personal Details
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Basic information about the player.
             </p>
           </div>
@@ -191,10 +191,10 @@ export default function ProfilePage() {
         {/* ── Season Statistics ──────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Season Statistics
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Hitting and pitching stats by season.
             </p>
           </div>
@@ -207,7 +207,7 @@ export default function ProfilePage() {
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(tab)}
-                  className={`font-condensed text-[11px] font-bold tracking-[0.11em] uppercase py-2 px-4 cursor-pointer border-b-2 transition-colors ${
+                  className={`font-condensed text-meta font-bold tracking-[0.11em] uppercase py-2 px-4 cursor-pointer border-b-2 transition-colors ${
                     activeTab === tab
                       ? "text-ink border-gold"
                       : "text-slate border-transparent hover:text-ink"

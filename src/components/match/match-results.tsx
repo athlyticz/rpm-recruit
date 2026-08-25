@@ -1,21 +1,79 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Info, MapPin, ExternalLink, Trophy } from "lucide-react";
 import { Tachometer } from "@/components/ui/tachometer";
 import { LEVELS, type Division } from "./level-constants";
-import type { MatchResult, ScoreComponent } from "@/lib/match/interim-scorer";
+import {
+  rankMatches,
+  TIE_BREAK_LABEL,
+  type MatchResult,
+  type RankedMatch,
+  type ScoreComponent,
+} from "@/lib/match/interim-scorer";
 
 /* ------------------------------------------------------------------ */
 /*  Presentation helpers                                               */
 /* ------------------------------------------------------------------ */
 
-/** Fit bands. Deliberately blunt: a bad fit reads as a bad fit. */
-function fitBand(score: number): { label: string; text: string; bar: string } {
-  if (score >= 80) return { label: "Strong fit", text: "text-green-2", bar: "bg-green-2" };
-  if (score >= 65) return { label: "Realistic", text: "text-gold-2", bar: "bg-gold" };
-  if (score >= 45) return { label: "Reach", text: "text-gold", bar: "bg-gold/70" };
-  return { label: "Long shot", text: "text-blood-2", bar: "bg-blood-2" };
+/**
+ * Fit bands. Deliberately blunt: a bad fit reads as a bad fit.
+ *
+ * The thresholds are printed in the list headings rather than left implicit,
+ * so a player can see exactly where a band starts and ends.
+ */
+interface Band {
+  key: string;
+  label: string;
+  min: number;
+  text: string;
+  bar: string;
+  blurb: string;
+}
+
+const BANDS: Band[] = [
+  {
+    key: "strong",
+    label: "Strong fit",
+    min: 80,
+    text: "text-green-2",
+    bar: "bg-green-2",
+    blurb: "Your profile clears what these programs look for.",
+  },
+  {
+    key: "realistic",
+    label: "Realistic",
+    min: 65,
+    text: "text-gold-2",
+    bar: "bg-gold",
+    blurb: "In range on the components that carry weight.",
+  },
+  {
+    key: "reach",
+    label: "Reach",
+    min: 45,
+    text: "text-gold",
+    bar: "bg-gold/70",
+    blurb: "Worth contacting, but something has to move first.",
+  },
+  {
+    key: "longshot",
+    label: "Long shot",
+    min: 0,
+    text: "text-blood-2",
+    bar: "bg-blood-2",
+    blurb: "The gap here is wide. Shown because hiding it would not help you.",
+  },
+];
+
+function fitBand(score: number): Band {
+  return BANDS.find((b) => score >= b.min) ?? BANDS[BANDS.length - 1];
+}
+
+/** "65 to 79" for the middle bands, "80 and above" for the top. */
+function bandRange(band: Band): string {
+  const above = BANDS.filter((b) => b.min > band.min).sort((a, b) => a.min - b.min)[0];
+  return above ? `${band.min} to ${above.min - 1}` : `${band.min} and above`;
 }
 
 /** Staggered entrance, capped so a long list never feels slow. */
@@ -23,10 +81,15 @@ function stagger(index: number): React.CSSProperties {
   return { animationDelay: `${Math.min(index, 8) * 45}ms` };
 }
 
+/**
+ * One construction for all three chips: ordinal plus "best fit". The previous
+ * set mixed "Best fit", "Runner up" and "Third", which read as three different
+ * ideas rather than three places in one order.
+ */
 const PODIUM = [
-  { ring: "border-gold shadow-gold", chip: "bg-gold text-ink", label: "Best fit" },
-  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "Runner up" },
-  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "Third" },
+  { ring: "border-gold shadow-gold", chip: "bg-gold text-ink", label: "1st best fit" },
+  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "2nd best fit" },
+  { ring: "border-bone-3", chip: "bg-ink text-gold-3", label: "3rd best fit" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -121,19 +184,11 @@ function Collapse({ open, children }: { open: boolean; children: React.ReactNode
 /*  Result cards                                                       */
 /* ------------------------------------------------------------------ */
 
-function PodiumCard({
-  result,
-  rank,
-  index,
-}: {
-  result: MatchResult;
-  rank: number;
-  index: number;
-}) {
+function PodiumCard({ result, index }: { result: RankedMatch; index: number }) {
   const [open, setOpen] = useState(false);
-  const { college, score } = result;
+  const { college, score, rank, tied } = result;
   const band = score === null ? null : fitBand(score);
-  const style = PODIUM[rank - 1];
+  const style = PODIUM[rank - 1] ?? PODIUM[PODIUM.length - 1];
   const first = rank === 1;
 
   return (
@@ -147,8 +202,13 @@ function PodiumCard({
         >
           {first && <Trophy size={11} aria-hidden />}
           {style.label}
+          {tied && <span className="font-normal opacity-80">&nbsp;· tied</span>}
         </span>
-        <span className="font-mono text-micro text-slate tabular-nums">#{rank}</span>
+        {tied && (
+          <span className="text-micro text-slate">
+            same score, {TIE_BREAK_LABEL}
+          </span>
+        )}
       </div>
 
       <button
@@ -184,7 +244,7 @@ function PodiumCard({
 
         <span className="text-right shrink-0 pl-1">
           <span
-            className={`block font-display font-bold leading-none tabular-nums text-ink ${
+            className={`block font-display font-bold leading-none num text-ink ${
               first ? "text-numeral" : "text-display-xl"
             }`}
           >
@@ -195,6 +255,21 @@ function PodiumCard({
               className={`block font-condensed text-micro font-bold tracking-[0.14em] uppercase mt-1 ${band.text}`}
             >
               {band.label}
+            </span>
+          )}
+          {first && score !== null && (
+            /* Needle-physics moment: the meter sweeps to the score. The digits
+               never animate. A number that animates is a number that can be
+               caught mid-flight showing something untrue, and every figure in
+               this product has to be defensible at any instant. */
+            <span
+              aria-hidden
+              className="mt-1.5 block h-[3px] w-16 ml-auto rounded-pill bg-bone-2 overflow-hidden"
+            >
+              <span
+                className={`block h-full rounded-pill origin-left motion-safe:animate-meter ${band?.bar ?? "bg-gold"}`}
+                style={{ width: `${score}%` }}
+              />
             </span>
           )}
         </span>
@@ -215,17 +290,9 @@ function PodiumCard({
   );
 }
 
-function ListRow({
-  result,
-  rank,
-  index,
-}: {
-  result: MatchResult;
-  rank: number;
-  index: number;
-}) {
+function ListRow({ result, index }: { result: RankedMatch; index: number }) {
   const [open, setOpen] = useState(false);
-  const { college, score } = result;
+  const { college, score, rank, tied } = result;
   const band = score === null ? null : fitBand(score);
 
   return (
@@ -239,7 +306,13 @@ function ListRow({
         aria-expanded={open}
         className="w-full text-left px-4 py-3 min-h-touch flex items-center gap-3 active:bg-bone/40 transition-colors dur-fast"
       >
-        <span className="font-mono text-meta text-slate tabular-nums w-5 shrink-0">{rank}</span>
+        <span
+          className="font-mono text-meta text-slate tabular-nums w-7 shrink-0"
+          title={tied ? `Tied on score, ${TIE_BREAK_LABEL}` : undefined}
+        >
+          {rank}
+          {tied && <span className="text-micro">=</span>}
+        </span>
 
         <span className="flex-1 min-w-0">
           <span className="block font-display text-title-sm font-bold text-ink truncate">
@@ -259,7 +332,7 @@ function ListRow({
         </span>
 
         <span className="text-right shrink-0">
-          <span className="block font-display text-title-lg font-bold text-ink leading-none tabular-nums">
+          <span className="block font-display text-title-lg font-bold num text-ink leading-none tabular-nums">
             {score === null ? "--" : score.toFixed(0)}
           </span>
           {band && (
@@ -311,6 +384,19 @@ export function MatchResults({
   hasPlayer: boolean;
 }) {
   const [level, setLevel] = useState<Division>("d1");
+  const tabListRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<Partial<Record<Division, HTMLButtonElement | null>>>({});
+  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+
+  // The selected level rides a bar that slides on the needle curve. Tab
+  // switching is the main interaction on this screen, so the movement carries
+  // the eye from the old selection to the new one instead of teleporting.
+  useLayoutEffect(() => {
+    const list = tabListRef.current;
+    const tab = tabRefs.current[level];
+    if (!list || !tab) return;
+    setIndicator({ left: tab.offsetLeft - list.scrollLeft, width: tab.offsetWidth });
+  }, [level]);
 
   const byLevel = useMemo(() => {
     const map = new Map<Division, MatchResult[]>();
@@ -322,9 +408,21 @@ export function MatchResults({
   }, [results]);
 
   const top = results[0];
-  const active = byLevel.get(level) ?? [];
-  const podium = active.slice(0, 3);
-  const rest = active.slice(3);
+  const active = useMemo(() => rankMatches(byLevel.get(level) ?? []), [byLevel, level]);
+
+  // The podium is defined by rank, not by row count, so a genuine three-way tie
+  // shows three leaders rather than silently demoting one of them.
+  const podium = active.filter((r) => r.rank <= 3);
+  const rest = active.filter((r) => r.rank > 3);
+
+  // Everything below the podium is grouped by fit band, so a run of near
+  // identical rows becomes a shape the eye can read.
+  const grouped = useMemo(() => {
+    return BANDS.map((band) => ({
+      band,
+      rows: rest.filter((r) => r.score !== null && fitBand(r.score).key === band.key),
+    })).filter((g) => g.rows.length > 0);
+  }, [rest]);
 
   return (
     <div className="space-y-4">
@@ -345,7 +443,7 @@ export function MatchResults({
             </p>
             {top ? (
               <>
-                <p className="font-display text-display font-bold text-bone text-balance">
+                <p className="font-display text-display font-bold num text-bone text-balance">
                   {top.college.short_name ?? top.college.name}
                 </p>
                 <p className="text-caption text-slate-2 mt-1.5 text-pretty">
@@ -378,17 +476,38 @@ export function MatchResults({
       </section>
 
       {/* ── Level selector ──────────────────────────────────────── */}
-      <div
-        role="tablist"
-        aria-label="Division level"
-        className="flex gap-1.5 overflow-x-auto -mx-gutter px-gutter lg:mx-0 lg:px-0 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
+      <div className="relative">
+        {indicator && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-0 h-[2px] rounded-pill bg-redline shadow-redline transition-[left,width] dur-base ease-needle"
+            style={{ left: indicator.left, width: indicator.width }}
+          />
+        )}
+        <div
+          ref={tabListRef}
+          role="tablist"
+          aria-label="Division level"
+          onScroll={(e) => {
+            const tab = tabRefs.current[level];
+            if (tab) {
+              setIndicator({
+                left: tab.offsetLeft - e.currentTarget.scrollLeft,
+                width: tab.offsetWidth,
+              });
+            }
+          }}
+          className="flex gap-1.5 overflow-x-auto -mx-gutter px-gutter lg:mx-0 lg:px-0 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
         {LEVELS.map((meta) => {
           const count = byLevel.get(meta.key)?.length ?? 0;
           const selected = level === meta.key;
           return (
             <button
               key={meta.key}
+              ref={(el) => {
+                tabRefs.current[meta.key] = el;
+              }}
               role="tab"
               aria-selected={selected}
               onClick={() => setLevel(meta.key)}
@@ -409,6 +528,7 @@ export function MatchResults({
             </button>
           );
         })}
+        </div>
       </div>
 
       {/* Keyed on level so switching tabs replays the staggered entrance. */}
@@ -418,28 +538,41 @@ export function MatchResults({
         ) : (
           <>
             {podium.map((result, i) => (
-              <PodiumCard key={result.college.id} result={result} rank={i + 1} index={i} />
+              <PodiumCard key={result.college.id} result={result} index={i} />
             ))}
 
-            {rest.length > 0 && (
-              <>
-                <p
-                  style={stagger(3)}
-                  className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-slate pt-2 motion-safe:animate-rise"
+            {grouped.map((group, gi) => (
+              <div key={group.band.key} className="pt-2">
+                <div
+                  style={stagger(podium.length + gi)}
+                  className="flex items-baseline justify-between gap-3 pb-1.5 mb-2 border-b border-bone-3 motion-safe:animate-rise"
                 >
-                  {rest.length} more {LEVELS.find((l) => l.key === level)?.label} program
-                  {rest.length === 1 ? "" : "s"}
+                  <span
+                    className={`font-condensed text-label font-bold tracking-[0.2em] uppercase ${group.band.text}`}
+                  >
+                    {group.band.label}
+                    <span className="text-slate font-normal"> · {group.rows.length}</span>
+                  </span>
+                  <span className="font-mono text-micro text-slate tabular-nums shrink-0">
+                    {bandRange(group.band)}
+                  </span>
+                </div>
+
+                <p className="text-caption text-ink-5 mb-2.5 text-pretty">
+                  {group.band.blurb}
                 </p>
-                {rest.map((result, i) => (
-                  <ListRow
-                    key={result.college.id}
-                    result={result}
-                    rank={i + 4}
-                    index={i + 4}
-                  />
-                ))}
-              </>
-            )}
+
+                <div className="space-y-2">
+                  {group.rows.map((result, i) => (
+                    <ListRow
+                      key={result.college.id}
+                      result={result}
+                      index={podium.length + gi + i}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </>
         )}
       </section>

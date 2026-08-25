@@ -10,7 +10,7 @@ export default function ContactPage() {
     <>
       <section className="bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-2">
+          <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-2">
             Contact
           </div>
           <h1 className="font-display text-4xl font-bold text-bone">
@@ -29,7 +29,7 @@ export default function ContactPage() {
           {/* Contact info */}
           <div className="space-y-10">
             <div>
-              <h2 className="font-condensed text-[10px] font-bold tracking-[0.2em] uppercase text-slate mb-3">
+              <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-slate mb-3">
                 Scanzano Baseball
               </h2>
               <address className="text-ink-5 not-italic leading-relaxed">
@@ -50,7 +50,7 @@ export default function ContactPage() {
             <form className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
+                  <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
                     First Name
                   </label>
                   <input
@@ -60,7 +60,7 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
+                  <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
                     Last Name
                   </label>
                   <input
@@ -71,7 +71,7 @@ export default function ContactPage() {
                 </div>
               </div>
               <div>
-                <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
+                <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
                   Email
                 </label>
                 <input
@@ -81,7 +81,7 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
+                <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 block mb-1.5">
                   Message
                 </label>
                 <textarea

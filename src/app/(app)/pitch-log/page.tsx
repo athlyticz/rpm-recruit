@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/app/page-header";
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4">
+    <label className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4">
       {children}
     </label>
   );
@@ -133,10 +133,10 @@ export default function PitchLogPage() {
         {/* ── Game Info ───────────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Game Info
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Identify the pitcher and opponent.
             </p>
           </div>
@@ -175,10 +175,10 @@ export default function PitchLogPage() {
         {/* ── Pitch Totals ────────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Pitch Totals
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Aggregate pitch counts by type and result.
             </p>
           </div>
@@ -203,10 +203,10 @@ export default function PitchLogPage() {
         {/* ── Inning-by-Inning ────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
-            <h2 className="font-display text-[17px] font-semibold text-ink">
+            <h2 className="font-display text-title-sm font-semibold text-ink">
               Inning-by-Inning
             </h2>
-            <p className="text-[11px] text-slate">
+            <p className="text-meta text-slate">
               Detail each inning pitched.
             </p>
           </div>
@@ -247,7 +247,7 @@ export default function PitchLogPage() {
                     ].map((col) => (
                       <th
                         key={col}
-                        className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-2 px-1"
+                        className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-2 px-1"
                       >
                         {col}
                       </th>

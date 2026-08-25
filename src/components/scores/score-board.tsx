@@ -102,7 +102,7 @@ export function ScoreBoard({
           <p className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-1">
             Showcase Rating
           </p>
-          <p className="font-display text-display sm:text-display-lg font-bold text-bone leading-tight">
+          <p className="font-display text-display sm:text-display-lg font-bold num text-bone leading-tight">
             {overall === null ? "Not yet rated" : overall.toFixed(1)}
           </p>
           <p className="text-caption text-slate-2 mt-1.5 leading-relaxed max-w-[44ch] text-pretty">

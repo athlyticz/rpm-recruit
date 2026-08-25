@@ -43,14 +43,14 @@ export function Topbar() {
 
           <Link
             href="/settings"
-            className="hidden sm:flex items-center font-condensed text-[11px] font-bold tracking-[0.13em] uppercase text-slate-2 px-4 h-9 border border-ink-3 rounded-sm hover:border-gold hover:text-gold transition-colors dur-fast"
+            className="hidden sm:flex items-center font-condensed text-meta font-bold tracking-[0.13em] uppercase text-slate-2 px-4 h-9 border border-ink-3 rounded-sm hover:border-gold hover:text-gold transition-colors dur-fast"
           >
             Settings
           </Link>
           <button
             type="button"
             onClick={handleSignOut}
-            className="hidden sm:flex items-center font-condensed text-[11px] font-bold tracking-[0.13em] uppercase text-slate-2 px-4 h-9 border border-ink-3 rounded-sm hover:border-blood-2 hover:text-blood-2 transition-colors dur-fast"
+            className="hidden sm:flex items-center font-condensed text-meta font-bold tracking-[0.13em] uppercase text-slate-2 px-4 h-9 border border-ink-3 rounded-sm hover:border-blood-2 hover:text-blood-2 transition-colors dur-fast"
           >
             Sign Out
           </button>

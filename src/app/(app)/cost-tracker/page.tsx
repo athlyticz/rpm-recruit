@@ -66,10 +66,10 @@ export default function CostTrackerPage() {
           {/* Header */}
           <div className="flex items-center justify-between px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
             <div>
-              <h2 className="font-display text-[17px] font-semibold text-ink">
+              <h2 className="font-display text-title-sm font-semibold text-ink">
                 College Cost Comparison
               </h2>
-              <p className="text-[11px] text-slate">
+              <p className="text-meta text-slate">
                 Net cost auto-calculates from total minus scholarship.
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function CostTrackerPage() {
                   ].map((col) => (
                     <th
                       key={col}
-                      className="font-condensed text-[10px] font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-2 px-1"
+                      className="font-condensed text-label font-bold tracking-[0.15em] uppercase text-ink-4 text-left pb-2 px-1"
                     >
                       {col}
                     </th>
@@ -162,7 +162,7 @@ export default function CostTrackerPage() {
                         />
                       </td>
                       <td className="px-1 py-1.5">
-                        <span className="font-mono text-[13px] text-ink">
+                        <span className="font-mono text-body text-ink">
                           {fmt(total)}
                         </span>
                       </td>
@@ -178,7 +178,7 @@ export default function CostTrackerPage() {
                         />
                       </td>
                       <td className="px-1 py-1.5">
-                        <span className="font-mono text-[13px] text-green-600 font-medium">
+                        <span className="font-mono text-body text-green-600 font-medium">
                           {fmt(net)}
                         </span>
                       </td>

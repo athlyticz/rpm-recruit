@@ -85,9 +85,9 @@ export default async function ScoresPage() {
 
       <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14">
         {skills.length === 0 ? (
-          <p className="bg-white border border-black/[0.07] rounded-md shadow-sm p-5 text-[13px] text-ink-5 leading-relaxed">
+          <p className="bg-white border border-black/[0.07] rounded-md shadow-sm p-5 text-body text-ink-5 leading-relaxed">
             The evaluation ladder has not been loaded into this environment yet. Run{" "}
-            <code className="font-mono text-[12px]">npm run db:seed:ladder</code> to populate it.
+            <code className="font-mono text-caption">npm run db:seed:ladder</code> to populate it.
           </p>
         ) : (
           <ScoreBoard

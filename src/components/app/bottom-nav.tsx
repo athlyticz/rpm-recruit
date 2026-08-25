@@ -52,7 +52,7 @@ export function BottomNav() {
             className="relative bg-ink border-t-2 border-gold rounded-t-xl px-4 pt-4 pb-safe animate-rise"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold">
+              <span className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold">
                 All Sections
               </span>
               <button
@@ -81,7 +81,7 @@ export function BottomNav() {
                     }`}
                   >
                     <Icon size={17} strokeWidth={1.75} aria-hidden />
-                    <span className="text-[13px] leading-tight">{item.label}</span>
+                    <span className="text-body leading-tight">{item.label}</span>
                   </Link>
                 );
               })}
@@ -120,7 +120,7 @@ export function BottomNav() {
                   aria-hidden
                 />
                 <span
-                  className={`font-condensed text-[9px] font-bold tracking-[0.12em] uppercase leading-none transition-colors dur-fast ${
+                  className={`font-condensed text-micro font-bold tracking-[0.12em] uppercase leading-none transition-colors dur-fast ${
                     active ? "text-bone" : "text-slate"
                   }`}
                 >
@@ -154,7 +154,7 @@ export function BottomNav() {
               aria-hidden
             />
             <span
-              className={`font-condensed text-[9px] font-bold tracking-[0.12em] uppercase leading-none transition-colors dur-fast ${
+              className={`font-condensed text-micro font-bold tracking-[0.12em] uppercase leading-none transition-colors dur-fast ${
                 secondaryActive || menuOpen ? "text-bone" : "text-slate"
               }`}
             >

@@ -57,7 +57,7 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
         <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4">
           Profile Strength
         </h2>
-        <span className="font-display text-display font-bold text-ink leading-none tabular-nums">
+        <span className="font-display text-display font-bold num text-ink leading-none tabular-nums">
           {Math.round(swept)}
           <span className="text-body text-slate font-body font-normal">/100</span>
         </span>

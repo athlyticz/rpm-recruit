@@ -125,6 +125,7 @@
   --animate-rise: rise var(--duration-base) var(--ease-sweep) both;
   --animate-fade: fade var(--duration-base) var(--ease-settle) both;
   --animate-shimmer: shimmer 1.6s var(--ease-settle) infinite;
+  --animate-meter: meter var(--duration-sweep) var(--ease-needle) both;
 }
 
 @keyframes needle-sweep {
@@ -133,6 +134,15 @@
   }
   to {
     transform: rotate(var(--needle-to, 0deg));
+  }
+}
+
+@keyframes meter {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }
 
@@ -214,6 +224,15 @@ body {
 
 @utility dur-sweep {
   transition-duration: var(--duration-sweep);
+}
+
+/* Cormorant Garamond ships old-style figures by default, where 7 and 9 drop
+   below the baseline and 1 sits at x-height. That is correct for running prose
+   and wrong for a score readout, where "71" and "80" then sit at visibly
+   different heights. Any number presented as data gets lining, tabular
+   figures so digits align and columns do not jitter as values change. */
+@utility num {
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 @utility pb-safe {

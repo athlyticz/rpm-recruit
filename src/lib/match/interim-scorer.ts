@@ -348,15 +348,66 @@ export function scoreMatch(player: Player, college: College): MatchResult {
 
   return {
     college,
-    score: Math.round(total * 10) / 10,
+    // Whole numbers on purpose. The score is displayed as an integer, so it is
+    // stored as one: keeping a hidden decimal would let two programs that both
+    // read 80 rank differently on a digit the player never sees. Precision the
+    // reader cannot inspect is precision we cannot defend, and it would turn a
+    // real tie into a manufactured winner.
+    score: Math.round(total),
     components,
     missing: components.filter((c) => c.score === null).map((c) => c.label),
     engineVersion: INTERIM_ENGINE_VERSION,
   };
 }
 
+/**
+ * How rows that score the same are ordered on screen.
+ *
+ * Ties are real and are shown as ties. We do not reach for hidden decimal
+ * places to manufacture a winner, because a distinction the player cannot see
+ * is a distinction we cannot defend. Equal scores share a rank, and the only
+ * thing separating them in the list is alphabetical order, which the UI names
+ * out loud rather than leaving the reader to guess.
+ */
+export const TIE_BREAK_LABEL = "listed alphabetically";
+
+export interface RankedMatch extends MatchResult {
+  /** Dense rank. Equal scores share the same number. */
+  rank: number;
+  /** True when at least one other program shares this exact score. */
+  tied: boolean;
+}
+
 export function scoreAll(player: Player, colleges: College[]): MatchResult[] {
   return colleges
     .map((college) => scoreMatch(player, college))
-    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
+    .sort(
+      (a, b) =>
+        (b.score ?? -1) - (a.score ?? -1) ||
+        // The named tie-break. Nothing hidden happens here.
+        a.college.name.localeCompare(b.college.name)
+    );
+}
+
+/** Assigns dense ranks, so two programs on 80 are both rank 1 and the next is 2. */
+export function rankMatches(results: MatchResult[]): RankedMatch[] {
+  const counts = new Map<number | null, number>();
+  for (const r of results) {
+    counts.set(r.score, (counts.get(r.score) ?? 0) + 1);
+  }
+
+  let rank = 0;
+  let previousScore: number | null | undefined;
+
+  return results.map((result) => {
+    if (result.score !== previousScore) {
+      rank += 1;
+      previousScore = result.score;
+    }
+    return {
+      ...result,
+      rank,
+      tied: (counts.get(result.score) ?? 0) > 1,
+    };
+  });
 }

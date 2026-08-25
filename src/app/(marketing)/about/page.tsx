@@ -11,7 +11,7 @@ export default function AboutPage() {
     <>
       <section className="bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="font-condensed text-[10px] font-bold tracking-[0.22em] uppercase text-gold mb-2">
+          <div className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-2">
             About
           </div>
           <h1 className="font-display text-4xl font-bold text-bone">
