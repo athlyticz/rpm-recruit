@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ChevronDown, Info, MapPin, ExternalLink, Trophy } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Info, MapPin, ExternalLink, Trophy, X } from "lucide-react";
 import { Tachometer } from "@/components/ui/tachometer";
 import { LEVELS, type Division } from "./level-constants";
+import { FitLandscape } from "./fit-landscape";
 import {
   rankMatches,
   TIE_BREAK_LABEL,
@@ -11,6 +12,10 @@ import {
   type RankedMatch,
   type ScoreComponent,
 } from "@/lib/match/interim-scorer";
+import type { Database } from "@/types/database";
+
+type Player = Database["public"]["Tables"]["players"]["Row"];
+type College = Database["public"]["Tables"]["colleges"]["Row"];
 
 /* ------------------------------------------------------------------ */
 /*  Presentation helpers                                               */
@@ -469,12 +474,31 @@ export function MatchResults({
   results,
   missingComponents,
   hasPlayer,
+  player,
+  colleges,
 }: {
   results: MatchResult[];
   missingComponents: string[];
   hasPlayer: boolean;
+  player: Player;
+  colleges: College[];
 }) {
   const [level, setLevel] = useState<Division>("d1");
+  const [focused, setFocused] = useState<MatchResult | null>(null);
+  const focusRef = useRef<HTMLDivElement | null>(null);
+
+  // Selecting a dot switches to that program's level and scrolls its detail
+  // into view, so the picture and the list stay in agreement.
+  useEffect(() => {
+    if (!focused) return;
+    setLevel(focused.college.division as Division);
+    focusRef.current?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "nearest",
+    });
+  }, [focused]);
   /**
    * There is deliberately no sliding tab indicator here.
    *
@@ -578,6 +602,45 @@ export function MatchResults({
       </section>
 
       {/* ── Level selector ──────────────────────────────────────── */}
+      <FitLandscape
+        player={player}
+        colleges={colleges}
+        selectedId={focused?.college.id ?? null}
+        onSelect={(result) =>
+          setFocused((current) =>
+            current?.college.id === result.college.id ? null : result
+          )
+        }
+      />
+
+      {focused && (
+        <div
+          ref={focusRef}
+          className="bg-white border-2 border-ink rounded-md shadow-md overflow-hidden motion-safe:animate-rise"
+        >
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-ink">
+            <span className="min-w-0">
+              <span className="block font-display text-title font-bold num text-bone truncate">
+                {focused.college.short_name ?? focused.college.name}
+              </span>
+              <span className="font-condensed text-micro font-bold tracking-[0.16em] uppercase text-slate-2">
+                {focused.college.division.toUpperCase()} · {focused.college.state} · fit{" "}
+                {focused.score ?? "--"}
+              </span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setFocused(null)}
+              aria-label="Close program detail"
+              className="pressable focusable size-touch -mr-2 flex items-center justify-center text-slate-2 hover:text-bone"
+            >
+              <X size={18} aria-hidden />
+            </button>
+          </div>
+          <Breakdown result={focused} />
+        </div>
+      )}
+
       {/* The band key sits above the tabs and is stated once. Repeating four
           sentences on every level switch was noise, not guidance. */}
       <details className="bg-white border border-black/[0.07] rounded-md shadow-sm">

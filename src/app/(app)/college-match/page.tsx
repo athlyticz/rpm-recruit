@@ -109,6 +109,8 @@ async function MatchResultsSection() {
       results={results}
       missingComponents={componentsMissingEverywhere(results)}
       hasPlayer={player !== null}
+      player={player ?? EMPTY_PLAYER}
+      colleges={colleges}
     />
   );
 }

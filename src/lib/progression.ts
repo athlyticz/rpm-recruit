@@ -8,7 +8,7 @@
  */
 
 import type { Player, College, Metric, ChecklistItem } from "@/lib/data/player";
-import { scoreAll } from "@/lib/match/interim-scorer";
+import { scoreAll, IN_RANGE_THRESHOLD } from "@/lib/match/interim-scorer";
 import type { Database } from "@/types/database";
 
 type VerificationStatus = Database["public"]["Enums"]["verification_status"];
@@ -269,9 +269,6 @@ export interface TierLever {
   /** Where the player goes to act on it. */
   href: string;
 }
-
-/** A program is "in range" once the interim scorer puts it at Realistic or better. */
-const IN_RANGE_THRESHOLD = 65;
 
 function countInRange(player: Player, colleges: College[]) {
   const results = scoreAll(player, colleges);

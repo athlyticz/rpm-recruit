@@ -19,6 +19,9 @@ import type { Database } from "@/types/database";
 
 export const INTERIM_ENGINE_VERSION = "interim-0.1";
 
+/** A program is "in range" once the interim scorer puts it at Realistic. */
+export const IN_RANGE_THRESHOLD = 65;
+
 type College = Database["public"]["Tables"]["colleges"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
