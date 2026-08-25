@@ -54,10 +54,10 @@ export function ProfileStrengthCard({ strength }: { strength: ProfileStrength })
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
       <div className="flex items-baseline justify-between gap-3 mb-3">
-        <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4">
+        <h2 className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate">
           Profile Strength
         </h2>
-        <span className="font-display text-display font-bold num text-ink leading-none tabular-nums">
+        <span className="font-display text-display-lg font-bold num text-ink leading-none">
           {Math.round(swept)}
           <span className="text-body text-slate font-body font-normal">/100</span>
         </span>
@@ -102,7 +102,7 @@ export function VerificationLadder({ mix }: { mix: VerificationMix }) {
 
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
-      <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4 mb-1">
+      <h2 className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate mb-1">
         Credibility
       </h2>
       <p className="text-caption text-ink-5 leading-relaxed mb-3 text-pretty">
@@ -227,7 +227,7 @@ export function ReadinessStages({ state }: { state: ReadinessState }) {
   return (
     <section className="bg-white border border-black/[0.07] rounded-md shadow-sm p-4">
       <div className="flex items-baseline justify-between gap-3 mb-3">
-        <h2 className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-ink-4">
+        <h2 className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate">
           Recruiting Readiness
         </h2>
         {state.gradYear && (

@@ -77,7 +77,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-5 py-6">
             <Tachometer
               score={player?.overall_score ?? null}
-              size="lg"
+              size="hero"
               precision={1}
               className="shrink-0"
             />
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
               <p className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-1">
                 Showcase Rating
               </p>
-              <p className="font-display text-display sm:text-display-lg font-bold text-bone leading-tight text-balance">
+              <p className="font-display text-title-lg sm:text-display-sm font-bold text-bone leading-tight text-balance">
                 {player?.overall_score !== null && player?.overall_score !== undefined
                   ? "Rated on the Scanzano scale"
                   : "Not yet rated"}
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           {/* Two real counts, both traceable to rows. */}
           <div className="grid grid-cols-2 border-t border-ink-3 divide-x divide-ink-3">
             <div className="px-5 py-3">
-              <p className="font-mono text-title-lg text-gold-3 leading-none tabular-nums">
+              <p className="font-mono num text-display text-gold-3 leading-none">
                 {colleges.length}
               </p>
               <p className="font-condensed text-micro font-bold tracking-[0.16em] uppercase text-slate mt-1">
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <div className="px-5 py-3">
-              <p className="font-mono text-title-lg text-gold-3 leading-none tabular-nums">
+              <p className="font-mono num text-display text-gold-3 leading-none">
                 {inRange}
               </p>
               <p className="font-condensed text-micro font-bold tracking-[0.16em] uppercase text-slate mt-1">

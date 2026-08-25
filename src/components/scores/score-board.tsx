@@ -127,7 +127,7 @@ export function ScoreBoard({
   return (
     <div className="space-y-4">
       <section className="bg-ink border border-ink-2 rounded-lg flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-5 py-6">
-        <Tachometer score={overall} size="lg" precision={1} className="shrink-0" />
+        <Tachometer score={overall} size="hero" precision={1} className="shrink-0" />
         <div className="text-center sm:text-left min-w-0">
           <p className="font-condensed text-label font-bold tracking-[0.22em] uppercase text-gold mb-1">
             Showcase Rating

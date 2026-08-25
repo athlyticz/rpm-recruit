@@ -91,7 +91,7 @@ export function TachometerShowcase() {
                 {i <= activeIndex ? (
                   <Tachometer
                     score={demo.score}
-                    size="lg"
+                    size="card"
                     animated={true}
                     showLabel={true}
                   />

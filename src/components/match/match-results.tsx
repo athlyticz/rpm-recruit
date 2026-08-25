@@ -146,7 +146,7 @@ function Breakdown({ result }: { result: MatchResult }) {
 
   return (
     <div className="px-4 pb-4 pt-1 bg-bone/40 border-t border-black/[0.05]">
-      <p className="font-condensed text-label font-bold tracking-[0.2em] uppercase text-gold mb-1">
+      <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-gold mb-1">
         Why this score
       </p>
 
@@ -532,7 +532,7 @@ export function MatchResults({
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-5 py-6">
           <Tachometer
             score={top?.score !== null && top?.score !== undefined ? top.score / 10 : null}
-            size="lg"
+            size="card"
             precision={1}
             label={top ? "Top Program Fit" : "No programs scored"}
             className="shrink-0 max-w-full"

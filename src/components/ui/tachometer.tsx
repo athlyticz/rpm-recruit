@@ -16,8 +16,12 @@ interface TachometerProps {
   label?: string;
   /** Shown in place of the score when score is null. */
   emptyText?: string;
-  /** Rendered size of the gauge */
-  size?: "sm" | "md" | "lg" | "xl";
+  /**
+   * Role-named size. hero commands a phone viewport, card sits at podium
+   * prominence, inline stays legible in a dense row. The old t-shirt sizes
+   * remain as aliases so existing call sites keep working.
+   */
+  size?: "hero" | "card" | "inline" | "sm" | "md" | "lg" | "xl";
   /** Animate the needle on mount (default true) */
   animated?: boolean;
   /** Show the level label below the score (default true) */
@@ -30,11 +34,42 @@ interface TachometerProps {
 /* ------------------------------------------------------------------ */
 
 const SIZE_PX: Record<NonNullable<TachometerProps["size"]>, number> = {
-  sm: 80,
-  md: 160,
-  lg: 280,
-  xl: 420,
+  inline: 68,
+  card: 168,
+  hero: 264,
+  // Aliases onto the role scale, so no call site invents its own dimension.
+  sm: 68,
+  md: 168,
+  lg: 264,
+  xl: 264,
 };
+
+/**
+ * Proportions are re-tuned per tier rather than scaled uniformly. A numeral
+ * that reads well at 264px is illegible at 68px if it simply shrinks with the
+ * viewBox, and the level label stops being readable at arm's length long
+ * before the numeral does.
+ */
+const PROPORTIONS: Record<
+  "hero" | "card" | "inline",
+  { score: number; label: number; labelY: number; showLabel: boolean; arc: number }
+> = {
+  // Sizes are viewBox units against a 200 unit box, so the rendered pixel size
+  // is value x (px / 200). The label sizes below are set so the label lands
+  // near 14px rendered at hero and 10px at card: the point where it stays
+  // readable at arm's length on a phone rather than becoming a smudge under
+  // the numeral. Scaling these uniformly with the box is what made the label
+  // illegible at hero.
+  hero: { score: 42, label: 11, labelY: 26, showLabel: true, arc: 9 },
+  card: { score: 42, label: 12.5, labelY: 27, showLabel: true, arc: 8 },
+  inline: { score: 54, label: 0, labelY: 0, showLabel: false, arc: 13 },
+};
+
+function tierOf(size: NonNullable<TachometerProps["size"]>) {
+  if (size === "inline" || size === "sm") return "inline" as const;
+  if (size === "card" || size === "md") return "card" as const;
+  return "hero" as const;
+}
 
 const LEVEL_LABELS: Record<number, string> = {
   10: "Professional Prospect",
@@ -206,7 +241,9 @@ export function Tachometer({
   );
 
   const px = SIZE_PX[size];
-  const isSmall = size === "sm";
+  const tier = tierOf(size);
+  const proportions = PROPORTIONS[tier];
+  const isSmall = tier === "inline";
 
   /* ---- tick marks ---- */
   const ticks = useMemo(() => {
@@ -221,12 +258,12 @@ export function Tachometer({
   }, []);
 
   /* ---- label font sizing ---- */
-  const scoreFontSize = isSmall ? 28 : 36;
-  const labelFontSize = isSmall ? 7 : 8;
+  const scoreFontSize = proportions.score;
+  const labelFontSize = proportions.label;
   // The readout sits slightly above centre so its optical mass is centred once
   // the label below is accounted for.
-  const scoreY = CY - 4;
-  const labelY = CY + 22;
+  const scoreY = proportions.showLabel ? CY - 6 : CY + 2;
+  const labelY = CY + proportions.labelY;
 
   const label = labelOverride ?? (hasScore ? LEVEL_LABELS[clampedScore] ?? "" : "Not yet rated");
   const readout = hasScore ? exactScore.toFixed(precision) : emptyText;
@@ -251,7 +288,7 @@ export function Tachometer({
           d={arcPath(CX, CY, RADIUS, ARC_START_DEG, ARC_END_DEG)}
           fill="none"
           stroke={COLOR_ARC_BG}
-          strokeWidth={8}
+          strokeWidth={proportions.arc}
           strokeLinecap="round"
         />
 
@@ -268,7 +305,7 @@ export function Tachometer({
             )}
             fill="none"
             stroke={seg.color}
-            strokeWidth={8}
+            strokeWidth={proportions.arc}
             strokeLinecap="butt"
             opacity={hasScore ? 1 : 0.28}
           />
@@ -316,7 +353,7 @@ export function Tachometer({
         </text>
 
         {/* Level label */}
-        {showLabel && !isSmall && (
+        {showLabel && proportions.showLabel && (
           <text
             x={CX}
             y={labelY}

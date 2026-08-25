@@ -88,6 +88,15 @@
   --spacing-gutter: 1rem;        /* phone gutter */
   --spacing-gutter-lg: 2rem;     /* desktop gutter */
 
+  /* ── Gauge sizes ──
+     The tachometer is the brand, so its scale is a token decision rather than
+     an ad hoc prop at each call site. Hero commands the viewport on a phone
+     (about 68% of 390px); card sits at podium prominence; inline stays legible
+     at a glance in a dense row. */
+  --size-gauge-hero: 16.5rem;    /* 264px, ~68% of a 390px viewport */
+  --size-gauge-card: 10.5rem;    /* 168px */
+  --size-gauge-inline: 4.25rem;  /* 68px */
+
   /* ── Radii ──
      The brand is machined and athletic, not soft. Radii stay tight; the
      gauge is the only truly round thing on screen. */
