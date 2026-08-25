@@ -73,6 +73,7 @@ export function BottomNav() {
                   <Link
                     key={item.href}
                     href={item.href}
+                prefetch={item.href === "/college-match" || undefined}
                     aria-current={active ? "page" : undefined}
                     className={`pressable focusable flex items-center gap-2.5 px-3 min-h-touch rounded-sm border transition-colors dur-fast ${
                       active

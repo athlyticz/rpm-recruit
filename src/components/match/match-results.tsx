@@ -533,6 +533,7 @@ export function MatchResults({
           <Tachometer
             score={top?.score !== null && top?.score !== undefined ? top.score / 10 : null}
             size="card"
+            transitionName="gauge"
             precision={1}
             label={top ? "Top Program Fit" : "No programs scored"}
             className="shrink-0 max-w-full"

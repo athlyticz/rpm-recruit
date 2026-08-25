@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "2mb",
     },
+    // Deliberately not enabling experimental.viewTransition: it only works on
+    // the experimental React channel, and this project runs React stable.
+    // Route transitions are driven directly from components/app/view-transitions.tsx.
   },
 };
 

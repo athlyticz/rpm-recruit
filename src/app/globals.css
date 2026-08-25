@@ -337,3 +337,76 @@ body {
 @utility h-tabbar-safe {
   height: calc(var(--spacing-tabbar) + env(safe-area-inset-bottom, 0px));
 }
+
+/* ── Route transitions ──
+   Movement between screens is short and directional: content cross-fades with
+   a small vertical drift on the needle curve. Anything longer than a quarter
+   second stops feeling like response and starts feeling like waiting. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 200ms var(--ease-settle) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 240ms var(--ease-sweep) both;
+  }
+
+  /* The gauge is the one element that survives the cut. It morphs between its
+     hero and card sizes rather than re-mounting cold, so the brand object is
+     continuous while everything around it changes. */
+  ::view-transition-old(gauge),
+  ::view-transition-new(gauge) {
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-needle);
+    mix-blend-mode: normal;
+  }
+}
+
+/* Forward: a small inward drift. */
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Lateral: peers on the tab bar slide sideways instead of drifting inward. */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-vt="lateral"]::view-transition-old(root) {
+    animation: vt-out-lateral 200ms var(--ease-settle) both;
+  }
+
+  :root[data-vt="lateral"]::view-transition-new(root) {
+    animation: vt-in-lateral 240ms var(--ease-sweep) both;
+  }
+}
+
+@keyframes vt-out-lateral {
+  to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+@keyframes vt-in-lateral {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+
+/* Reduced motion gets instant cuts. No exceptions, including the gauge. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

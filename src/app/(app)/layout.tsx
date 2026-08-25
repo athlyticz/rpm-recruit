@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Topbar } from "@/components/app/topbar";
 import { Sidebar } from "@/components/app/sidebar";
 import { BottomNav } from "@/components/app/bottom-nav";
+import { ViewTransitions } from "@/components/app/view-transitions";
 
 // The authenticated shell is always rendered per request, never prerendered,
 // so the auth guard below runs on every visit.
@@ -52,6 +53,7 @@ export default async function AppLayout({
       </div>
 
       <BottomNav />
+      <ViewTransitions />
     </div>
   );
 }

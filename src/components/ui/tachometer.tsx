@@ -17,6 +17,12 @@ interface TachometerProps {
   /** Shown in place of the score when score is null. */
   emptyText?: string;
   /**
+   * Marks this gauge as the one that persists across a route change. Only one
+   * element per page may carry a given view-transition-name, so pages set this
+   * on their single primary gauge.
+   */
+  transitionName?: string;
+  /**
    * Role-named size. hero commands a phone viewport, card sits at podium
    * prominence, inline stays legible in a dense row. The old t-shirt sizes
    * remain as aliases so existing call sites keep working.
@@ -187,6 +193,7 @@ export function Tachometer({
   precision = 0,
   label: labelOverride,
   emptyText = "--",
+  transitionName,
   className = "",
 }: TachometerProps) {
   const hasScore = score !== null && Number.isFinite(score);
@@ -243,7 +250,6 @@ export function Tachometer({
   const px = SIZE_PX[size];
   const tier = tierOf(size);
   const proportions = PROPORTIONS[tier];
-  const isSmall = tier === "inline";
 
   /* ---- tick marks ---- */
   const ticks = useMemo(() => {
@@ -272,7 +278,11 @@ export function Tachometer({
   return (
     <div
       className={`inline-flex items-center justify-center ${className}`}
-      style={{ width: px, height: px }}
+      style={{
+        width: px,
+        height: px,
+        ...(transitionName ? { viewTransitionName: transitionName } : {}),
+      }}
     >
       <svg
         viewBox={`0 0 ${VIEWBOX} ${VIEWBOX}`}

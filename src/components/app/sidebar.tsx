@@ -36,6 +36,7 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={item.href === "/college-match" || undefined}
                 aria-current={active ? "page" : undefined}
                 title={item.label}
                 className={`pressable focusable group relative flex items-center gap-3 border-l-2 min-h-touch transition-colors dur-fast ease-settle justify-center xl:justify-start px-0 xl:px-5 ${

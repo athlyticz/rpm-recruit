@@ -78,6 +78,7 @@ export default async function DashboardPage() {
             <Tachometer
               score={player?.overall_score ?? null}
               size="hero"
+              transitionName="gauge"
               precision={1}
               className="shrink-0"
             />
@@ -144,6 +145,7 @@ export default async function DashboardPage() {
         {topFit !== null && (
           <Link
             href="/college-match"
+            prefetch
             className="pressable focusable flex items-center gap-3 p-4 min-h-touch bg-white border border-black/[0.07] rounded-md shadow-sm hover:border-gold transition-colors dur-fast group"
           >
             <span className="flex-1 min-w-0">
