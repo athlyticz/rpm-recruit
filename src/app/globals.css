@@ -28,15 +28,93 @@
   --color-blue: #1A5C9A;
   --color-blue-2: #2472BE;
 
+  /* Tachometer redline. The active-state accent across the app, so the
+     navigation reads as part of the same instrument as the gauge. */
+  --color-redline: #C8102E;
+  --color-redline-2: #E01B39;
+
   /* ── Typography ── */
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-body: "Barlow", sans-serif;
   --font-condensed: "Barlow Condensed", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* ── Shadows ── */
+  /* ── Spacing ──
+     Named steps for layout chrome that must agree across components. The
+     numeric scale still covers everything else. */
+  --spacing-topbar: 3.5rem;      /* 56px, the sticky header */
+  --spacing-tabbar: 4rem;        /* 64px, the phone bottom-tab strip */
+  --spacing-sidebar: 14.75rem;   /* 236px, the desktop rail */
+  --spacing-sidebar-rail: 4.5rem;/* 72px, the collapsed tablet rail */
+  --spacing-touch: 2.75rem;      /* 44px, the minimum touch target */
+  --spacing-gutter: 1rem;        /* phone gutter */
+  --spacing-gutter-lg: 2rem;     /* desktop gutter */
+
+  /* ── Radii ──
+     The brand is machined and athletic, not soft. Radii stay tight; the
+     gauge is the only truly round thing on screen. */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.1875rem;
+  --radius-md: 0.3125rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.875rem;
+  --radius-pill: 9999px;
+
+  /* ── Elevation ── */
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.09);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.13);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
+  --shadow-tabbar: 0 -2px 16px rgba(0, 0, 0, 0.28);
+  --shadow-gold: 0 0 24px rgba(184, 151, 90, 0.28);
+  --shadow-redline: 0 0 20px rgba(200, 16, 46, 0.35);
+
+  /* ── Motion ──
+     The signature curve is the needle sweep: fast attack off the peg, then a
+     damped settle that slightly overshoots and returns, the way a real
+     tachometer needle behaves. Reveals use the same physics without the
+     overshoot. Nothing in this product should ease linearly. */
+  --ease-needle: cubic-bezier(0.34, 1.42, 0.48, 1);
+  --ease-sweep: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-settle: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --duration-instant: 90ms;
+  --duration-fast: 160ms;
+  --duration-base: 260ms;
+  --duration-slow: 420ms;
+  --duration-sweep: 1100ms;
+
+  --animate-needle-sweep: needle-sweep var(--duration-sweep) var(--ease-needle) both;
+  --animate-rise: rise var(--duration-base) var(--ease-sweep) both;
+  --animate-fade: fade var(--duration-base) var(--ease-settle) both;
+}
+
+@keyframes needle-sweep {
+  from {
+    transform: rotate(var(--needle-from, 0deg));
+  }
+  to {
+    transform: rotate(var(--needle-to, 0deg));
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ── Base styles ── */
@@ -46,4 +124,51 @@ body {
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* No layout in this product may scroll sideways. */
+  overflow-x: hidden;
+}
+
+/* Respect the platform setting everywhere, including the needle. Motion is
+   decoration here; the numbers are the product. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Safe-area helpers for the phone tab bar and any fixed bottom chrome. */
+/* Tailwind v4 has no --duration-* theme namespace, so the motion durations are
+   registered as real utilities under a dur-* prefix. The duration-* prefix is
+   claimed by core Tailwind, so a static utility there is silently ignored. */
+@utility dur-instant {
+  transition-duration: var(--duration-instant);
+}
+
+@utility dur-fast {
+  transition-duration: var(--duration-fast);
+}
+
+@utility dur-base {
+  transition-duration: var(--duration-base);
+}
+
+@utility dur-slow {
+  transition-duration: var(--duration-slow);
+}
+
+@utility dur-sweep {
+  transition-duration: var(--duration-sweep);
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@utility h-tabbar-safe {
+  height: calc(var(--spacing-tabbar) + env(safe-area-inset-bottom, 0px));
 }

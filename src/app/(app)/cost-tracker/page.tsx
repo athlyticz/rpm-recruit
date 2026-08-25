@@ -61,7 +61,7 @@ export default function CostTrackerPage() {
         bgText="COST"
       />
 
-      <div className="px-8 py-6 pb-14">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14">
         <div className="bg-white border border-black/[0.06] shadow-sm">
           {/* Header */}
           <div className="flex items-center justify-between px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
@@ -76,7 +76,7 @@ export default function CostTrackerPage() {
             <button
               type="button"
               onClick={addRow}
-              className="font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
+              className="font-condensed text-xs font-bold tracking-[0.13em] uppercase px-5 py-2.5 min-h-touch inline-flex items-center justify-center transition-colors bg-transparent border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"
             >
               + Add Row
             </button>

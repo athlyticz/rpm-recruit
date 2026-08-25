@@ -136,7 +136,7 @@ export default function ProfilePage() {
         bgText="PLAYER"
       />
 
-      <div className="px-8 py-6 pb-14 space-y-6">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6">
         {/* ── Personal Details ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">

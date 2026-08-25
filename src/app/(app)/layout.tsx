@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { Topbar } from "@/components/app/topbar";
 import { Sidebar } from "@/components/app/sidebar";
+import { BottomNav } from "@/components/app/bottom-nav";
 
 // The authenticated shell is always rendered per request, never prerendered,
 // so the auth guard below runs on every visit.
@@ -37,12 +38,20 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="grid grid-cols-[236px_1fr] grid-rows-[56px_1fr] min-h-screen">
+    <div className="min-h-dvh bg-bone">
       <Topbar />
-      <Sidebar />
-      <main className="bg-bone h-[calc(100vh-56px)] overflow-y-auto">
-        {children}
-      </main>
+
+      <div className="flex">
+        <Sidebar />
+
+        {/* min-w-0 stops long content from forcing the flex row wider than the
+            viewport, which is what produces horizontal scroll on phones. */}
+        <main className="flex-1 min-w-0 pb-[calc(var(--spacing-tabbar)+env(safe-area-inset-bottom,0px))] md:pb-0">
+          {children}
+        </main>
+      </div>
+
+      <BottomNav />
     </div>
   );
 }

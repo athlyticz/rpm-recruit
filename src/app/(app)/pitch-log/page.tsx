@@ -129,7 +129,7 @@ export default function PitchLogPage() {
         bgText="PITCHING"
       />
 
-      <div className="px-8 py-6 pb-14 space-y-5">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-5">
         {/* ── Game Info ───────────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">

@@ -130,7 +130,7 @@ export default function AcademicsPage() {
         bgText="ACADEMICS"
       />
 
-      <div className="px-8 py-6 pb-14 space-y-6">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6">
         {/* ── Academic Profile ─────────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
@@ -170,7 +170,7 @@ export default function AcademicsPage() {
                     key={major}
                     type="button"
                     onClick={() => toggleMajor(major)}
-                    className={`px-3 py-1.5 text-[12px] font-medium rounded-sm transition-colors cursor-pointer ${
+                    className={`px-3 py-1.5 min-h-touch inline-flex items-center text-[12px] font-medium rounded-sm transition-colors cursor-pointer ${
                       active
                         ? "bg-ink border border-ink text-gold-3"
                         : "bg-bone border-[1.5px] border-bone-3 text-ink-4 hover:border-ink hover:text-ink"

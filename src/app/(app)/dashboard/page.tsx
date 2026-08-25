@@ -81,7 +81,7 @@ export default async function DashboardPage() {
         subtitle="Complete your profile below to generate your showcase evaluation and college match report."
         bgText="DASHBOARD"
       />
-      <div className="px-8 py-6 pb-14">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14">
         {/* Player Banner */}
         <div className="bg-ink border border-ink-2 grid grid-cols-[72px_1fr_auto] items-center gap-5 p-5 mb-5">
           <div className="w-[72px] h-[72px] bg-ink-2 border-[1.5px] border-gold flex items-center justify-center font-display text-[32px] font-bold text-gold">

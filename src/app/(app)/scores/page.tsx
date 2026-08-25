@@ -170,7 +170,7 @@ function getConfig(pos: Position): PositionConfig {
 
 function cellClasses(value: number, selected: boolean, isHighest: boolean): string {
   const base =
-    "w-7 h-7 flex items-center justify-center cursor-pointer text-[10px] font-mono transition-all duration-100 select-none";
+    "flex-1 min-w-0 sm:flex-none sm:w-7 h-11 sm:h-7 flex items-center justify-center cursor-pointer text-[10px] font-mono transition-all duration-100 select-none rounded-xs";
 
   if (!selected) {
     return `${base} bg-bone-2 border border-[#C4B89A] text-[10px]`;
@@ -204,11 +204,15 @@ function RatingRow({
   onChange: (v: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-2 py-1">
-      <span className="w-[116px] shrink-0 text-[12px] font-medium text-ink-4 leading-tight">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 py-1.5">
+      <span className="sm:w-[116px] sm:shrink-0 flex items-baseline justify-between gap-2 text-[12px] font-medium text-ink-4 leading-tight">
         {skill}
+        <span className="sm:hidden font-mono font-bold text-[12px]">
+          {value > 0 ? value : "\u2014"}
+        </span>
       </span>
-      <div className="flex gap-[2px]">
+      {/* Phone: the ten cells share the row width instead of overflowing it. */}
+      <div className="flex gap-[2px] flex-1 min-w-0">
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
           <button
             key={n}
@@ -220,8 +224,8 @@ function RatingRow({
           </button>
         ))}
       </div>
-      <span className="w-6 text-right text-[12px] font-mono font-bold text-ink-4">
-        {value > 0 ? value : "—"}
+      <span className="hidden sm:block w-6 text-right text-[12px] font-mono font-bold text-ink-4">
+        {value > 0 ? value : "\u2014"}
       </span>
     </div>
   );
@@ -296,7 +300,7 @@ export default function ScoresPage() {
       />
 
       {/* Position selector bar */}
-      <div className="px-8 py-4 border-b border-black/[0.06] bg-white flex items-center gap-3">
+      <div className="px-gutter lg:px-gutter-lg py-4 border-b border-black/[0.06] bg-white flex items-center gap-3">
         <label className="text-[12px] font-semibold text-ink-4 whitespace-nowrap">
           Evaluating Position
         </label>
@@ -314,7 +318,7 @@ export default function ScoresPage() {
       </div>
 
       {/* Evaluation form */}
-      <div className="px-8 py-6 pb-14">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14">
         {/* Skill group columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {config.groups.map((group) => (

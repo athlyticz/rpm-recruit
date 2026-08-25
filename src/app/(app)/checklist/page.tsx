@@ -168,7 +168,7 @@ export default function ChecklistPage() {
         bgText="PREP"
       />
 
-      <div className="px-8 py-6 pb-14 space-y-6">
+      <div className="px-gutter lg:px-gutter-lg py-5 lg:py-6 pb-10 lg:pb-14 space-y-6">
         {/* ── Package Checklist ───────────────────────────────── */}
         <div className="bg-white border border-black/[0.06] shadow-sm">
           <div className="px-5 pt-3.5 pb-3 border-b border-black/[0.06]">
@@ -192,27 +192,33 @@ export default function ChecklistPage() {
                 <button
                   type="button"
                   onClick={() => toggleCheck(i)}
-                  className={`w-[17px] h-[17px] flex-shrink-0 border-[1.5px] mt-0.5 cursor-pointer flex items-center justify-center transition-colors ${
-                    checked[i]
-                      ? "bg-ink border-ink"
-                      : "bg-white border-bone-3"
-                  }`}
+                  aria-pressed={checked[i]}
+                  className="size-touch -m-3 flex-shrink-0 flex items-center justify-center cursor-pointer"
                 >
-                  {checked[i] && (
-                    <svg
-                      className="w-2.5 h-2.5 text-bone"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
+                  <span
+                    aria-hidden
+                    className={`w-[17px] h-[17px] border-[1.5px] flex items-center justify-center transition-colors dur-fast ${
+                      checked[i]
+                        ? "bg-ink border-ink"
+                        : "bg-white border-bone-3"
+                    }`}
+                  >
+                    {checked[i] && (
+                      <svg
+                        className="w-2.5 h-2.5 text-bone"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </span>
                 </button>
                 <div>
                   <strong
@@ -247,7 +253,7 @@ export default function ChecklistPage() {
                 <button
                   type="button"
                   onClick={() => toggleQ(i)}
-                  className="w-full text-left px-5 py-3 flex items-center gap-3 hover:bg-bone/30 transition-colors cursor-pointer"
+                  className="w-full text-left px-5 py-3 min-h-touch flex items-center gap-3 hover:bg-bone/30 transition-colors dur-fast cursor-pointer"
                 >
                   <span className="font-mono text-[13px] font-medium text-gold w-6 flex-shrink-0">
                     {String(i + 1).padStart(2, "0")}
