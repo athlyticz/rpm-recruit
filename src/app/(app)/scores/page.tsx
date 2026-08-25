@@ -259,7 +259,7 @@ export default function ScoresPage() {
   // Build a unique key for the current position so ratings stay per-position
   const posKey = position;
 
-  const posRatings = ratings[posKey] ?? {};
+  const posRatings = useMemo(() => ratings[posKey] ?? {}, [ratings, posKey]);
 
   const setSkillRating = (skill: string, value: number) => {
     setRatings((prev) => ({

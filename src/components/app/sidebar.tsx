@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Logo } from "@/components/ui/logo";
 
 const NAV_SECTIONS = [
   {
