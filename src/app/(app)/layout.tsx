@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 import { Topbar } from "@/components/app/topbar";
 import { Sidebar } from "@/components/app/sidebar";
 
+// The authenticated shell is always rendered per request, never prerendered,
+// so the auth guard below runs on every visit.
+export const dynamic = "force-dynamic";
+
 export default async function AppLayout({
   children,
 }: {
@@ -11,7 +15,16 @@ export default async function AppLayout({
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (supabaseConfigured) {
+  if (!supabaseConfigured) {
+    // Fail closed in production. A missing or misnamed env var must never
+    // open the app; it has to be a hard error instead.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "Supabase is not configured. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are required to serve authenticated routes."
+      );
+    }
+    // Local development only: allow access without auth.
+  } else {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const {
@@ -22,7 +35,6 @@ export default async function AppLayout({
       redirect("/login");
     }
   }
-  // When Supabase is not configured, allow access for local development
 
   return (
     <div className="grid grid-cols-[236px_1fr] grid-rows-[56px_1fr] min-h-screen">

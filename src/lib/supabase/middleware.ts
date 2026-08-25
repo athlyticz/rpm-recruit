@@ -26,8 +26,19 @@ export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // If Supabase is not configured, allow all routes for local development
   if (!supabaseUrl || !supabaseAnonKey) {
+    // Fail closed in production, but only for authenticated routes. A missing
+    // or misnamed env var must never silently open the app; public marketing
+    // pages do not need Supabase and keep serving.
+    if (
+      process.env.NODE_ENV === "production" &&
+      isAppRoute(request.nextUrl.pathname)
+    ) {
+      throw new Error(
+        "Supabase is not configured. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are required to serve authenticated routes."
+      );
+    }
+    // Local development, or a public route: allow through.
     return supabaseResponse;
   }
 
