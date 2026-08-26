@@ -262,6 +262,34 @@ Sample in the UI itself. The rules that follow from that:
   fake slider on the front door is a promise the product then has to keep.
 - Sample data is labelled where it is displayed, not in a footnote.
 
+### The launch funnel is a lead, not a checkout
+
+The product sells through a phone call from Coach Scanzano's team. Every
+public call to action reads Start Today and routes to `/start`, which writes
+a row to `leads` and promises a call within 48 hours. Stripe stays wired at
+`/api/checkout` and dormant; nothing on a public page routes to it, and no
+public copy implies a card is needed.
+
+`leads` is the most sensitive table in the product: a minor's name beside a
+parent's phone number and email. It is insert-only for `anon` and
+`authenticated`, with no select grant and no select policy, so the insert path
+must never call `.select()`. Reading leads is a service-role job. If a future
+screen needs to show them to John, it goes behind an authenticated
+service-role read, never a client query.
+
+### Motion never sits on top of a navigation that is already fast
+
+Measured on the deployed app: a tap on a prefetched nav link commits the
+destination in about 90ms. The cross-fade over it was 240ms, so more than half
+the wait to see a new screen was decoration, and the transition froze the old
+frame for two animation frames before it even started. Durations are now the
+instant token for the fade and the fast token for the gauge morph, and the
+pre-snapshot hold is one frame.
+
+The rule that follows: before adding or keeping a transition, measure what it
+is decorating. If the animation is longer than the work it covers, it is not
+polish, it is latency the user cannot explain.
+
 ### Route Transitions (read this if a link misbehaves)
 
 `src/components/app/view-transitions.tsx` intercepts same-origin anchor clicks

@@ -107,6 +107,27 @@ Rules that have already been broken once and are worth checking every time:
 The pattern worth remembering: every serious bug in Phase 1 was invisible to the
 check being run at the time, not to the code. Audit the checks, not just the code.
 
+## Before the stakeholder demo (blocking)
+
+- [ ] **Apply migration 00006 to the hosted Supabase project.** `/start` renders
+  without it but the submit fails, and the form says so honestly rather than
+  pretending. Run `supabase/migrations/00006_leads.sql` in the SQL editor of the
+  hosted project, or `supabase db push` once the CLI is linked. Verify by
+  submitting one lead on the deployed site and reading it back with the service
+  role.
+- [ ] **Visual freeze is in effect.** Remaining sessions before the demo are
+  bug-fix only: no new screens, no new components, no restyling. A bug is
+  something that is wrong, not something that could be better.
+
+### Parked until after the demo
+
+- Gauge polish. One specific note so it is not relearned: `Tachometer` paints
+  its own ink disc, so it only reads correctly on a dark surface and every
+  light-surface placement needs a dark card wrapped around it by hand. The fix
+  is a `surface` prop on the component, not another wrapper at each call site.
+  That is a change to the single most-used component in the product, which is
+  exactly the kind of thing a freeze exists to keep away from a demo.
+
 ## Phase 5: Growth surface
 
 - [x] Rebuild marketing landing page around the tachometer identity and honest-fit
