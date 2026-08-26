@@ -262,6 +262,22 @@ Sample in the UI itself. The rules that follow from that:
   fake slider on the front door is a promise the product then has to keep.
 - Sample data is labelled where it is displayed, not in a footnote.
 
+### The marketing surface may use d3, the app may not
+
+`d3-force` is a dependency of the landing page and nothing else. The app's
+charts stay hand rolled, and the rule behind that is unchanged: a chart inside
+the product must not be able to drift from the numbers behind it.
+
+The landing swarm keeps that rule while using the library. Every node's x is
+set as `fx`, which d3 treats as immovable, so the horizontal axis is exactly
+the fit score and the simulation cannot touch it. The only thing being solved
+is y, which carries no data: it is the room the dots need to stop overlapping.
+Motion resolves the picture, never the number. A re-score re-pins x and
+re-heats the simulation, so the landscape rearranges itself in front of the
+reader instead of cutting to a new frame.
+
+If a future encoding cannot be expressed that way, hand roll it instead.
+
 ### The launch funnel is a lead, not a checkout
 
 The product sells through a phone call from Coach Scanzano's team. Every
@@ -269,6 +285,11 @@ public call to action reads Start Today and routes to `/start`, which writes
 a row to `leads` and promises a call within 48 hours. Stripe stays wired at
 `/api/checkout` and dormant; nothing on a public page routes to it, and no
 public copy implies a card is needed.
+
+`newsletter_subscribers` follows the same shape and the same reasoning: insert
+only for anon, no select policy or grant, unique on `lower(email)` with the
+conflict swallowed so a repeat sign-up cannot be used to test whether an
+address is on the list.
 
 `leads` is the most sensitive table in the product: a minor's name beside a
 parent's phone number and email. It is insert-only for `anon` and

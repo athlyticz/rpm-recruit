@@ -504,6 +504,59 @@ body {
   will-change: auto;
 }
 
+/* Stat callouts arrive on the needle curve: the card moves, the figure inside
+   it does not. Geometry moves, digits cut. */
+.stat {
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  transition:
+    opacity var(--duration-base) linear,
+    transform var(--duration-slow) var(--ease-needle);
+}
+
+.stat[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* The photo is treated in brand rather than dropped in raw: grayscale first,
+   then a gold to ink duotone laid over it in colour blend mode. The person
+   stays legible; the picture stops fighting the palette. */
+.duotone {
+  background: var(--color-ink);
+}
+
+.duotone img {
+  filter: grayscale(1) contrast(1.05) brightness(0.97);
+}
+
+.duotone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--color-gold) 70%, transparent),
+    color-mix(in srgb, var(--color-blood) 55%, transparent) 55%,
+    color-mix(in srgb, var(--color-ink) 80%, transparent)
+  );
+  mix-blend-mode: color;
+  pointer-events: none;
+}
+
+.duotone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-ink) 85%, transparent),
+    transparent 45%
+  );
+  pointer-events: none;
+}
+
 /* The trajectory draws itself: a wipe from the left, which reads as the line
    being laid down rather than as a box appearing. */
 .wipe {
@@ -515,31 +568,83 @@ body {
   clip-path: inset(0 0 0 0);
 }
 
-/* Each dot in the landing landscape starts on the axis and rises into its
-   packed position. The per-dot delay is set inline from the pack order. */
-.dot-settle {
-  transform: translateY(var(--dot-drop, 28px));
-  opacity: 0;
-  transition:
-    transform var(--duration-slow) var(--ease-needle),
-    opacity var(--duration-base) linear,
-    /* When a lever re-scores the field the dots slide to their new places
-       rather than teleporting. Browsers without CSS geometry animation just
-       cut, which is the same picture a frame later. */
-    cx var(--duration-base) var(--ease-settle),
-    cy var(--duration-base) var(--ease-settle),
-    fill var(--duration-base) linear;
+/* An act on the landing page owns the screen while it is being read: at
+   least a viewport tall, its content centred in that space. min-height, never
+   height, so an act that outgrows the viewport on a small phone simply gets
+   taller instead of clipping. The 4.5rem allows for the sticky header and the
+   phone gauge strip above it. */
+.act {
+  min-height: calc(100svh - 4.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 3.5rem;
 }
 
-.dot-settle[data-shown="true"] {
-  transform: none;
+@media (min-width: 1024px) {
+  .act {
+    min-height: calc(100vh - 4.5rem);
+    padding-block: 4.5rem;
+  }
+}
+
+/* The axis draws itself before anything lands on it, and the tick labels
+   arrive after it. Both are chrome: the dots carry the data and they are
+   positioned by the simulation, not by these rules. */
+.axis-draw {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+}
+
+svg[data-shown="true"] .axis-draw {
+  transition: stroke-dashoffset var(--duration-sweep) var(--ease-sweep);
+  stroke-dashoffset: 0;
+}
+
+.threshold-draw {
+  transform: scaleY(0);
+  transition: transform var(--duration-slow) var(--ease-sweep) 500ms;
+}
+
+svg[data-shown="true"] .threshold-draw {
+  transform: scaleY(1);
+}
+
+.tick-in {
+  opacity: 0;
+  transition: opacity var(--duration-base) linear;
+}
+
+svg[data-shown="true"] .tick-in {
+  opacity: 1;
+}
+
+/* Dots fade up as the simulation starts moving them. Position is the
+   simulation's job and is written straight to the attribute; opacity is the
+   only thing CSS touches here. */
+.swarm-dot {
+  opacity: 0;
+  transition: opacity var(--duration-slow) linear 260ms;
+}
+
+svg[data-shown="true"] .swarm-dot {
   opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal,
-  .dot-settle {
+  .stat,
+  .swarm-dot,
+  .tick-in {
     opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .axis-draw {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .threshold-draw {
     transform: none !important;
   }
 

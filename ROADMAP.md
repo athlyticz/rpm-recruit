@@ -109,7 +109,7 @@ check being run at the time, not to the code. Audit the checks, not just the cod
 
 ## Before the stakeholder demo (blocking)
 
-- [ ] **Apply migration 00006 to the hosted Supabase project.** `/start` renders
+- [ ] **Apply migrations 00006 and 00007 to the hosted Supabase project.** `/start` renders
   without it but the submit fails, and the form says so honestly rather than
   pretending. Run `supabase/migrations/00006_leads.sql` in the SQL editor of the
   hosted project, or `supabase db push` once the CLI is linked. Verify by

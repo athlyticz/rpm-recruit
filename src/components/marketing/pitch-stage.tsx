@@ -1,6 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forceCollide,
+  forceSimulation,
+  forceY,
+  type Simulation,
+  type SimulationNodeDatum,
+} from "d3-force";
 import Link from "next/link";
 import { Tachometer } from "@/components/ui/tachometer";
 import { Reveal } from "@/components/marketing/reveal";
@@ -72,60 +79,81 @@ function ActHeading({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Act one: the landscape assembles                                   */
+/*  Act one: the landscape settles                                     */
 /* ------------------------------------------------------------------ */
 
 const PLOT_W = 640;
-const PLOT_H = 158;
+const PLOT_H = 178;
 const PLOT_PAD = 22;
+const AXIS_Y = PLOT_H - PLOT_PAD;
+const DOT_R = 6;
 
-interface Dot {
+interface SwarmNode extends SimulationNodeDatum {
   id: string;
-  x: number;
-  y: number;
   division: string;
   score: number;
-  order: number;
+  /** x is pinned here. See the note in Landscape on why it is fx and not a force. */
+  fx: number;
+}
+
+function scoreToX(score: number) {
+  return PLOT_PAD + (score / 100) * (PLOT_W - PLOT_PAD * 2);
 }
 
 /**
- * Beeswarm packing: dots keep their true x and step sideways in y only when
- * they would otherwise overlap, so the horizontal axis stays exact.
+ * The landscape, settled by a real force simulation rather than a row packer.
+ *
+ * Why d3-force here when the app draws its charts by hand: the app's rule
+ * exists so a chart in the product cannot drift from the numbers behind it.
+ * That rule is kept, not bent. Every node's x is set as `fx`, which d3 treats
+ * as immovable, so the horizontal axis is exactly the fit score and the
+ * simulation is not allowed to touch it. The only thing being solved is y,
+ * which carries no data at all: it is the vertical room dots need to stop
+ * overlapping. Motion resolves the picture, never the number.
+ *
+ * The simulation is also what makes a re-score read as a landscape rearranging
+ * itself rather than a chart cutting to a new frame.
  */
-function pack(results: MatchResult[]): Dot[] {
-  const scored = results
-    .filter((r): r is MatchResult & { score: number } => r.score !== null)
-    .sort((a, b) => b.score - a.score);
-
-  const rows: number[][] = [];
-  const dots: Dot[] = [];
-
-  scored.forEach((result, order) => {
-    const x = PLOT_PAD + (result.score / 100) * (PLOT_W - PLOT_PAD * 2);
-    let row = 0;
-    while (rows[row]?.some((taken) => Math.abs(taken - x) < 13)) row += 1;
-    rows[row] = [...(rows[row] ?? []), x];
-
-    dots.push({
-      id: result.college.id,
-      x,
-      y: PLOT_H - PLOT_PAD - 12 - row * 13,
-      division: result.college.division,
-      score: result.score,
-      order,
-    });
-  });
-
-  return dots;
-}
-
 function Landscape({ results }: { results: MatchResult[] }) {
-  const dots = useMemo(() => pack(results), [results]);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const circlesRef = useRef(new Map<string, SVGCircleElement | null>());
+  const nodesRef = useRef<SwarmNode[]>([]);
+  const simRef = useRef<Simulation<SwarmNode, undefined> | null>(null);
+  const frameRef = useRef(0);
   const [shown, setShown] = useState(false);
-  const ref = useRef<SVGSVGElement | null>(null);
 
+  const scored = useMemo(
+    () =>
+      results
+        .filter((r): r is MatchResult & { score: number } => r.score !== null)
+        .sort((a, b) => b.score - a.score),
+    [results]
+  );
+
+  const inRange = scored.filter((r) => r.score >= IN_RANGE_THRESHOLD).length;
+  const thresholdX = scoreToX(IN_RANGE_THRESHOLD);
+
+  const levels = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const r of scored) {
+      counts.set(r.college.division, (counts.get(r.college.division) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  }, [scored]);
+
+  /** Writes the current simulation state to the DOM. No React render per frame. */
+  const paint = useCallback(() => {
+    for (const node of nodesRef.current) {
+      const el = circlesRef.current.get(node.id);
+      if (!el) continue;
+      el.setAttribute("cx", String(node.fx));
+      el.setAttribute("cy", String(node.y ?? AXIS_Y));
+    }
+  }, []);
+
+  // Reveal, then settle. Nothing runs until the plot is on screen.
   useEffect(() => {
-    const el = ref.current;
+    const el = svgRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(true);
@@ -138,21 +166,65 @@ function Landscape({ results }: { results: MatchResult[] }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.25 }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
-  const threshold =
-    PLOT_PAD + (IN_RANGE_THRESHOLD / 100) * (PLOT_W - PLOT_PAD * 2);
-  const inRange = dots.filter((d) => d.score >= IN_RANGE_THRESHOLD).length;
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const levels = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const dot of dots) counts.set(dot.division, (counts.get(dot.division) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  }, [dots]);
+    // Keep the y a node already has, so a re-score flows from where it was
+    // rather than dropping back to the axis.
+    const previous = new Map(nodesRef.current.map((n) => [n.id, n]));
+    nodesRef.current = scored.map((result) => {
+      const existing = previous.get(result.college.id);
+      return {
+        id: result.college.id,
+        division: result.college.division,
+        score: result.score,
+        fx: scoreToX(result.score),
+        x: scoreToX(result.score),
+        y: existing?.y ?? AXIS_Y,
+        vy: existing?.vy ?? 0,
+      } satisfies SwarmNode;
+    });
+
+    simRef.current?.stop();
+
+    const sim = forceSimulation<SwarmNode>(nodesRef.current)
+      .force("y", forceY<SwarmNode>(AXIS_Y - 58).strength(0.08))
+      .force("collide", forceCollide<SwarmNode>(DOT_R + 1).strength(0.92).iterations(3))
+      .alpha(1)
+      .alphaDecay(0.045)
+      .stop();
+
+    simRef.current = sim;
+
+    if (!shown) {
+      paint();
+      return;
+    }
+
+    if (reduced) {
+      // No motion at all: solve it now and paint the answer once.
+      sim.tick(220);
+      paint();
+      return;
+    }
+
+    const step = () => {
+      sim.tick();
+      paint();
+      if (sim.alpha() > sim.alphaMin()) {
+        frameRef.current = requestAnimationFrame(step);
+      }
+    };
+    frameRef.current = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [scored, shown, paint]);
 
   return (
     <div className="bg-white border border-black/[0.07] rounded-md shadow-sm overflow-hidden">
@@ -161,80 +233,86 @@ function Landscape({ results }: { results: MatchResult[] }) {
           Every program, scored
         </h3>
         <p className="font-mono num text-meta text-ink-5">
-          <span className="text-ink font-bold">{inRange}</span> of {dots.length} in range
+          <span className="text-ink font-bold">{inRange}</span> of {scored.length} in
+          range
         </p>
       </div>
 
       <svg
-        ref={ref}
+        ref={svgRef}
         viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
         className="w-full h-auto"
+        data-shown={shown ? "true" : "false"}
         role="img"
-        aria-label={`${dots.length} programs plotted by fit score for the sample player. ${inRange} score at or above ${IN_RANGE_THRESHOLD}.`}
+        aria-label={`${scored.length} programs plotted by fit score for the sample player. ${inRange} score at or above ${IN_RANGE_THRESHOLD}.`}
       >
+        {/* The axis draws itself, left to right, before anything lands on it. */}
         <line
+          className="axis-draw"
           x1={PLOT_PAD}
           x2={PLOT_W - PLOT_PAD}
-          y1={PLOT_H - PLOT_PAD}
-          y2={PLOT_H - PLOT_PAD}
+          y1={AXIS_Y}
+          y2={AXIS_Y}
           stroke="var(--viz-reference)"
           strokeWidth={1}
         />
-        <line
-          x1={threshold}
-          x2={threshold}
-          y1={12}
-          y2={PLOT_H - PLOT_PAD}
-          stroke="var(--viz-reference)"
-          strokeWidth={1}
-          strokeDasharray="3 3"
-        />
+
+        <g className="threshold-draw" style={{ transformOrigin: `${thresholdX}px ${AXIS_Y}px` }}>
+          <line
+            x1={thresholdX}
+            x2={thresholdX}
+            y1={14}
+            y2={AXIS_Y}
+            stroke="var(--viz-reference)"
+            strokeWidth={1}
+            strokeDasharray="3 3"
+          />
+        </g>
         <text
-          x={threshold + 6}
-          y={20}
-          className="font-condensed plot-label"
+          x={thresholdX + 6}
+          y={22}
+          className="font-condensed plot-label tick-in"
+          style={{ transitionDelay: "700ms" }}
           letterSpacing="1.6"
           fill="var(--viz-label)"
         >
           IN RANGE
         </text>
 
-        {[0, 25, 50, 75, 100].map((tick) => (
+        {[0, 25, 50, 75, 100].map((tick, i) => (
           <text
             key={tick}
-            x={PLOT_PAD + (tick / 100) * (PLOT_W - PLOT_PAD * 2)}
+            x={scoreToX(tick)}
             y={PLOT_H - 6}
             textAnchor="middle"
-            className="font-mono plot-label"
+            className="font-mono plot-label tick-in"
+            style={{ transitionDelay: `${300 + i * 70}ms` }}
             fill="var(--viz-label)"
           >
             {tick}
           </text>
         ))}
 
-        {dots.map((dot) => (
-          <circle
-            key={dot.id}
-            className="dot-settle plot-dot"
-            data-shown={shown ? "true" : "false"}
-            style={
-              {
-                transitionDelay: `${Math.min(dot.order * 18, 620)}ms`,
-                "--dot-drop": `${PLOT_H - PLOT_PAD - dot.y}px`,
-              } as React.CSSProperties
-            }
-            cx={dot.x}
-            cy={dot.y}
-            r={5}
-            fill={
-              dot.score >= IN_RANGE_THRESHOLD
-                ? LEVEL_COLOUR[dot.division] ?? "var(--color-slate)"
-                : "white"
-            }
-            stroke={LEVEL_COLOUR[dot.division] ?? "var(--color-slate)"}
-            strokeWidth={1.5}
-          />
-        ))}
+        {scored.map((result) => {
+          const colour = LEVEL_COLOUR[result.college.division] ?? "var(--color-slate)";
+          return (
+            <circle
+              key={result.college.id}
+              ref={(el) => {
+                circlesRef.current.set(result.college.id, el);
+              }}
+              className="plot-dot swarm-dot"
+              cx={scoreToX(result.score)}
+              cy={AXIS_Y}
+              r={DOT_R}
+              fill={result.score >= IN_RANGE_THRESHOLD ? colour : "white"}
+              stroke={colour}
+              strokeWidth={1.5}
+            >
+              <title>{`${result.college.name}: ${result.score}`}</title>
+            </circle>
+          );
+        })}
       </svg>
 
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pb-3.5">
@@ -687,9 +765,9 @@ export function PitchStage({ results }: { results: MatchResult[] }) {
         {/* No items-start: the gauge column has to stretch to the row height or
             its sticky child has nothing to travel inside. */}
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">
-          <div className="flex flex-col gap-16 lg:gap-28 min-w-0">
+          <div className="flex flex-col min-w-0">
             {/* Act one */}
-            <section>
+            <section className="act">
               <ActHeading
                 index="01"
                 eyebrow="The landscape"
@@ -722,7 +800,7 @@ export function PitchStage({ results }: { results: MatchResult[] }) {
             </section>
 
             {/* Act two */}
-            <section>
+            <section className="act">
               <ActHeading
                 index="02"
                 eyebrow="The lever"
@@ -757,7 +835,7 @@ export function PitchStage({ results }: { results: MatchResult[] }) {
             </section>
 
             {/* Act three */}
-            <section>
+            <section className="act">
               <ActHeading
                 index="03"
                 eyebrow="The record"

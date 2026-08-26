@@ -21,7 +21,7 @@ export function Reveal({
   children: ReactNode;
   className?: string;
   /** Which choreography to use. All of them end in the same final state. */
-  effect?: "reveal" | "wipe";
+  effect?: "reveal" | "wipe" | "stat";
   delay?: number;
   as?: "div" | "section" | "li";
 }) {
@@ -70,10 +70,12 @@ export function Reveal({
       ref={ref as React.Ref<never>}
       className={className}
     >
+      {/* h-full so a card inside a stretched grid cell still fills it: the
+          effect wrapper sits between the grid item and the card. */}
       <div
         data-shown={shown ? "true" : "false"}
         style={delay ? { transitionDelay: `${delay}ms` } : undefined}
-        className={armed ? effect : undefined}
+        className={`h-full ${armed ? effect : ""}`.trim()}
       >
         {children}
       </div>
