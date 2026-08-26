@@ -573,17 +573,26 @@ body {
    height, so an act that outgrows the viewport on a small phone simply gets
    taller instead of clipping. The 4.5rem allows for the sticky header and the
    phone gauge strip above it. */
+/* At phone width an act is content plus rhythm, nothing more. The
+   viewport-height treatment was audited per act on mobile and none of the
+   three needs it: each act's choreography (the swarm settling, the lever, the
+   wipe) lives inside its own card, so forcing the section taller only
+   manufactured dead air above and below the content. The mobile rhythm is
+   2.5rem per section edge, 5rem of air between the content of adjacent
+   sections, and nothing on the page may open a gap larger than that.
+
+   Desktop keeps the full-viewport act: at 1024px and up there is room for a
+   section to own the screen while the gauge rail rides beside it. */
 .act {
-  min-height: calc(100svh - 4.5rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-block: 3.5rem;
+  padding-block: 2.5rem;
 }
 
 @media (min-width: 1024px) {
   .act {
     min-height: calc(100vh - 4.5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     padding-block: 4.5rem;
   }
 }

@@ -139,39 +139,48 @@ const CZAHOR: Person = {
 function ScoutingCard({ person }: { person: Person }) {
   return (
     <div className="bg-ink border border-ink-3 rounded-lg overflow-hidden shadow-lg">
-      <div className="duotone relative aspect-[3/4]">
-        <Image
-          src={person.photo}
-          alt={person.photoAlt}
-          fill
-          sizes="(min-width: 1024px) 360px, 100vw"
-          className="object-cover object-top"
-          priority
-        />
+      {/*
+        At phone width the portrait shares its row with the name plate instead
+        of owning the full card width: a full-bleed 3:4 photo at 390px was a
+        477px tall image that consumed the entry viewport by itself. Capped at
+        45% of the card, the face, name, and title land together. Desktop
+        keeps the stacked plate, where the column is narrow and sticky.
+      */}
+      <div className="flex items-stretch lg:block">
+        <div className="duotone relative w-[45%] max-w-[190px] shrink-0 aspect-[3/4] lg:w-auto lg:max-w-none">
+          <Image
+            src={person.photo}
+            alt={person.photoAlt}
+            fill
+            sizes="(min-width: 1024px) 360px, 45vw"
+            className="object-cover object-top"
+            priority
+          />
+        </div>
+
+        <div className="flex-1 min-w-0 px-4 py-3.5 lg:px-5 lg:pt-4 lg:pb-0 flex flex-col justify-center lg:justify-start">
+          <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-gold">
+            {person.role}
+          </p>
+          <h2 className="font-display text-title-lg lg:text-display-sm font-bold text-bone leading-tight mt-1">
+            {person.name}
+          </h2>
+        </div>
       </div>
 
-      <div className="p-4 lg:p-5">
-        <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-gold">
-          {person.role}
-        </p>
-        <h2 className="font-display text-title-lg lg:text-display-sm font-bold text-bone leading-tight mt-1">
-          {person.name}
-        </h2>
-
-        <dl className="mt-4 flex flex-col">
-          {person.meta.map((row) => (
-            <div
-              key={row.label}
-              className="flex items-baseline gap-3 py-2 border-t border-ink-3"
-            >
-              <dt className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-5 w-20 shrink-0">
-                {row.label}
-              </dt>
-              <dd className="text-caption text-slate-2 text-pretty">{row.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
+      <dl className="px-4 pb-3.5 lg:px-5 lg:pb-5 lg:mt-4 flex flex-col">
+        {person.meta.map((row) => (
+          <div
+            key={row.label}
+            className="flex items-baseline gap-3 py-2 border-t border-ink-3"
+          >
+            <dt className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-5 w-20 shrink-0">
+              {row.label}
+            </dt>
+            <dd className="text-caption text-slate-2 text-pretty">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
@@ -211,7 +220,7 @@ function Stats({ stats }: { stats: Stat[] }) {
 
 function Profile({ person, reversed = false }: { person: Person; reversed?: boolean }) {
   return (
-    <section className="mx-auto max-w-7xl px-gutter lg:px-6 py-12 lg:py-20">
+    <section className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-20">
       <div
         className={`lg:grid lg:gap-14 xl:gap-20 ${
           reversed
@@ -220,7 +229,7 @@ function Profile({ person, reversed = false }: { person: Person; reversed?: bool
         }`}
       >
         <Reveal
-          className={`block mb-8 lg:mb-0 ${reversed ? "lg:order-2" : ""}`}
+          className={`block mb-6 lg:mb-0 ${reversed ? "lg:order-2" : ""}`}
         >
           <div className="lg:sticky lg:top-24">
             <ScoutingCard person={person} />
@@ -272,7 +281,7 @@ export default function AboutPage() {
   return (
     <>
       <section className="bg-ink">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 pt-12 pb-12 lg:pt-20 lg:pb-16">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 pt-10 pb-10 lg:pt-20 lg:pb-16">
           <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-3">
             The team behind RPM Recruit
           </p>
@@ -299,7 +308,7 @@ export default function AboutPage() {
       <Profile person={CZAHOR} reversed />
 
       <section className="bg-ink">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-14 lg:py-20 text-center">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-20 text-center">
           <Reveal>
             <h2 className="font-display text-display-lg lg:text-numeral font-bold text-bone leading-none text-balance">
               Talk to the coach, not a sales desk.

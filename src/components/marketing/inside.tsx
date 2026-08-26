@@ -226,7 +226,7 @@ const TILES = [
 
 export function Inside() {
   return (
-    <section className="mx-auto max-w-7xl px-gutter lg:px-6 py-16 lg:py-24">
+    <section className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-24">
       <Reveal className="max-w-[46ch] mb-8">
         <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-2">
           Inside

@@ -761,7 +761,7 @@ export function PitchStage({ results }: { results: MatchResult[] }) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-14 lg:py-24">
+      <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-0 lg:py-24">
         {/* No items-start: the gauge column has to stretch to the row height or
             its sticky child has nothing to travel inside. */}
         <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">

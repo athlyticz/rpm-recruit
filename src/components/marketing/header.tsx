@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
+import { MobileMenu } from "@/components/marketing/mobile-menu";
 
 export function MarketingHeader() {
   return (
@@ -43,6 +44,7 @@ export function MarketingHeader() {
           >
             Start Today
           </Link>
+          <MobileMenu />
         </div>
       </div>
     </header>

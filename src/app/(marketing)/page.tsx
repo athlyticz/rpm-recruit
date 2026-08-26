@@ -40,7 +40,7 @@ export default async function HomePage() {
     <>
       {/* ── HERO ── */}
       <section className="relative bg-ink overflow-hidden">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 pt-16 pb-14 lg:pt-28 lg:pb-24 relative z-10 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16 lg:items-center">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 pt-12 pb-10 lg:pt-28 lg:pb-24 relative z-10 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16 lg:items-center">
           <div className="max-w-3xl">
             <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-6">
               Scanzano Baseball &middot; All-American Baseball Talent Showcases
@@ -107,7 +107,7 @@ export default async function HomePage() {
 
       {/* ── THE LADDER ── */}
       <section className="bg-ink">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <Reveal>
               <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-2">
@@ -149,7 +149,7 @@ export default async function HomePage() {
       <Inside />
 
       {/* ── PRICING ── */}
-      <section className="mx-auto max-w-7xl px-gutter lg:px-6 pb-16 lg:pb-24">
+      <section className="mx-auto max-w-7xl px-gutter lg:px-6 pt-10 pb-10 lg:pt-0 lg:pb-24">
         <Reveal className="max-w-[46ch] mb-8">
           <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-2">
             Pricing
@@ -172,7 +172,7 @@ export default async function HomePage() {
 
       {/* ── CTA ── */}
       <section className="bg-ink">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-16 lg:py-24 text-center">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-24 text-center">
           <Reveal>
             <h2 className="font-display text-display-lg lg:text-numeral font-bold text-bone leading-none text-balance">
               Your number, your list, your next call.
