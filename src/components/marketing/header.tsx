@@ -38,10 +38,10 @@ export function MarketingHeader() {
             Sign In
           </Link>
           <Link
-            href="/signup"
+            href="/start"
             className="pressable focusable inline-flex items-center min-h-touch whitespace-nowrap font-condensed text-xs font-bold tracking-widest uppercase bg-gold text-ink px-4 rounded-sm hover:bg-gold-2 transition-colors dur-fast"
           >
-            Get Started
+            Start Today
           </Link>
         </div>
       </div>

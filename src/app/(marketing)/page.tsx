@@ -87,10 +87,10 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3 mt-9">
               <Link
-                href="/signup"
+                href="/start"
                 className="pressable focusable press-redline inline-flex items-center min-h-touch font-condensed text-body font-bold tracking-[0.14em] uppercase bg-gold text-ink px-7 rounded-sm hover:bg-gold-2 transition-colors dur-fast"
               >
-                Start your profile
+                Start Today
               </Link>
               <Link
                 href="/pricing"
@@ -145,10 +145,10 @@ export default async function HomePage() {
                 rather than implied.
               </p>
               <Link
-                href="/signup"
+                href="/start"
                 className="pressable-sink focusable press-redline inline-flex items-center min-h-touch font-condensed text-body font-bold tracking-[0.14em] uppercase bg-gold text-ink px-6 rounded-sm hover:bg-gold-2 transition-colors dur-fast mt-7"
               >
-                Get evaluated
+                Start Today
               </Link>
             </Reveal>
 
@@ -246,14 +246,14 @@ export default async function HomePage() {
                   ))}
                 </ul>
                 <Link
-                  href="/signup"
+                  href={`/start?plan=${key}`}
                   className={`pressable focusable flex items-center justify-center min-h-touch text-center font-condensed text-label font-bold tracking-[0.14em] uppercase rounded-sm transition-colors dur-fast ${
                     key === "showcase"
                       ? "bg-ink text-bone hover:bg-gold hover:text-ink"
                       : "bg-bone text-ink-4 hover:bg-ink hover:text-bone"
                   }`}
                 >
-                  Get started
+                  Start Today
                 </Link>
               </div>
             </Reveal>
@@ -273,10 +273,10 @@ export default async function HomePage() {
               it: the rating, the program list, the letters you send.
             </p>
             <Link
-              href="/signup"
+              href="/start"
               className="pressable-sink focusable press-redline inline-flex items-center min-h-touch font-condensed text-body font-bold tracking-[0.14em] uppercase bg-gold text-ink px-8 rounded-sm hover:bg-gold-2 transition-colors dur-fast mt-8"
             >
-              Create your profile
+              Start Today
             </Link>
           </Reveal>
         </div>

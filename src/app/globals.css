@@ -431,12 +431,20 @@ body {
    a small vertical drift on the needle curve. Anything longer than a quarter
    second stops feeling like response and starts feeling like waiting. */
 @media (prefers-reduced-motion: no-preference) {
+  /*
+   * Deliberately short. The destination route commits about 90ms after the
+   * tap on a prefetched link, and the cross-fade then sits on top of that:
+   * every millisecond here is a millisecond the reader waits to see content
+   * that already exists. Measured before the cut, the fade was more than
+   * twice the cost of the navigation it was decorating. Perceived speed beats
+   * motion, so this is now the shortest fade the eye still reads as a fade.
+   */
   ::view-transition-old(root) {
-    animation: vt-out 200ms var(--ease-settle) both;
+    animation: vt-out var(--duration-instant) var(--ease-settle) both;
   }
 
   ::view-transition-new(root) {
-    animation: vt-in 240ms var(--ease-sweep) both;
+    animation: vt-in var(--duration-instant) var(--ease-sweep) both;
   }
 
   /* The gauge is the one element that survives the cut. It morphs between its
@@ -444,7 +452,7 @@ body {
      continuous while everything around it changes. */
   ::view-transition-old(gauge),
   ::view-transition-new(gauge) {
-    animation-duration: 260ms;
+    animation-duration: var(--duration-fast);
     animation-timing-function: var(--ease-needle);
     mix-blend-mode: normal;
   }

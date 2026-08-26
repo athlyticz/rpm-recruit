@@ -797,10 +797,10 @@ export function PitchStage({ results }: { results: MatchResult[] }) {
                   : "A fictional right-handed pitcher, class of 2027."}
               </p>
               <Link
-                href="/signup"
+                href="/start"
                 className="pressable focusable press-redline mt-5 inline-flex items-center min-h-touch font-condensed text-label font-bold tracking-[0.16em] uppercase bg-gold text-ink px-5 rounded-sm hover:bg-gold-2 transition-colors dur-fast"
               >
-                Score your own
+                Start Today
               </Link>
             </div>
           </aside>

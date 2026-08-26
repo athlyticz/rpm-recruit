@@ -287,6 +287,66 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          contacted_at: string | null
+          contacted_by: string | null
+          created_at: string
+          current_level: string
+          grad_year: number
+          id: string
+          notes: string | null
+          parent_email: string
+          parent_name: string
+          parent_phone: string
+          plan_interest: string | null
+          player_first_name: string
+          player_last_name: string
+          position: string
+          source: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          contacted_at?: string | null
+          contacted_by?: string | null
+          created_at?: string
+          current_level: string
+          grad_year: number
+          id?: string
+          notes?: string | null
+          parent_email: string
+          parent_name: string
+          parent_phone: string
+          plan_interest?: string | null
+          player_first_name: string
+          player_last_name: string
+          position: string
+          source?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          contacted_at?: string | null
+          contacted_by?: string | null
+          created_at?: string
+          current_level?: string
+          grad_year?: number
+          id?: string
+          notes?: string | null
+          parent_email?: string
+          parent_name?: string
+          parent_phone?: string
+          plan_interest?: string | null
+          player_first_name?: string
+          player_last_name?: string
+          position?: string
+          source?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           college_id: string
@@ -770,6 +830,10 @@ export type Database = {
     }
     Functions: {
       owns_player: { Args: { target_player_id: string }; Returns: boolean }
+      recompute_overall_score: {
+        Args: { target_player_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       college_division: "d1" | "d2" | "d3" | "naia" | "njcaa"

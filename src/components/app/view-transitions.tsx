@@ -83,10 +83,16 @@ export function ViewTransitions() {
       try {
         const transition = document.startViewTransition(() => {
           navigate();
-          // Resolve on the next frame so the new route has committed before
-          // the snapshot is taken.
+          /*
+           * One frame, not two. The old frame is frozen on screen for the
+           * whole of this wait, so each extra frame is pure added latency on
+           * a navigation that is already fast. One is enough for the router
+           * to commit a prefetched route; if it is not, the transition
+           * cross-fades two identical frames, which costs nothing and is
+           * invisible.
+           */
           return new Promise<void>((resolve) =>
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+            requestAnimationFrame(() => resolve())
           );
         });
 

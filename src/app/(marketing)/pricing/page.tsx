@@ -72,14 +72,14 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 <Link
-                  href="/signup"
+                  href={`/start?plan=${key}`}
                   className={`pressable focusable flex items-center justify-center min-h-touch text-center font-condensed text-xs font-bold tracking-[0.13em] uppercase py-3 transition-colors dur-fast ${
                     featured
                       ? "bg-ink text-bone hover:bg-gold hover:text-ink"
                       : "bg-bone text-ink-4 hover:bg-ink hover:text-bone"
                   }`}
                 >
-                  Get Started
+                  Start Today
                 </Link>
               </div>
             );
