@@ -57,9 +57,44 @@ design bar. Everything wired after it is held to the same standard.
   rate-limited and not deliverable at volume; it will not survive real signups.
   Email confirmation already cost us a day of "empty data" debugging when
   confirmation links pointed at localhost, so this path is load-bearing.
+  Groundwork done: the same Resend account that carries lead notifications
+  carries auth mail. Once the domain is verified in Resend, set in the hosted
+  Supabase dashboard (Project Settings, Authentication, SMTP): host
+  smtp.resend.com, port 465, username literally `resend`, password = the
+  Resend API key, sender = an address on the verified domain (for example
+  auth@send.athlyticz.com), sender name RPM Recruit. Then raise the auth email
+  rate limit from the built-in sender's default. Dashboard-only settings; the
+  repo has nothing left to do here.
 - [ ] Set `access_expires_at` in the subscription branch of the Stripe webhook. `checkout.session.completed` with `session.mode === "subscription"` currently leaves it null, so subscribers would have no expiry once gating exists. Carry it forward from the period end on `customer.subscription.updated`.
 
 ## Phase 2: Real AI (earn the label)
+
+- [~] **Lead notifications (Phase 2 opener).** Built and verified end to end on the
+  local stack; production is blocked only on account credentials that are not
+  mine to create. The mechanism: migration 00008 adds a pg_net trigger (chosen
+  over a dashboard Database Webhook so the whole mechanism lives in the repo)
+  that posts each new leads row to `/api/notify/lead` with a shared bearer
+  secret; the route formats a forward-ready email and sends through Resend.
+  Waitlist signups deliberately have no trigger: a Vercel cron (vercel.json,
+  daily 13:00 UTC, about 9am ET) hits `/api/notify/waitlist-digest`, which
+  computes "N new, M total" from the last digest actually sent (notify_log),
+  so a late cron never drops a signup between windows. With no RESEND_API_KEY
+  the send layer becomes a logged dry run and says so, never pretending.
+  Hosted checklist, in order:
+  1. Create the Resend account; add the sending domain (send.athlyticz.com
+     recommended; athlyticz.com is confirmed owned). Add the DNS records
+     Resend generates: an MX and an SPF TXT on the send subdomain and a DKIM
+     TXT at resend._domainkey; a `_dmarc` TXT (v=DMARC1; p=none;) is worth
+     adding alongside. Exact values are per-account, from Resend's Add Domain
+     screen.
+  2. Vercel env vars: RESEND_API_KEY, RESEND_FROM, NOTIFY_EMAIL,
+     NOTIFY_WEBHOOK_SECRET, CRON_SECRET (see .env.local.example). Redeploy.
+  3. Apply migration 00008 to hosted (`supabase db push`).
+  4. Point the trigger at production: run `npm run notify:setup` with the
+     hosted URL/service key, NOTIFY_WEBHOOK_SECRET matching Vercel, and
+     NOTIFY_APP_URL=https://rpm-recruit.vercel.app.
+  5. Verify: submit one lead on /start and confirm the email arrives; hit the
+     digest route once with the CRON_SECRET bearer to confirm the digest.
 
 - [ ] `POST /api/ai/letter` — Anthropic API route generating coach outreach letters from player data + target school + tone. Streaming response. Per-user rate limit.
 - [ ] `POST /api/ai/bio` — profile bio generation with the same guardrails.

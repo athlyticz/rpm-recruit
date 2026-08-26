@@ -13,7 +13,8 @@
     "db:seed": "npx tsx scripts/seed-colleges.ts",
     "db:seed:ladder": "npx tsx scripts/seed-ladder.ts",
     "db:seed:demo": "npx tsx scripts/seed-demo-player.ts",
-    "check:contrast": "npx tsx scripts/check-contrast.ts"
+    "check:contrast": "npx tsx scripts/check-contrast.ts",
+    "notify:setup": "npx tsx scripts/setup-notifications.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^5.3.0",

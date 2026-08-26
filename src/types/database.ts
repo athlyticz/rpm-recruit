@@ -522,6 +522,45 @@ export type Database = {
         }
         Relationships: []
       }
+      notify_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      notify_log: {
+        Row: {
+          detail: Json | null
+          id: string
+          kind: string
+          sent_at: string
+        }
+        Insert: {
+          detail?: Json | null
+          id?: string
+          kind: string
+          sent_at?: string
+        }
+        Update: {
+          detail?: Json | null
+          id?: string
+          kind?: string
+          sent_at?: string
+        }
+        Relationships: []
+      }
       outreach_log: {
         Row: {
           channel: string

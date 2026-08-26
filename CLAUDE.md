@@ -396,6 +396,18 @@ Replace the legacy if/else heuristic with a transparent weighted scoring model a
 
 See `.env.local.example` for required variables: Supabase URL/keys, Stripe keys/price IDs, app URL. Add `ANTHROPIC_API_KEY` (server-side only) when AI routes land.
 
+### Lead notifications
+
+A new `leads` row notifies by itself: migration 00008 puts a pg_net trigger on
+the table that posts the row to `/api/notify/lead` with a bearer secret from
+`notify_config` (service-role only; written by `npm run notify:setup`, never
+by a migration). The route composes a forward-ready email and sends via
+Resend. Waitlist rows do not trigger anything; a daily Vercel cron builds the
+digest from `notify_log` bookkeeping. Two rules the trigger holds: an
+unconfigured environment is silent, not broken, and a notification failure
+never blocks the insert. With no RESEND_API_KEY every send is a logged dry
+run that reports itself as unsent.
+
 ### Cached Reference Data
 
 `getColleges` is cached for an hour behind the `colleges` tag, because it is
