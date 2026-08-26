@@ -39,6 +39,12 @@ export interface ScoreComponent {
   weight: number;
   /** 0-100, or null when the inputs to compute it are missing. */
   score: number | null;
+  /**
+   * The weight actually applied, after renormalising over the components that
+   * could be computed. Equal to `weight` when nothing is missing. This is the
+   * number the UI must show and draw with, so what is on screen multiplies out.
+   */
+  effectiveWeight?: number;
   /** Points this component contributed to the final score. */
   contribution: number;
   /** Plain sentence the UI renders under the component bar. */
@@ -343,9 +349,20 @@ export function scoreMatch(player: Player, college: College): MatchResult {
   // drag every school toward zero.
   let total = 0;
   for (const component of components) {
-    if (component.score === null) continue;
-    const normalisedWeight = component.weight / totalWeight;
-    component.contribution = component.score * normalisedWeight;
+    if (component.score === null) {
+      component.effectiveWeight = 0;
+      continue;
+    }
+    /*
+     * The component score is rounded before it is weighted, for the same reason
+     * the total is rounded below: the UI prints 61, so 61 is what has to
+     * multiply out. Leaving 60.8 underneath meant the breakdown showed a
+     * player 61 and 24.3 points at a 40% weighting, and those two numbers do
+     * not agree on any calculator they own.
+     */
+    component.score = Math.round(component.score);
+    component.effectiveWeight = component.weight / totalWeight;
+    component.contribution = component.score * component.effectiveWeight;
     total += component.contribution;
   }
 

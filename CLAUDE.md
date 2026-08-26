@@ -175,6 +175,21 @@ specified behaviour exactly and never once performed a drag. A real drag showed
 the thumb springing back on release, which reads as a dead control. The
 specification was wrong and the tests were built to agree with it.
 
+**Origin story, worth keeping.** The policy found a real bug on its first run.
+Dragging the fastball velocity lever *down* from 87 to 77 reported "77 mph = 10":
+a lower measurement producing a higher score, and a score the player had not
+earned. Published ladders have gaps (75-77, then 78-80), the slider was landing
+in them, and the fallback sent in-gap values to whichever end of the whole scale
+was nearer. It had shipped, it was live, and every automated check passed
+because every check drove the slider with synthetic events instead of dragging
+it. A wrong-direction score on the demo centrepiece was only ever going to be
+found by a thumb.
+
+The same run also caught me reporting a navigation bug that did not exist: I had
+clicked coordinates measured before the page scrolled. Both halves are the
+lesson. Gesture verification finds what event dispatch cannot, and coordinates
+measured in one call are stale by the next.
+
 - Sliders are dragged, not `setValue`d.
 - Buttons and links are clicked at coordinates, not `.click()`ed, whenever the
   result is in doubt.
@@ -281,6 +296,14 @@ Replace the legacy if/else heuristic with a transparent weighted scoring model a
   that most NAIA baseball is played in the Midwest and South, and that national coverage
   arrives with the full dataset. A level being sparse near a player is information they
   need, not a gap to paper over.
+- Every number on screen must multiply out. Component scores are rounded before they are
+  weighted, and the weight the UI prints is the renormalised one actually applied, so a
+  player reading "61 x 40% weighting = 24.4 points" can check it on a calculator. Hidden
+  precision anywhere in the chain is precision we cannot defend, same rule as the total.
+- The binding constraint named in the breakdown headline is the component costing the most
+  points, which is weight times shortfall, not the lowest raw score. A 59 on geography at a
+  10% weight costs four points; a 61 on athletic projection at 40% costs sixteen. The gate
+  is the second one.
 
 ## Legacy Prototype
 

@@ -209,6 +209,7 @@
   --animate-shimmer: shimmer 1.6s var(--ease-settle) infinite;
   --animate-meter: meter var(--duration-sweep) var(--ease-needle) both;
   --animate-confirm: confirm var(--duration-slow) var(--ease-needle) both;
+  --animate-tick: tick var(--duration-slow) var(--ease-needle) both;
 }
 
 @keyframes needle-sweep {
@@ -233,6 +234,20 @@
   }
   100% {
     opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* A band boundary being crossed. The bands are the pedagogy of the lever, so
+   the moment the score steps is given a beat rather than passing silently. */
+@keyframes tick {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  100% {
     transform: scale(1);
   }
 }

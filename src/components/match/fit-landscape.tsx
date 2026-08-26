@@ -476,7 +476,7 @@ export function FitLandscape({
                 Projection
               </span>
               <span className="font-mono num text-meta text-ink">
-                {gained > 0 ? `+${gained}` : gained} in range
+                {gained === 0 ? "no change" : `${gained > 0 ? "+" : ""}${gained} in range`}
               </span>
             </span>
           )}
@@ -509,10 +509,20 @@ export function FitLandscape({
                   </span>
                   <span className="text-slate"> {lever.unit}</span>
                   {projectedScore !== null && (
-                    <span className={isDrafting ? "text-ink-4" : "text-ink-5"}>
-                      {" "}
-                      = {projectedScore}
-                    </span>
+                    <>
+                      <span className="text-slate"> = </span>
+                      {/* Keyed on the score so crossing a boundary remounts
+                          this and replays the beat. The bands are what the
+                          lever teaches; stepping between them should be felt. */}
+                      <span
+                        key={projectedScore}
+                        className={`inline-block font-bold motion-safe:animate-tick ${
+                          isDrafting ? "text-ink" : "text-ink-5"
+                        }`}
+                      >
+                        {projectedScore}
+                      </span>
+                    </>
                   )}
                 </span>
               </label>
@@ -520,18 +530,32 @@ export function FitLandscape({
               {/* Band boundaries on the track, so the player can see exactly
                   where one score becomes the next. */}
               <div className="relative h-3 mb-0.5" aria-hidden>
-                {ticks.map((tick) => (
-                  <span
-                    key={tick.score}
-                    className="absolute top-0 flex flex-col items-center"
-                    style={{ left: `${Math.min(Math.max(tick.at, 0), 1) * 100}%`, transform: "translateX(-50%)" }}
-                  >
-                    <span className="block w-px h-1.5 bg-bone-3" />
-                    <span className="font-mono num text-[7px] leading-none text-slate">
-                      {tick.score}
+                {ticks.map((tick) => {
+                  const current = tick.score === projectedScore;
+                  return (
+                    <span
+                      key={tick.score}
+                      className="absolute top-0 flex flex-col items-center transition-colors dur-fast"
+                      style={{
+                        left: `${Math.min(Math.max(tick.at, 0), 1) * 100}%`,
+                        transform: "translateX(-50%)",
+                      }}
+                    >
+                      <span
+                        className={`block w-px h-1.5 ${
+                          current ? "bg-ink h-2" : "bg-bone-3"
+                        }`}
+                      />
+                      <span
+                        className={`font-mono num text-[7px] leading-none ${
+                          current ? "text-ink font-bold" : "text-slate"
+                        }`}
+                      >
+                        {tick.score}
+                      </span>
                     </span>
-                  </span>
-                ))}
+                  );
+                })}
               </div>
 
               <input
@@ -609,8 +633,8 @@ export function FitLandscape({
 
         <p className="text-micro text-slate leading-relaxed text-pretty">
           {draft
-            ? "Projected only while you hold the slider. Nothing here is saved, and the dark line marks your real best fit."
-            : "Drag a slider to see which programs would come into range. Release to return to your real numbers."}
+            ? "Projected numbers. Nothing here is saved, the dark line marks your real best fit, and Back to reality clears it."
+            : "Drag a slider to see which programs would come into range. Your real numbers are untouched."}
         </p>
 
         {draft && (

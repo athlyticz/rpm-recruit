@@ -5,6 +5,7 @@ import { ChevronDown, Info, MapPin, ExternalLink, Trophy, X } from "lucide-react
 import { Tachometer } from "@/components/ui/tachometer";
 import { LEVELS, type Division } from "./level-constants";
 import { FitLandscape } from "./fit-landscape";
+import type { ComponentKey } from "@/lib/match/interim-scorer";
 import {
   rankMatches,
   TIE_BREAK_LABEL,
@@ -120,37 +121,114 @@ const PODIUM = [
 /*  Score breakdown                                                    */
 /* ------------------------------------------------------------------ */
 
-function ComponentBar({ component }: { component: ScoreComponent }) {
+/**
+ * The verdict: which component is actually gating this program.
+ *
+ * The arithmetic was always right and always readable, but it read as uniform
+ * micro-text, so the thing a player needs first, what is stopping them, carried
+ * no more weight than anything else. The binding constraint is the lowest
+ * available component, and it gets said in display type before any numbers.
+ */
+const VERDICTS: Record<ComponentKey, { gate: string; clear: string }> = {
+  athletic: {
+    gate: "The gap here is on the field, not in the classroom.",
+    clear: "You project well for this level.",
+  },
+  academic: {
+    gate: "Admission is the gate here, not baseball.",
+    clear: "Academically you clear this program.",
+  },
+  cost: {
+    gate: "Cost is the constraint here, not fit.",
+    clear: "Affordable relative to the rest of the field.",
+  },
+  major: {
+    gate: "Your intended majors are the mismatch here.",
+    clear: "They teach what you want to study.",
+  },
+  geography: {
+    gate: "Distance is the main friction here.",
+    clear: "Close enough for family to watch you play.",
+  },
+};
+
+/**
+ * The binding constraint is the component costing the most points, which is
+ * weight times the shortfall, not the lowest raw score. A 59 on geography at a
+ * 10% weight costs four points; a 61 on athletic projection at 40% costs
+ * sixteen. Ranking on the raw score alone named the wrong gate.
+ */
+function verdictFor(components: ScoreComponent[]) {
+  const available = components.filter((c) => c.score !== null);
+  if (available.length === 0) return null;
+  const cost = (c: ScoreComponent) =>
+    (c.effectiveWeight ?? c.weight) * (100 - (c.score as number));
+  const binding = available.reduce((worst, c) => (cost(c) > cost(worst) ? c : worst));
+  const gating = (binding.score as number) < 70;
+  return {
+    line: gating ? VERDICTS[binding.key].gate : VERDICTS[binding.key].clear,
+    gating,
+    points: cost(binding),
+  };
+}
+
+/**
+ * One component. Weight is the width of the track and score is the fill, so the
+ * relationship the old copy spelled out as "16.5 of 40%" is simply visible: a
+ * heavy component owns a long track, and how much of it is filled is how much
+ * of that weight was earned.
+ */
+function ComponentBar({
+  component,
+  maxWeight,
+  showMath,
+}: {
+  component: ScoreComponent;
+  maxWeight: number;
+  showMath: boolean;
+}) {
   const unavailable = component.score === null;
   const pct = component.score ?? 0;
+  const trackWidth = ((component.effectiveWeight ?? component.weight) / maxWeight) * 100;
 
   return (
     <div className="py-2.5 border-b border-black/[0.05] last:border-0">
-      <div className="flex items-baseline justify-between gap-3 mb-1.5">
-        <span className="font-condensed text-label font-bold tracking-[0.16em] uppercase text-ink-4">
+      <div className="flex items-baseline gap-2.5">
+        <span className="font-condensed text-micro font-bold tracking-[0.2em] uppercase text-ink-4 flex-1 min-w-0">
           {component.label}
         </span>
         <span
-          className={`font-mono text-meta tabular-nums ${unavailable ? "text-slate" : "text-ink"}`}
+          className={
+            unavailable
+              ? "text-caption text-slate"
+              : "font-display num text-display-sm font-bold text-ink leading-none"
+          }
         >
-          {unavailable ? "no data" : `${Math.round(pct)} / 100`}
+          {unavailable ? "no data" : Math.round(pct)}
         </span>
       </div>
 
-      <div className="h-1.5 bg-bone-2 rounded-pill overflow-hidden mb-1.5">
-        <div
-          className={`h-full rounded-pill transition-[width] dur-slow ease-needle ${
-            unavailable ? "bg-bone-3" : fitBand(pct).bar
-          }`}
-          style={{ width: unavailable ? "100%" : `${pct}%`, opacity: unavailable ? 0.4 : 1 }}
-        />
+      <div className="mt-1.5 mb-1.5" style={{ width: `${trackWidth}%` }}>
+        <div className="h-2 bg-bone-2 rounded-pill overflow-hidden">
+          <div
+            className={`h-full rounded-pill motion-safe:transition-[width] motion-safe:dur-slow ${
+              unavailable ? "bg-bone-3" : fitBand(pct).bar
+            }`}
+            style={{
+              width: unavailable ? "100%" : `${pct}%`,
+              opacity: unavailable ? 0.4 : 1,
+              transitionTimingFunction: "var(--ease-needle)",
+            }}
+          />
+        </div>
       </div>
 
       <p className="text-caption text-ink-5 text-pretty">{component.explanation}</p>
 
-      {!unavailable && (
-        <p className="font-mono text-micro text-slate mt-1 tabular-nums">
-          contributes {component.contribution.toFixed(1)} of {Math.round(component.weight * 100)}% weight
+      {showMath && !unavailable && (
+        <p className="font-mono num text-micro text-slate mt-1">
+          {component.score} x {Math.round((component.effectiveWeight ?? component.weight) * 100)}
+          % weighting = {component.contribution.toFixed(1)} points
         </p>
       )}
     </div>
@@ -158,17 +236,52 @@ function ComponentBar({ component }: { component: ScoreComponent }) {
 }
 
 function Breakdown({ result }: { result: MatchResult }) {
+  const [showMath, setShowMath] = useState(false);
   const { college, components } = result;
+  const verdict = verdictFor(components);
+  const maxWeight = Math.max(
+    ...components.map((c) => c.effectiveWeight ?? c.weight)
+  );
 
   return (
-    <div className="px-4 pb-4 pt-1 bg-bone/40 border-t border-black/[0.05]">
-      <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-gold mb-1">
-        Why this score
-      </p>
+    <div className="px-4 pb-4 pt-3 bg-bone/40 border-t border-black/[0.05]">
+      {verdict && (
+        <div className="mb-3">
+          <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-slate mb-1">
+            {verdict.gating ? "What is stopping you" : "Where you stand"}
+          </p>
+          <p className="font-display text-title-lg sm:text-display-sm font-bold text-ink leading-tight text-balance">
+            {verdict.line}
+          </p>
+          <p className="text-caption text-slate mt-1.5">
+            Bar length is how much each piece counts toward the score. Fill is how
+            much of it you have earned.
+          </p>
+        </div>
+      )}
 
       {components.map((component) => (
-        <ComponentBar key={component.key} component={component} />
+        <ComponentBar
+          key={component.key}
+          component={component}
+          maxWeight={maxWeight}
+          showMath={showMath}
+        />
       ))}
+
+      <button
+        type="button"
+        onClick={() => setShowMath((v) => !v)}
+        aria-expanded={showMath}
+        className="pressable focusable mt-2 inline-flex items-center gap-1.5 min-h-touch font-condensed text-micro font-bold tracking-[0.16em] uppercase text-ink-4 hover:text-gold transition-colors dur-fast"
+      >
+        {showMath ? "Hide the math" : "Show the math"}
+        <ChevronDown
+          size={12}
+          aria-hidden
+          className={`transition-transform dur-base ease-settle ${showMath ? "rotate-180" : ""}`}
+        />
+      </button>
 
       {college.program_notes && (
         <p className="text-caption text-ink-5 mt-3 pt-3 border-t border-black/[0.05] text-pretty">
