@@ -109,7 +109,10 @@ check being run at the time, not to the code. Audit the checks, not just the cod
 
 ## Phase 5: Growth surface
 
-- [ ] Rebuild marketing landing page around the tachometer identity and honest-fit positioning.
+- [x] Rebuild marketing landing page around the tachometer identity and honest-fit
+  positioning. Shipped as a scroll-assembled page that runs the real scorer against
+  the real program database for a labelled fictional sample player, with a working
+  what-if lever that needs no login.
 - [ ] Public shareable profile route (`/p/[slug]`) with QR code, read-only, coach-facing.
 - [ ] PWA manifest and installability pass (precursor to app-store presence).
 
