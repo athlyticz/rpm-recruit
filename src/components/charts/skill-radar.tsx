@@ -148,7 +148,7 @@ export function SkillRadar({
                       fontSize={8}
                       fontFamily="var(--font-condensed)"
                       letterSpacing={0.6}
-                      fill="var(--color-ink-5)"
+                      fill="var(--viz-label)"
                     >
                       {axis.label}
                     </text>

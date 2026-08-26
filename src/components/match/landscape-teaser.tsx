@@ -79,10 +79,17 @@ export function LandscapeTeaser({ results }: { results: MatchResult[] }) {
               cx={x(r.score as number)}
               cy={DOT_R + 2 + seeded(r.college.id) * (H - DOT_R * 2 - 4)}
               r={DOT_R}
-              fill={LEVEL_COLOUR[r.college.division as Division]}
-              stroke="white"
-              strokeWidth={0.8}
-              opacity={(r.score as number) >= IN_RANGE_THRESHOLD ? 1 : 0.42}
+              fill={
+                (r.score as number) >= IN_RANGE_THRESHOLD
+                  ? LEVEL_COLOUR[r.college.division as Division]
+                  : "white"
+              }
+              stroke={
+                (r.score as number) >= IN_RANGE_THRESHOLD
+                  ? "white"
+                  : LEVEL_COLOUR[r.college.division as Division]
+              }
+              strokeWidth={1.2}
             />
           ))}
         </svg>

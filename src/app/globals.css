@@ -60,37 +60,51 @@
   --viz-level-d1: #C8102E;
   --viz-level-d2: #9B2B2B;
   --viz-level-d3: #2472BE;
-  --viz-level-naia: #3DAA6E;
+  --viz-level-naia: #2F9159;
   --viz-level-njcaa: #7B5EA7;
 
-  /* Verification. The one data role gold carries. */
+  /* Verification. The one data role gold carries. Deepened from the brand gold
+     so a filled point clears 3:1 on white; brand gold itself sits at 2.76. */
   --viz-verify-self: #888888;
-  --viz-verify-coach: #B8975A;
+  --viz-verify-coach: #AF8F56;
   --viz-verify-event: #1C1C1C;
 
   /* Component contribution. Parts of one number, so a sequential ramp rather
-     than categories: the eye reads magnitude and the legend carries names. */
+     than categories: the eye reads magnitude and the legend carries the names.
+     Keeping the ramp is the right call, since five categorical hues next to the
+     level dots would compete for the same reading. Neutral greys read as
+     unfinished against a bone ground, so the ramp is warmed toward the palette:
+     still unmistakably one family, no longer default. */
   --viz-component-1: #1C1C1C;
-  --viz-component-2: #3D3D3D;
-  --viz-component-3: #5A5A5A;
-  --viz-component-4: #7A7A7A;
-  --viz-component-5: #9E9E9E;
+  --viz-component-2: #3E3730;
+  --viz-component-3: #5E564C;
+  --viz-component-4: #7A7060;
+  --viz-component-5: #8C8272;
 
-  /* Fit quality. A sequential judgement, deliberately avoiding amber so it
-     cannot be mistaken for the verification gold. The words carry most of the
-     meaning; the hue only reinforces direction. */
+  /* Fit quality. A sequential judgement running good to bad, so it reads as one
+     ramp rather than four categories. Deliberately avoids amber, so it cannot be
+     mistaken for verification gold, and avoids the saturated level hues, so a
+     band cannot be mistaken for a division. Realistic is a muted green rather
+     than pure ink: ink was identical to body text and read as unstyled instead
+     of as a judgement, but a saturated blue would have collided with D3. */
   --viz-fit-strong: #2D7A50;
-  --viz-fit-realistic: #1C1C1C;
-  --viz-fit-reach: #7A7A7A;
+  --viz-fit-realistic: #4A6B55;
+  --viz-fit-reach: #737373;
   --viz-fit-longshot: #9B2B2B;
 
-  /* Reference lines: thresholds and scale bands. Always recessive. */
-  --viz-reference: #D8CEBC;
+  /* Reference lines: thresholds and scale bands. Recessive, but still at 3:1
+     against white, because a threshold line carries meaning and a line nobody
+     can see is not recessive, it is absent. */
+  --viz-reference: #9C9487;
   --viz-reference-strong: #1C1C1C;
 
   /* Projection is a mode, not a category, so it has no hue of its own. It is
      drawn as a dashed outline plus an explicit badge. */
   --viz-projection-line: #444444;
+
+  /* Chart text. The chrome slate is 3.54:1 on white, which is fine for large
+     UI text and fails for 8px axis labels. */
+  --viz-label: #767676;
 
   /* ── Typography ── */
   --font-display: "Cormorant Garamond", Georgia, serif;

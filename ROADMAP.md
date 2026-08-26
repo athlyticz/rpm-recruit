@@ -53,6 +53,10 @@ design bar. Everything wired after it is held to the same standard.
 - [ ] Wire `/checklist` to `checklist_items`, seeded by grad year from a playbook template table.
 - [ ] Wire checkout. `/api/checkout` is never called from anywhere in the app; the pricing CTAs are plain links to `/signup`, so no user can start a purchase. Add the client call and the plan-selection path.
 - [ ] Entitlement gating. Nothing anywhere reads `plan`, `subscription_status`, or `access_expires_at`, so a free signup and a $1,499 purchaser get identical access. Add a server-side entitlement check and gate paid surfaces on it.
+- [ ] Custom SMTP for auth emails (launch blocker). Supabase's built-in sender is
+  rate-limited and not deliverable at volume; it will not survive real signups.
+  Email confirmation already cost us a day of "empty data" debugging when
+  confirmation links pointed at localhost, so this path is load-bearing.
 - [ ] Set `access_expires_at` in the subscription branch of the Stripe webhook. `checkout.session.completed` with `session.mode === "subscription"` currently leaves it null, so subscribers would have no expiry once gating exists. Carry it forward from the period end on `customer.subscription.updated`.
 
 ## Phase 2: Real AI (earn the label)

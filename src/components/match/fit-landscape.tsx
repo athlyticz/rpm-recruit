@@ -374,19 +374,28 @@ export function FitLandscape({
                 cx={x}
                 cy={y}
                 r={isSelected ? DOT_R + 2 : DOT_R}
-                fill={LEVEL_COLOUR[result.college.division as Division]}
+                /* Out of range is drawn hollow rather than faded. Fading to
+                   42% put several level hues under 3:1 against white, and no
+                   opacity value fixed all of them: an outline keeps the dot at
+                   full strength while still reading as "not yet". */
+                fill={
+                  (result.score as number) >= IN_RANGE_THRESHOLD
+                    ? LEVEL_COLOUR[result.college.division as Division]
+                    : "white"
+                }
                 stroke={
                   isSelected
                     ? "var(--viz-reference-strong)"
                     : draft
                       ? "var(--viz-projection-line)"
-                      : "white"
+                      : (result.score as number) >= IN_RANGE_THRESHOLD
+                        ? "white"
+                        : LEVEL_COLOUR[result.college.division as Division]
                 }
-                strokeWidth={isSelected ? 2 : 1}
+                strokeWidth={isSelected ? 2 : 1.5}
                 /* Projection is a mode, not a category: dots keep their level
                    colour and take a dashed outline instead of a new hue. */
                 strokeDasharray={!isSelected && draft ? "2 2" : undefined}
-                opacity={result.score !== null && result.score >= IN_RANGE_THRESHOLD ? 1 : 0.42}
                 /* Geometry moves: the dot travels to its new score on the
                    needle curve. The score text beside it cuts. See the Motion
                    Policy in CLAUDE.md. */

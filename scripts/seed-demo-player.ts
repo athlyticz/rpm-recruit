@@ -29,7 +29,30 @@ function requireEnv(name: string): string {
   return value;
 }
 
-const EMAIL = process.argv[2] ?? "avery@example.com";
+/**
+ * Guard. This script deletes a player's metrics and evaluations before
+ * reseeding, so pointing it at the wrong account destroys real data. It
+ * therefore refuses to run without an explicit email, and refuses any address
+ * that is not clearly a disposable test or demo alias.
+ */
+const EMAIL = process.argv[2];
+
+if (!EMAIL) {
+  console.error(
+    "Refusing to run without an explicit email.\n" +
+      "  npm run db:seed:demo -- someone+test@example.com"
+  );
+  process.exit(1);
+}
+
+if (!/\+(test|demo)@/.test(EMAIL)) {
+  console.error(
+    `Refusing to seed ${EMAIL}.\n` +
+      "This script deletes that player's metrics and evaluations first, so it only\n" +
+      "accepts a +test@ or +demo@ alias. Use a disposable address."
+  );
+  process.exit(1);
+}
 
 const METRICS: {
   metric_type: string;

@@ -120,7 +120,7 @@ function Sparkline({ series }: { series: TrajectorySeries }) {
                 y={y(edge) + 3}
                 fontSize={8}
                 fontFamily="var(--font-mono)"
-                fill="var(--color-slate)"
+                fill="var(--viz-label)"
               >
                 {band.score}
               </text>
@@ -241,7 +241,7 @@ export function Trajectory({ series }: { series: TrajectorySeries[] }) {
                               y={yy + 3}
                               fontSize={8}
                               fontFamily="var(--font-mono)"
-                              fill="var(--color-slate)"
+                              fill="var(--viz-label)"
                             >
                               {band.score}
                             </text>

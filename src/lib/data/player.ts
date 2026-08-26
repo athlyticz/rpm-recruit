@@ -1,5 +1,22 @@
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
+
+/**
+ * Deduplicated auth lookup.
+ *
+ * auth.getUser() is a network round trip to the auth server, and several data
+ * functions each called it independently: the dashboard alone paid for two on
+ * every render. React's cache() collapses them to one per request.
+ */
+const getUser = cache(async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+});
 
 /**
  * Every load either succeeds or fails, and the caller can tell which.
@@ -32,12 +49,10 @@ function supabaseConfigured(): boolean {
 export async function getCurrentPlayer(): Promise<Player | null> {
   if (!supabaseConfigured()) return null;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) return null;
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("players")
     .select("*")
@@ -54,18 +69,54 @@ export async function getCurrentPlayer(): Promise<Player | null> {
 export async function getProfileName(): Promise<string> {
   if (!supabaseConfigured()) return "Player";
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getUser();
   return (user?.user_metadata?.full_name as string | undefined) || "Player";
 }
 
-/** Every active program, ordered so the list is stable between renders. */
+/**
+ * Every active program, ordered so the list is stable between renders.
+ *
+ * This is reference data: identical for every user and changing only when the
+ * seed runs, so it is cached across requests rather than re-fetched on every
+ * server render. It was the single largest repeated query in the app, running
+ * on the dashboard and the flagship both.
+ *
+ * The cached path reads with the service role because unstable_cache cannot
+ * hold a cookie-scoped client. That is safe here precisely because the result
+ * is user-independent; anything user-specific must never be cached this way.
+ * Without a service key it falls back to the ordinary authenticated read.
+ */
+const fetchCollegesCached = unstable_cache(
+  async (): Promise<Loaded<College[]>> => {
+    const { createClient: createServiceClient } = await import("@supabase/supabase-js");
+    const client = createServiceClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false } }
+    );
+    const { data, error } = await client
+      .from("colleges")
+      .select("*")
+      .eq("is_active", true)
+      .order("name");
+
+    if (error) {
+      console.error("getColleges (cached):", error.message);
+      return failed(error.message);
+    }
+    return ok(data ?? []);
+  },
+  ["colleges-active"],
+  { revalidate: 3600, tags: ["colleges"] }
+);
+
 export async function getColleges(): Promise<Loaded<College[]>> {
   if (!supabaseConfigured()) {
     return failed("The program database is not configured in this environment.");
+  }
+
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return fetchCollegesCached();
   }
 
   const supabase = await createClient();

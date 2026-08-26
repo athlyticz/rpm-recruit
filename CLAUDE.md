@@ -146,13 +146,22 @@ who stood behind the number.
 |---|---|---|
 | Level identity | `--viz-level-d1` … `-njcaa` | Which division a program plays in. Five categorical hues, none gold. |
 | Verification | `--viz-verify-self/coach/event` | Who confirmed a number. Hollow slate, gold, solid ink. |
-| Component contribution | `--viz-component-1` … `-5` | Parts of one score. A sequential ink ramp, so the eye reads magnitude. |
+| Component contribution | `--viz-component-1` … `-5` | Parts of one score. A sequential warm-ink ramp, so the eye reads magnitude without competing with level hues. |
 | Reference | `--viz-reference`, `--viz-reference-strong` | Thresholds and scale bands. Always recessive; strong is reserved for the player's own marker. |
-| Fit quality | `--viz-fit-strong` … `-longshot` | How good a match is. Avoids amber so it cannot be read as verification. |
+| Fit quality | `--viz-fit-strong` … `-longshot` | How good a match is. One good-to-bad ramp; avoids amber (verification) and the saturated level hues. |
 | Projection | `--viz-projection-line` | A mode, not a category, so it carries no hue: dashed outline plus an explicit badge. |
 
 Adding a chart means picking a role, not picking a colour. If a new encoding
 does not fit a role, add the role here first.
+
+Every role token is contrast-checked by `npm run check:contrast`, which is part
+of the standing pass. Graphical objects are held to 3:1 and chart text to
+4.5:1, because axis labels run as small as 8px. Add a token, add its check.
+
+One design decision came out of that audit rather than out of taste: out-of-range
+dots are drawn hollow rather than faded. Fading to 42% put several level hues
+under 3:1 and no single opacity fixed all of them, so the outline treatment
+keeps every dot at full strength while still reading as "not yet".
 
 ### Motion Policy: geometry moves, digits cut
 
@@ -266,5 +275,6 @@ See `.env.local.example` for required variables: Supabase URL/keys, Stripe keys/
 - Prefer server components and server actions for data access; client components only where interactivity requires it.
 - Every user-visible number that comes from the match engine must be explainable in the UI.
 - Every page wired to data gets a design pass to the token system in the same session.
-- Every layout must work at 390px width. Check phone width before calling a screen done.
+- Every layout must work at 390px width, and be reviewed at 1280px. Charts are capped rather than stretched: an SVG at width 100% scales its own text with the viewport.
+- Run `npm run check:contrast` when touching chart colour.
 - Verification happens against the deployed app, not localhost. The demo runs on the deployed build, so that is what gets measured.
