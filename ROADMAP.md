@@ -109,12 +109,11 @@ check being run at the time, not to the code. Audit the checks, not just the cod
 
 ## Before the stakeholder demo (blocking)
 
-- [ ] **Apply migrations 00006 and 00007 to the hosted Supabase project.** `/start` renders
-  without it but the submit fails, and the form says so honestly rather than
-  pretending. Run `supabase/migrations/00006_leads.sql` in the SQL editor of the
-  hosted project, or `supabase db push` once the CLI is linked. Verify by
-  submitting one lead on the deployed site and reading it back with the service
-  role.
+- [x] **Migrations 00006 (leads) and 00007 (newsletter_subscribers) are applied to
+  the hosted project.** Both were pushed by the account owner. Confirmed against
+  the deployed site: a lead submitted through `/start` returns the confirmation
+  state, which it can only reach after the insert succeeds, and the newsletter
+  bar returns its inline confirmation the same way.
 - [ ] **Visual freeze is in effect.** Remaining sessions before the demo are
   bug-fix only: no new screens, no new components, no restyling. A bug is
   something that is wrong, not something that could be better.

@@ -261,6 +261,10 @@ Sample in the UI itself. The rules that follow from that:
   the eight rated skills, and re-scores all thirty-one programs, because a
   fake slider on the front door is a promise the product then has to keep.
 - Sample data is labelled where it is displayed, not in a footnote.
+- The sister brand is spelled **AthlyticZ**, capital Z. That is how
+  athlyticz.com sets its own name, and it is the spelling used on /about in
+  the stat callout, the meta row, and the bio. Do not let a copy edit split
+  it into two spellings on one page again.
 
 ### The marketing surface may use d3, the app may not
 
