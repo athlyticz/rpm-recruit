@@ -1,7 +1,6 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Check } from "lucide-react";
-import { PLANS, type PlanKey } from "@/config/pricing";
+import { type PlanKey } from "@/config/pricing";
+import { PlanCard } from "@/components/marketing/plan-card";
 import { Reveal } from "@/components/marketing/reveal";
 
 export const metadata: Metadata = {
@@ -10,104 +9,7 @@ export const metadata: Metadata = {
     "RPM Recruit pricing: Showcase Package, Monthly, Scout and Coach, and Organization plans. Every plan starts with a phone call.",
 };
 
-/** Who each plan is actually for, in plain words. */
-const AUDIENCE: Record<PlanKey, string> = {
-  showcase: "For a family getting a player recruited this cycle",
-  monthly: "For a player who wants to keep the profile live",
-  scout: "For a coach or scout evaluating players",
-  org: "For a showcase, academy, or travel organization",
-};
-
 const ORDER: PlanKey[] = ["showcase", "monthly", "scout", "org"];
-
-function PlanCard({ planKey, index }: { planKey: PlanKey; index: number }) {
-  const plan = PLANS[planKey];
-  const featured = planKey === "showcase";
-
-  return (
-    <Reveal delay={index * 70} className="block h-full">
-      <div
-        className={`h-full flex flex-col rounded-lg overflow-hidden transition-shadow dur-base ${
-          featured
-            ? "bg-ink border border-gold shadow-lg"
-            : "bg-white border border-black/[0.07] shadow-sm hover:shadow-md"
-        }`}
-      >
-        {featured && (
-          <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-ink bg-gold px-4 py-1.5 text-center">
-            Where most families start
-          </p>
-        )}
-
-        <div className="p-5 lg:p-6 flex flex-col flex-1">
-          <h2
-            className={`font-display text-title-lg font-bold ${
-              featured ? "text-bone" : "text-ink"
-            }`}
-          >
-            {plan.name}
-          </h2>
-          <p
-            className={`text-caption mt-1 text-pretty ${
-              featured ? "text-slate-2" : "text-slate"
-            }`}
-          >
-            {AUDIENCE[planKey]}
-          </p>
-
-          <p className="mt-5 flex items-baseline gap-1.5">
-            <span
-              className={`font-display num text-numeral font-bold leading-none ${
-                featured ? "text-bone" : "text-ink"
-              }`}
-            >
-              ${plan.price.toLocaleString()}
-            </span>
-            <span
-              className={`font-mono text-meta ${featured ? "text-slate" : "text-slate"}`}
-            >
-              {plan.interval ? `/${plan.interval}` : "one time"}
-            </span>
-          </p>
-          <p
-            className={`text-caption mt-1.5 ${featured ? "text-slate-2" : "text-ink-5"}`}
-          >
-            {plan.description}
-          </p>
-
-          <ul className="flex flex-col gap-2.5 mt-6 flex-1">
-            {plan.features.map((feature) => (
-              <li
-                key={feature}
-                className={`text-body flex items-start gap-2.5 text-pretty ${
-                  featured ? "text-slate-2" : "text-ink-4"
-                }`}
-              >
-                <Check
-                  size={14}
-                  aria-hidden
-                  className="text-gold shrink-0 mt-0.5"
-                />
-                {feature}
-              </li>
-            ))}
-          </ul>
-
-          <Link
-            href={`/start?plan=${planKey}`}
-            className={`pressable focusable press-redline mt-7 flex items-center justify-center min-h-touch text-center font-condensed text-label font-bold tracking-[0.16em] uppercase rounded-sm transition-colors dur-fast ${
-              featured
-                ? "bg-gold text-ink hover:bg-gold-2"
-                : "bg-ink text-bone hover:bg-gold hover:text-ink"
-            }`}
-          >
-            Start Today
-          </Link>
-        </div>
-      </div>
-    </Reveal>
-  );
-}
 
 export default function PricingPage() {
   return (

@@ -49,6 +49,7 @@ const SCANZANO: Person = {
     { value: "2018", label: "NACA National Coach of the Year" },
     { value: "300+", label: "athletes trained annually" },
     { value: "20+", label: "years coaching and scouting" },
+    { value: "100+", label: "wins and a national title at King's Christian" },
   ],
   meta: [
     { label: "Now", value: "Head Baseball Coach, Camden County College" },
@@ -102,10 +103,12 @@ const CZAHOR: Person = {
   pull: "Seven years inside MLB front offices.",
   intro: "",
   stats: [
-    { value: "7", label: "years, MLB front offices" },
-    { value: "Dual PhD", label: "Statistics" },
-    { value: "15+", label: "countries taught" },
-    { value: "Boston College", label: "faculty" },
+    { value: "7", label: "years, senior quant roles across three MLB front offices" },
+    { value: "Dual PhD", label: "Statistics and Wind Engineering, Iowa State" },
+    { value: "AthlyticZ", label: "founder" },
+    { value: "15+", label: "countries, students trained in AI and data science" },
+    { value: "Boston College", label: "graduate instructor, sports analytics" },
+    { value: "NSF IGERT", label: "fellow" },
   ],
   meta: [
     { label: "Now", value: "Founder and CTO, RPM Recruit" },
@@ -174,9 +177,14 @@ function ScoutingCard({ person }: { person: Person }) {
 }
 
 /**
- * Stat callouts. The card geometry arrives on the needle curve; the figure
- * inside it does not animate at all. A number that is mid flight is a number
- * that is not yet true, and these are the claims the whole page rests on.
+ * Stat callouts. Six per person, which divides evenly into both grids the
+ * page uses, so no cell is ever left empty at any width. The grid is a
+ * hairline lattice: an unfilled cell would read as a block of rule colour,
+ * which is exactly the bug this replaced.
+ *
+ * The card geometry arrives on the needle curve; the figure inside it does
+ * not animate at all. A number mid flight is a number that is not yet true,
+ * and these are the claims the page rests on.
  */
 function Stats({ stats }: { stats: Stat[] }) {
   return (
@@ -196,11 +204,6 @@ function Stats({ stats }: { stats: Stat[] }) {
             </p>
           </div>
         </Reveal>
-      ))}
-      {/* The grid is a hairline lattice, so an unfilled cell would show as a
-          block of rule colour rather than as nothing. */}
-      {Array.from({ length: (3 - (stats.length % 3)) % 3 }).map((_, i) => (
-        <div key={`filler-${i}`} aria-hidden className="hidden lg:block bg-white" />
       ))}
     </div>
   );
