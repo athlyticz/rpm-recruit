@@ -163,6 +163,36 @@ dots are drawn hollow rather than faded. Fading to 42% put several level hues
 under 3:1 and no single opacity fixed all of them, so the outline treatment
 keeps every dot at full strength while still reading as "not yet".
 
+### Verification Policy: controls are tested by gesture
+
+An interactive control is verified by performing the gesture a person performs,
+not by dispatching the events a test finds convenient.
+
+This is not a preference. The what-if sliders passed every check for three
+sessions and were broken the entire time. The checks drove them with a
+synthetic `input` event followed by an explicit `pointerup`, which confirmed the
+specified behaviour exactly and never once performed a drag. A real drag showed
+the thumb springing back on release, which reads as a dead control. The
+specification was wrong and the tests were built to agree with it.
+
+- Sliders are dragged, not `setValue`d.
+- Buttons and links are clicked at coordinates, not `.click()`ed, whenever the
+  result is in doubt.
+- Anything with pointer handlers is exercised with a full down, move, up
+  sequence.
+
+**Demo-critical path.** Any session that touches it ends with a full
+human-gesture run on the deployed build:
+
+1. log in
+2. land on the dashboard
+3. open college match
+4. drag a what-if lever and confirm the projection holds after release
+5. press Back to reality and confirm it clears
+
+If the deployment is not live yet, say so rather than reporting the local run as
+the confirmation.
+
 ### Motion Policy: geometry moves, digits cut
 
 The rule that kept getting re-litigated case by case, written down.

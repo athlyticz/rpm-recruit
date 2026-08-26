@@ -101,6 +101,8 @@ Rules that have already been broken once and are worth checking every time:
 - [ ] `npm run check:contrast` passes, and every new `--viz-*` token has a check.
 - [ ] Every interactive element carries press and focus-visible states.
 - [ ] Measurement pass runs against the deployed build at 390px and 1280px.
+- [ ] Demo-critical path run by real gesture on the deployed build: log in, dashboard,
+  drag a what-if lever, confirm the projection holds on release, Back to reality clears it.
 
 The pattern worth remembering: every serious bug in Phase 1 was invisible to the
 check being run at the time, not to the code. Audit the checks, not just the code.

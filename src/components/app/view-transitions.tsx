@@ -59,14 +59,44 @@ export function ViewTransitions() {
       event.preventDefault();
       event.stopPropagation();
 
-      document.startViewTransition(() => {
+      /*
+       * Navigation must happen whether or not the transition does.
+       *
+       * startViewTransition aborts in several states the browser does not warn
+       * about in advance, and when it aborts before running its callback the
+       * router.push inside it never executes. That swallowed a real click on
+       * the dashboard's primary call to action on production: the synthetic
+       * .click() used in earlier checks happened to succeed, a real one did
+       * not. A decorative cross-fade must never be able to eat a navigation.
+       *
+       * navigate() is idempotent and is called from every exit: the transition
+       * callback, both rejection paths, a synchronous throw, and a short
+       * fallback timer for the case where none of those fire.
+       */
+      let navigated = false;
+      const navigate = () => {
+        if (navigated) return;
+        navigated = true;
         router.push(href);
-        // Resolve on the next frame so the new route has committed before the
-        // snapshot is taken.
-        return new Promise<void>((resolve) =>
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-        );
-      });
+      };
+
+      try {
+        const transition = document.startViewTransition(() => {
+          navigate();
+          // Resolve on the next frame so the new route has committed before
+          // the snapshot is taken.
+          return new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+          );
+        });
+
+        transition.ready.catch(navigate);
+        transition.finished.catch(navigate);
+      } catch {
+        navigate();
+      }
+
+      window.setTimeout(navigate, 250);
     }
 
     document.addEventListener("click", onClick, true);
