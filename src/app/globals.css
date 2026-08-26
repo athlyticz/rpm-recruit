@@ -472,3 +472,92 @@ body {
     animation: none !important;
   }
 }
+
+/* ── Landing page scroll choreography ──────────────────────────────────
+   The public landing page assembles itself as it is scrolled. Every effect
+   here is decoration over content that is already in the DOM and already
+   readable: the start state is applied by a class the component only adds
+   when it has confirmed the platform allows motion, so a stuck observer or a
+   reduced-motion setting leaves everything visible rather than blank. That is
+   the lesson from the entrance animation that once stranded content at
+   opacity 0 with fill-mode both. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-slow) var(--ease-sweep),
+    transform var(--duration-slow) var(--ease-sweep);
+  will-change: transform, opacity;
+}
+
+.reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* The trajectory draws itself: a wipe from the left, which reads as the line
+   being laid down rather than as a box appearing. */
+.wipe {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--duration-sweep) var(--ease-sweep);
+}
+
+.wipe[data-shown="true"] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Each dot in the landing landscape starts on the axis and rises into its
+   packed position. The per-dot delay is set inline from the pack order. */
+.dot-settle {
+  transform: translateY(var(--dot-drop, 28px));
+  opacity: 0;
+  transition:
+    transform var(--duration-slow) var(--ease-needle),
+    opacity var(--duration-base) linear,
+    /* When a lever re-scores the field the dots slide to their new places
+       rather than teleporting. Browsers without CSS geometry animation just
+       cut, which is the same picture a frame later. */
+    cx var(--duration-base) var(--ease-settle),
+    cy var(--duration-base) var(--ease-settle),
+    fill var(--duration-base) linear;
+}
+
+.dot-settle[data-shown="true"] {
+  transform: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .dot-settle {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .wipe {
+    clip-path: none !important;
+  }
+}
+
+/* Landing plots draw into a fixed viewBox, so at phone widths the whole
+   drawing scales down and 9px labels land near 5px. These sizes are set in
+   CSS rather than as attributes so a viewport media query can compensate:
+   the query fires exactly when the drawing is being shrunk. */
+.plot-label {
+  font-size: 9px;
+}
+
+.plot-dot {
+  r: 5px;
+}
+
+@media (max-width: 640px) {
+  .plot-label {
+    font-size: 15px;
+  }
+
+  .plot-dot {
+    r: 7px;
+  }
+}

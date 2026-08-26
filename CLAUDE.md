@@ -239,6 +239,29 @@ verification, delete it rather than patch it.
 Everything above is additionally subject to `prefers-reduced-motion`, which
 gets instant states with no exceptions.
 
+Third corollary, from the landing page: **never observe the element you are
+hiding.** An IntersectionObserver measures the target's visible area after
+clipping, so an element that hides itself with `clip-path` reports an empty
+intersection rect and never fires. The scroll-in wipe held itself closed
+permanently and the trajectory chart shipped locally as an empty card. The
+reveal helper now observes an outer element and animates an inner one, which
+is also why the reduced-motion CSS forces both back to their final state:
+belt and braces, because motion must never gate content.
+
+### Marketing surfaces are held to the product's honesty rules
+
+The public landing page runs the real scorer against the real program
+database, using a fictional sample player, and every demo surface is labelled
+Sample in the UI itself. The rules that follow from that:
+
+- No invented user counts, testimonials, or "players across the country"
+  language standing in for traction that does not exist yet.
+- A demo number is either computed by the same code the app runs, or it is not
+  shown. The landing lever moves a rating through the published bands, remeans
+  the eight rated skills, and re-scores all thirty-one programs, because a
+  fake slider on the front door is a promise the product then has to keep.
+- Sample data is labelled where it is displayed, not in a footnote.
+
 ### Route Transitions (read this if a link misbehaves)
 
 `src/components/app/view-transitions.tsx` intercepts same-origin anchor clicks
