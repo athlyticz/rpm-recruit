@@ -68,7 +68,7 @@ function ActHeading({
         <span className="font-mono num text-ink-5 mr-2">{index}</span>
         {eyebrow}
       </p>
-      <h2 className="font-display text-display-lg lg:text-numeral font-bold text-ink leading-none text-balance">
+      <h2 className="font-display text-headline lg:text-numeral font-bold text-ink leading-none text-balance">
         {title}
       </h2>
       <div className="text-body-lg text-ink-5 leading-relaxed mt-3 text-pretty">

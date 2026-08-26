@@ -54,7 +54,7 @@ export default async function HomePage() {
               style={{ filter: "drop-shadow(0 0 10px rgba(184,151,90,0.35))" }}
               priority
             />
-            <h1 className="font-display text-display-lg lg:text-numeral font-bold text-bone leading-none text-balance">
+            <h1 className="font-display text-headline lg:text-numeral font-bold text-bone leading-none text-balance">
               Find out where you actually stand, and what would move it.
             </h1>
             <p className="text-body-lg text-slate-2 leading-relaxed max-w-[58ch] mt-5">
@@ -107,7 +107,7 @@ export default async function HomePage() {
 
       {/* ── THE LADDER ── */}
       <section className="bg-ink">
-        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-10 lg:py-24">
+        <div className="mx-auto max-w-7xl px-gutter lg:px-6 py-8 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <Reveal>
               <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-2">
@@ -149,7 +149,7 @@ export default async function HomePage() {
       <Inside />
 
       {/* ── PRICING ── */}
-      <section className="mx-auto max-w-7xl px-gutter lg:px-6 pt-10 pb-10 lg:pt-0 lg:pb-24">
+      <section className="mx-auto max-w-7xl px-gutter lg:px-6 pt-8 pb-8 lg:pt-0 lg:pb-24">
         <Reveal className="max-w-[46ch] mb-8">
           <p className="font-condensed text-label font-bold tracking-[0.24em] uppercase text-gold mb-2">
             Pricing

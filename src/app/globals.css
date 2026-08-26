@@ -143,6 +143,12 @@
   --text-display-lg--line-height: 1.1;
   --text-display-xl: 2.125rem;  /* 34px - the headline fit number */
   --text-display-xl--line-height: 1;
+  /* The phone display spike. The scale jumped 34px to 50px with nothing
+     between, so at 390px every section heading collapsed to the same 30px
+     and the page had no hierarchy: desktop's numeral moments had no mobile
+     counterpart that fits a 358px column. This is that counterpart. */
+  --text-headline: 2.5rem;      /* 40px - display moments at phone width */
+  --text-headline--line-height: 1.05;
   --text-numeral: 3.125rem;     /* 50px - the one hero figure per screen */
   --text-numeral--line-height: 1;
   --text-ghost: 3.5rem;         /* 56px - watermark type, phone */
@@ -584,7 +590,10 @@ body {
    Desktop keeps the full-viewport act: at 1024px and up there is room for a
    section to own the screen while the gauge rail rides beside it. */
 .act {
-  padding-block: 2.5rem;
+  /* A major beat opens with more air than it closes with, and more than a
+     connective section gets: 3.5rem in, 2.5rem out. Entering an act reads as
+     arriving somewhere; leaving one hands off on the base rhythm. */
+  padding-block: 3.5rem 2.5rem;
 }
 
 @media (min-width: 1024px) {
