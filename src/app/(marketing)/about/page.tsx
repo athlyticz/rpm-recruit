@@ -112,7 +112,7 @@ const CZAHOR: Person = {
   ],
   meta: [
     { label: "Now", value: "Founder and CTO, RPM Recruit" },
-    { label: "Also", value: "Founder, Athlyticz" },
+    { label: "Also", value: "Founder, AthlyticZ" },
     { label: "Teaches", value: "Graduate analytics, Boston College" },
   ],
   sections: [
@@ -120,7 +120,7 @@ const CZAHOR: Person = {
       heading: "The front office years",
       paragraphs: [
         "Dr. Czahor spent seven years holding senior quantitative roles across three Major League Baseball front offices, working on player evaluation, forecasting, and the tools that put analysis in front of coaches, scouts, and executives.",
-        "He holds a dual PhD in Statistics and Wind Engineering and is the founder of Athlyticz, a sports data science education platform training students and professionals in over 15 countries.",
+        "He holds a dual PhD in Statistics and Wind Engineering and is the founder of AthlyticZ, a sports data science education platform training students and professionals in over 15 countries.",
       ],
     },
     {
