@@ -485,8 +485,9 @@ export function FitLandscape({
         {/* Metric levers first: a measurable is more concrete than a rating,
             and the bands make the translation visible. */}
         {metricLevers.map((lever) => {
-          const range = bandRange(lever.bands);
-          const ticks = bandTicks(lever.bands);
+          const whole = lever.unit !== "seconds";
+          const range = bandRange(lever.bands, whole);
+          const ticks = bandTicks(lever.bands, whole);
           const isDrafting = draft?.key === lever.metricKey;
           const anchorValue =
             lever.currentValue ?? (range.min + range.max) / 2;
