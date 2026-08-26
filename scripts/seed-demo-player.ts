@@ -22,6 +22,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../src/types/database";
+import { revalidate } from "./revalidate";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -217,6 +218,8 @@ async function main() {
 
   await supabase.from("players").update({ overall_score: overall }).eq("id", player.id);
   console.log("overall_score:", overall);
+
+  await revalidate("colleges");
 }
 
 main().catch((e: unknown) => {

@@ -267,6 +267,30 @@ Replace the legacy if/else heuristic with a transparent weighted scoring model a
 
 See `.env.local.example` for required variables: Supabase URL/keys, Stripe keys/price IDs, app URL. Add `ANTHROPIC_API_KEY` (server-side only) when AI routes land.
 
+### Cached Reference Data
+
+`getColleges` is cached for an hour behind the `colleges` tag, because it is
+reference data identical for every user and was the largest repeated query in
+the app. Anything user-specific must never be cached this way.
+
+Seeding invalidates it. The seed scripts POST to `/api/revalidate` with
+`REVALIDATE_SECRET`, since `revalidateTag` only works inside the Next runtime
+and the seeders are standalone Node processes. Without those env vars the
+scripts log a skip rather than failing, because seeding a local database with
+no app running is normal.
+
+### players.overall_score is enforced by the database
+
+It is a denormalised cache of `evaluations`, and migration 00005 puts a trigger
+on that table so any insert, update or delete recomputes it. Previously the
+rule lived in one server action, which held only while nothing else wrote
+evaluations; Phase 2 AI routes and Phase 4 scout entry both will. A writer that
+forgot would leave every gauge, projection and match score quietly wrong with
+no error anywhere.
+
+Do not recompute it by hand in new code. Write the evaluation and let the
+trigger do it.
+
 ## Working Agreement
 
 - See ROADMAP.md for phased priorities. Work the current phase unless told otherwise.

@@ -69,6 +69,10 @@ design bar. Everything wired after it is held to the same standard.
 ## Phase 3: Match engine v1 (the honest one)
 
 - [ ] `src/lib/match/engine.ts` — transparent weighted scoring per CLAUDE.md Match Engine Direction. Pure function, unit-tested with fixture players at each tier.
+  **Priority note:** the interim scorer is now load-bearing for four surfaces, not one.
+  The fit landscape, the what-if levers, the Next Tier panel and the dashboard teaser all
+  read from it, so its provisional weights propagate everywhere a player looks. Replacing
+  it is no longer a single-screen change.
 - [ ] Persist runs to `matches` with input snapshots.
 - [ ] Rebuild `/college-match` on real data: all five levels, component breakdown visible, tachometer for overall projection, honest division recommendation.
 - [ ] Gap view: "what moves you up a tier" derived from the score components.
@@ -78,6 +82,28 @@ design bar. Everything wired after it is held to the same standard.
 - [ ] Scout role UI: evaluation entry on the 1-10 scale per tool, feeding `evaluations` and the tachometer.
 - [ ] Org dashboard: roster of players, bulk evaluation, pipeline view.
 - [ ] PDF export of the player one-pager (profile, verified metrics, tachometer, fit summary) for the Showcase Package deliverable.
+
+## Recurring: CLAUDE.md compliance audit
+
+One session per phase, before that phase is called done. Re-read the policy file
+end to end, then grep the codebase for violations of each rule rather than
+trusting that they were followed.
+
+Rules that have already been broken once and are worth checking every time:
+
+- [ ] Tokens only. `grep -rE "text-\[[0-9]" src` and `grep -rE "\[#[0-9A-Fa-f]" src` must
+  both come back empty. Both were violated after being written down.
+- [ ] Gauge sizes, colour roles and type scale are read from tokens, not
+  redeclared in TypeScript. This is exactly how the gauge size drift was caught:
+  the tokens existed and the component ignored them.
+- [ ] Motion policy: geometry animates, digits cut. No entrance animation
+  strands content invisible.
+- [ ] `npm run check:contrast` passes, and every new `--viz-*` token has a check.
+- [ ] Every interactive element carries press and focus-visible states.
+- [ ] Measurement pass runs against the deployed build at 390px and 1280px.
+
+The pattern worth remembering: every serious bug in Phase 1 was invisible to the
+check being run at the time, not to the code. Audit the checks, not just the code.
 
 ## Phase 5: Growth surface
 

@@ -24,6 +24,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../src/types/database";
+import { revalidate } from "./revalidate";
 
 type CollegeInsert = Database["public"]["Tables"]["colleges"]["Insert"];
 
@@ -106,6 +107,9 @@ async function main() {
   }
 
   console.log(`colleges now holds ${total} rows.`);
+
+  // The colleges read is cached; drop it so the reseed is visible immediately.
+  await revalidate("colleges");
 }
 
 main().catch((error: unknown) => {
