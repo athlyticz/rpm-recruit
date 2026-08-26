@@ -127,6 +127,7 @@ export function FitLandscape({
   selectedId,
   metricLevers = [],
   currentRatings = {},
+  onProjection,
 }: {
   player: Player;
   colleges: College[];
@@ -134,7 +135,27 @@ export function FitLandscape({
   selectedId: string | null;
   metricLevers?: MetricLever[];
   currentRatings?: Record<string, number>;
+  /**
+   * Publishes the projection so the results below can follow the picture. A
+   * persisting projection that moved the plot while the list kept showing real
+   * scores would put two different answers on one screen.
+   */
+  onProjection?: (results: MatchResult[] | null) => void;
 }) {
+  /*
+   * A projection persists until it is dismissed. It used to reset on pointer
+   * release, which reset the slider thumb along with it: the user dragged, let
+   * go, and the thumb sprang back to where it started, which is
+   * indistinguishable from a control that does not work. That was the single
+   * blocking bug on the demo centrepiece, and it came from taking "snap back on
+   * release" literally rather than asking what it was protecting.
+   *
+   * What it was protecting is that the app must never present a projected
+   * number as real, and that is preserved without breaking the control: the
+   * Projection badge stands for as long as a draft is live, the player's real
+   * value stays printed beside the projected one, their true best fit stays
+   * marked on the plot, Back to reality clears it, and nothing is ever written.
+   */
   const [draft, setDraft] = useState<{ key: string; value: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const leversRef = useRef<HTMLDivElement | null>(null);
@@ -207,6 +228,13 @@ export function FitLandscape({
     // playerWithMetric is derived from props that are already dependencies.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, levers, metricLevers, player, colleges, currentRatings]);
+
+  useEffect(() => {
+    onProjection?.(projected);
+    // Keyed on the draft rather than the derived array, whose identity changes
+    // on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft?.key, draft?.value]);
 
   const shown = projected ?? real;
   const packed = useMemo(() => pack(shown), [shown]);
@@ -513,12 +541,6 @@ export function FitLandscape({
                 value={value}
                 aria-label={`${lever.metricLabel} projection`}
                 onChange={(e) => setDraft({ key: lever.metricKey, value: Number(e.target.value) })}
-                onPointerUp={() => setDraft(null)}
-                onPointerCancel={() => setDraft(null)}
-                onBlur={() => setDraft(null)}
-                onKeyUp={(e) => {
-                  if (e.key !== "Tab") setDraft(null);
-                }}
                 className="focusable w-full accent-gold h-touch cursor-pointer"
               />
 
@@ -567,14 +589,6 @@ export function FitLandscape({
                 value={value}
                 aria-label={`${lever.label} projection`}
                 onChange={(e) => setDraft({ key: lever.key, value: Number(e.target.value) })}
-                /* Release returns to reality. A projection is something you
-                   hold, not something the screen keeps claiming. */
-                onPointerUp={() => setDraft(null)}
-                onPointerCancel={() => setDraft(null)}
-                onBlur={() => setDraft(null)}
-                onKeyUp={(e) => {
-                  if (e.key !== "Tab") setDraft(null);
-                }}
                 className="focusable w-full accent-gold h-touch cursor-pointer"
               />
             </div>

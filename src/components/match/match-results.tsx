@@ -503,6 +503,9 @@ export function MatchResults({
 }) {
   const [level, setLevel] = useState<Division>("d1");
   const [focused, setFocused] = useState<MatchResult | null>(null);
+  // While a what-if projection stands, the list reads from it too, so the
+  // picture and the cards never show two different answers at once.
+  const [projected, setProjected] = useState<MatchResult[] | null>(null);
   const focusRef = useRef<HTMLDivElement | null>(null);
 
   // Selecting a dot switches to that program's level and scrolls its detail
@@ -529,16 +532,18 @@ export function MatchResults({
    * spent where it carries meaning: the contribution stack and the gauge.
    */
 
+  const shownResults = projected ?? results;
+
   const byLevel = useMemo(() => {
     const map = new Map<Division, MatchResult[]>();
     for (const meta of LEVELS) map.set(meta.key, []);
-    for (const result of results) {
+    for (const result of shownResults) {
       map.get(result.college.division as Division)?.push(result);
     }
     return map;
-  }, [results]);
+  }, [shownResults]);
 
-  const top = results[0];
+  const top = shownResults[0];
   const active = useMemo(() => rankMatches(byLevel.get(level) ?? []), [byLevel, level]);
 
   // The podium is defined by rank, not by row count, so a genuine three-way tie
@@ -626,6 +631,7 @@ export function MatchResults({
         metricLevers={metricLevers}
         currentRatings={currentRatings}
         selectedId={focused?.college.id ?? null}
+        onProjection={setProjected}
         onSelect={(result) =>
           setFocused((current) =>
             current?.college.id === result.college.id ? null : result
@@ -714,6 +720,16 @@ export function MatchResults({
           );
         })}
       </div>
+
+      {projected && (
+        <p className="flex items-center gap-2 text-caption text-ink-5 border border-dashed border-ink-4 rounded-sm px-3 py-2 text-pretty">
+          <span className="font-condensed text-micro font-bold tracking-[0.14em] uppercase text-ink-4 border border-dashed border-ink-4 rounded-xs px-1.5 py-0.5 shrink-0">
+            Projection
+          </span>
+          These results follow the what-if above, not your saved profile. Nothing here is
+          stored.
+        </p>
+      )}
 
       {/* Keyed on level so switching tabs replays the staggered entrance. */}
       <section key={level} aria-live="polite" className="space-y-2.5">
