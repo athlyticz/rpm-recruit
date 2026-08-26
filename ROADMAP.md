@@ -120,6 +120,12 @@ check being run at the time, not to the code. Audit the checks, not just the cod
 
 ### Parked until after the demo
 
+- Waitlist naming debt. The sticky capture is a waitlist in copy and in new
+  source values (waitlist:*), but the table is still newsletter_subscribers
+  and the component file is newsletter-bar.tsx. Rows written before the
+  reframe keep source marketing:*. Cosmetic, not a bug: rename table and
+  files together after the demo, never via a hosted migration before it.
+
 - Gauge polish. One specific note so it is not relearned: `Tachometer` paints
   its own ink disc, so it only reads correctly on a dark surface and every
   light-surface placement needs a dark card wrapped around it by hand. The fix

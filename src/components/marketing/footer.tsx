@@ -4,7 +4,7 @@ import { LogoFull } from "@/components/ui/logo";
 export function MarketingFooter() {
   return (
     <footer className="bg-ink border-t border-ink-3">
-      {/* Extra room at the bottom so the newsletter bar, which is fixed to
+      {/* Extra room at the bottom so the waitlist bar, which is fixed to
           the viewport, never sits permanently on top of real content. */}
       <div className="mx-auto max-w-7xl px-6 pt-10 lg:pt-16 pb-32 lg:pb-36">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">

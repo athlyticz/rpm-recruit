@@ -9,7 +9,14 @@ const INITIAL: SubscribeState = { status: "idle" };
 const DISMISSED_KEY = "rpm.newsletter.dismissed";
 
 /**
- * Newsletter capture, as a bar rather than a modal.
+ * Waitlist capture, as a bar rather than a modal.
+ *
+ * Pre-launch this is a waitlist, not a newsletter: same table, same
+ * mechanics, different promise. New rows carry source waitlist:*; rows
+ * written before the reframe keep their marketing:* source, which is a fact
+ * about when they signed up, not an error to rewrite. The file, component,
+ * and table names still say newsletter; that is cosmetic debt noted in the
+ * roadmap for after the demo, not worth a rename migration now.
  *
  * Rules it holds to: never on load, never over the content, never a focus
  * trap, and never on /start, where a family is in the middle of the highest
@@ -79,27 +86,27 @@ export function NewsletterBar() {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <p className="font-condensed text-micro font-bold tracking-[0.24em] uppercase text-gold">
-              Get the honest recruiting read
+              Join the waitlist
             </p>
 
             {state.status === "sent" ? (
               <p className="inline-flex items-center gap-2 text-body text-bone mt-1.5">
                 <Check size={14} className="text-green-2 shrink-0" aria-hidden />
-                You are on the list. Watch for the first one from Coach
-                Scanzano&apos;s team.
+                You&apos;re on the list. You&apos;ll hear from us before
+                doors open.
               </p>
             ) : (
               <>
                 <p className="text-caption text-slate-2 mt-1 text-pretty">
-                  What actually moves a recruit, level by level, from a JUCO
-                  head coach. No hype and no spam.
+                  Doors are not open yet. Leave an email, save your spot,
+                  and you hear it first when they are. No hype and no spam.
                 </p>
 
                 <form
                   action={formAction}
                   className="flex flex-col sm:flex-row gap-2 mt-2.5"
                 >
-                  <input type="hidden" name="source" value={`marketing:${pathname}`} />
+                  <input type="hidden" name="source" value={`waitlist:${pathname}`} />
                   <div aria-hidden className="hidden">
                     <input name="company" tabIndex={-1} autoComplete="off" />
                   </div>
@@ -128,7 +135,7 @@ export function NewsletterBar() {
                     disabled={pending}
                     className="pressable focusable press-redline inline-flex items-center justify-center min-h-touch px-5 font-condensed text-label font-bold tracking-[0.16em] uppercase bg-gold text-ink rounded-sm hover:bg-gold-2 disabled:opacity-70 transition-colors dur-fast"
                   >
-                    {pending ? "Sending" : "Send it"}
+                    {pending ? "Saving" : "Save my spot"}
                   </button>
                 </form>
 

@@ -8,7 +8,7 @@ export interface SubscribeState {
 }
 
 /**
- * Adds one address to the newsletter list.
+ * Adds one address to the waitlist.
  *
  * Two deliberate behaviours. A repeat sign-up answers exactly like a first
  * one, because "you are already on the list" tells a stranger who is on the
@@ -37,7 +37,7 @@ export async function subscribe(
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
-    return { status: "error", message: "Could not reach the list. Try later." };
+    return { status: "error", message: "Could not save your spot. Try later." };
   }
 
   const supabase = await createClient();
