@@ -119,7 +119,15 @@ function Select({
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
+      {/*
+        Keyed on the echoed value so a rejected submit restores the picks.
+        Text inputs keep what the family typed because the DOM holds it; an
+        uncontrolled select does not survive the re-render the same way, and
+        losing three dropdowns is the last thing anyone needs at the moment
+        the form has just told them something is wrong.
+      */}
       <select
+        key={`${name}-${values[name]}`}
         id={id}
         name={name}
         defaultValue={values[name]}
