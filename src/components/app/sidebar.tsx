@@ -3,15 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_SECTIONS } from "./nav-config";
+import { levelLabel } from "@/components/ui/tachometer";
 
 /**
  * Desktop and tablet navigation.
  *
  * Hidden entirely below md, where BottomNav takes over. Between md and xl it
  * collapses to an icon rail; at xl it opens to the full labelled rail.
+ *
+ * The rating card at the foot reads the same players.overall_score the
+ * dashboard gauge does, so the two can never disagree on one screen.
  */
-export function Sidebar() {
+export function Sidebar({ overallScore = null }: { overallScore?: number | null }) {
   const pathname = usePathname();
+  const score =
+    overallScore !== null && Number.isFinite(overallScore) ? overallScore : null;
+  const meterWidth =
+    score !== null ? `${(Math.min(Math.max(score, 1), 10) / 10) * 100}%` : "0%";
 
   return (
     <nav
@@ -71,13 +79,16 @@ export function Sidebar() {
             Overall Rating
           </div>
           <div className="font-display text-numeral font-bold num text-gold leading-none tracking-tight">
-            --
+            {score !== null ? score.toFixed(1) : "--"}
           </div>
           <p className="text-meta text-slate mt-1.5 leading-snug">
-            Enter scores to generate rating
+            {score !== null ? levelLabel(score) : "Enter scores to generate rating"}
           </p>
           <div className="h-[3px] bg-ink-3 mt-2.5 rounded-pill overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-blood to-gold w-0 transition-[width] dur-slow ease-needle" />
+            <div
+              className="h-full bg-gradient-to-r from-blood to-gold transition-[width] dur-slow ease-needle"
+              style={{ width: meterWidth }}
+            />
           </div>
         </div>
       </div>

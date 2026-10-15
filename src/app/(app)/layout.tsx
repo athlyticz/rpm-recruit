@@ -3,6 +3,7 @@ import { Topbar } from "@/components/app/topbar";
 import { Sidebar } from "@/components/app/sidebar";
 import { BottomNav } from "@/components/app/bottom-nav";
 import { ViewTransitions } from "@/components/app/view-transitions";
+import { getCurrentPlayer } from "@/lib/data/player";
 
 // The authenticated shell is always rendered per request, never prerendered,
 // so the auth guard below runs on every visit.
@@ -38,12 +39,15 @@ export default async function AppLayout({
     }
   }
 
+  // The sidebar's rating card reads the same row the dashboard gauge does.
+  const player = await getCurrentPlayer();
+
   return (
     <div className="min-h-dvh bg-bone">
       <Topbar />
 
       <div className="flex">
-        <Sidebar />
+        <Sidebar overallScore={player?.overall_score ?? null} />
 
         {/* min-w-0 stops long content from forcing the flex row wider than the
             viewport, which is what produces horizontal scroll on phones. */}

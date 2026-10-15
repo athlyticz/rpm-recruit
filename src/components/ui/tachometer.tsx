@@ -96,6 +96,16 @@ const LEVEL_LABELS: Record<number, string> = {
   1: "Below Avg JV",
 };
 
+/**
+ * The level label for a score, rounded and clamped exactly as the gauge does
+ * it, so any surface that prints a label beside a number agrees with the
+ * gauge on the same screen.
+ */
+export function levelLabel(score: number): string {
+  const clamped = Math.min(Math.max(Math.round(score), 1), 10);
+  return LEVEL_LABELS[clamped] ?? "";
+}
+
 /** Arc start / end in degrees (0 = 12-o'clock, CW positive) */
 const ARC_START_DEG = 210;
 const ARC_END_DEG = 330;
